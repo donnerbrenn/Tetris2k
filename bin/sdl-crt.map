@@ -1,0 +1,130 @@
+
+Allocating common symbols
+Common symbol       size              file
+
+screenSurface       0x4               obj/sdl.start.o
+pBackBuffer         0xd8              obj/sdl.start.o
+window              0x4               obj/sdl.start.o
+pBuffer             0xd8              obj/sdl.start.o
+
+Discarded input sections
+
+ .comment       0x0000000000000000       0x12 obj/sdl.start.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 obj/sdl.start.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+LOAD obj/sdl.start.o
+LOAD obj/stub.sdl.start.o
+                0x0000000000010000                . = 0x10000
+                0x0000000000010000                _smol_origin = .
+
+.header         0x0000000000010000       0x8c
+ *(.header)
+ .header        0x0000000000010000       0x8c obj/stub.sdl.start.o
+                0x000000000001008c                _smol_text_start = .
+                0x000000000000008c                _smol_text_off = (_smol_text_start - _smol_origin)
+
+.text           0x000000000001008c      0x737
+ *(.rodata.dynamic)
+ .rodata.dynamic
+                0x000000000001008c       0x20 obj/stub.sdl.start.o
+                0x000000000001008c                _DYNAMIC
+ *(.rodata.interp .rodata.neededlibs)
+ .rodata.interp
+                0x00000000000100ac       0x13 obj/stub.sdl.start.o
+ .rodata.neededlibs
+                0x00000000000100bf       0x1b obj/stub.sdl.start.o
+ *(.rdata .rdata.* .rodata .rodata.*)
+ *fill*         0x00000000000100da        0x2 
+ .rodata        0x00000000000100dc        0xa obj/sdl.start.o
+ *(.text.startup.smol)
+ .text.startup.smol
+                0x00000000000100e6       0x70 obj/stub.sdl.start.o
+ *(.text.startup._start)
+ .text.startup._start
+                0x0000000000010156       0x1f obj/sdl.start.o
+                0x0000000000010156                _start
+ *(.text .text.*)
+ .text          0x0000000000010175      0x540 obj/sdl.start.o
+                0x0000000000010175                isLineComplete
+                0x0000000000010195                InitPlayField
+                0x00000000000101d2                DropLine
+                0x0000000000010216                drawCharacter
+                0x0000000000010295                itoa
+                0x00000000000102b8                drawScore
+                0x000000000001031d                drawBufferSDL
+                0x00000000000103c1                Rotate
+                0x00000000000103fd                placeTetromino
+                0x0000000000010466                redraw
+                0x00000000000104d2                DoesPieceFit
+                0x0000000000010546                ProcessEventsSDL
+                0x000000000001060a                FallDown
+ .text.startup  0x00000000000106b5       0xe1 obj/sdl.start.o
+                0x00000000000106b5                main
+ .text.smolplt  0x0000000000010796       0x2d obj/stub.sdl.start.o
+                0x0000000000010796                exit
+                0x000000000001079a                rand
+                0x000000000001079e                srand
+                0x00000000000107a2                time
+                0x00000000000107a6                __libc_start_main
+                0x00000000000107aa                SDL_CreateWindow
+                0x00000000000107ae                SDL_GetWindowSurface
+                0x00000000000107b2                SDL_Delay
+                0x00000000000107b6                SDL_FillRect
+                0x00000000000107ba                SDL_PollEvent
+                0x00000000000107be                SDL_UpdateWindowSurface
+                0x00000000000107c3                _smol_text_end = .
+                0x0000000000000737                _smol_text_size = (_smol_text_end - _smol_text_start)
+                0x00000000000007c3                _smol_textandheader_size = (_smol_text_end - _smol_origin)
+                0x00000000000107c3                _smol_data_start = .
+                0x00000000000007c3                _smol_data_off = (_smol_data_start - _smol_origin)
+
+.data           0x00000000000107e0       0x57
+ *(.data.smolgot)
+ .data.smolgot  0x00000000000107e0        0x0 obj/stub.sdl.start.o
+ *(.data .data.* .tdata .tdata.*)
+ .data          0x00000000000107e0       0x57 obj/sdl.start.o
+                0x00000000000107e0                characters
+                0x0000000000010800                colors
+                0x0000000000010828                tetromino
+                0x0000000000010836                nCurrentX
+
+.dynamic
+ *(.dynamic)
+
+.dynstuff
+ *(.symtab .strtab .shstrtab .rel.text .got.plt .gnu.linkonce.* .plt .plt.got .interp)
+                0x0000000000010837                _smol_data_end = .
+                0x0000000000000074                _smol_data_size = (_smol_data_end - _smol_data_start)
+                0x0000000000000837                _smol_total_filesize = (. - _smol_origin)
+                0x0000000000010837                _smol_bss_start = .
+                0x0000000000000837                _smol_bss_off = (_smol_bss_start - _smol_origin)
+
+.bss            0x0000000000010840      0x1f8
+ *(.bss .bss.* .tbss .tbss.* .sbss .sbss.*)
+ .bss           0x0000000000010840        0x9 obj/sdl.start.o
+                0x0000000000010840                nCurrentY
+                0x0000000000010841                nCurrentRotation
+                0x0000000000010844                score
+                0x0000000000010848                nCurrentPiece
+ *fill*         0x0000000000010849       0x17 
+ COMMON         0x0000000000010860      0x1d8 obj/sdl.start.o
+                0x0000000000010860                screenSurface
+                0x0000000000010880                pBackBuffer
+                0x0000000000010958                window
+                0x0000000000010960                pBuffer
+                0x0000000000010a38                _smol_bss_end = .
+                0x0000000000000201                _smol_bss_size = (_smol_bss_end - _smol_bss_start)
+                0x0000000000000275                _smol_dataandbss_size = (_smol_bss_end - _smol_data_start)
+
+/DISCARD/
+ *(.*)
+                0x0000000000000a38                _smol_total_memsize = (. - _smol_origin)
+OUTPUT(bin/sdl-crt binary)
