@@ -282,7 +282,7 @@ int main()
         bool bGameOver=false;
         InitPlayField();
         redraw();
-        char i=0;
+        uint i=0;
         while(!bGameOver)
         {
             if(ProcessEventsSDL())
@@ -290,7 +290,7 @@ int main()
                 redraw();
             }
             SDL_Delay(8);
-            if(i-(i&128)==0)
+            if(i-(i&0b111111111111111110000000)==0)
             {
 //                redraw();
                 if(FallDown())
