@@ -91,16 +91,7 @@ $(BINDIR)/%: $(OBJDIR)/%.o $(OBJDIR)/stub.%.o $(BINDIR)/
 
 $(BINDIR)/%-crt: $(OBJDIR)/%.start.o $(OBJDIR)/stub.%.start.o $(BINDIR)/
 	$(CC) -Wl,-Map=$(BINDIR)/$*-crt.map $(LDFLAGS_) $(OBJDIR)/$*.start.o $(OBJDIR)/stub.$*.start.o -o "$@"
-	cd bin
-	cp sdl-crt t
-	lzma --format=lzma -9 --extreme --lzma1=preset=9,lc=1,lp=0,pb=0 t
-	cat ../ext/run t.lzma > t2k
-	chmod +x t2k
-	FILENAME=t2k
-	FILESIZE=$(stat -c%s "$FILENAME")
-	echo "Size of $FILENAME = $FILESIZE bytes."
-	rm t.lzma
-	cd ..
+	./optimize
 
 .PHONY: all clean
 
