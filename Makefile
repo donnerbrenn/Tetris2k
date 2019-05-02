@@ -14,7 +14,7 @@ BITS ?= 32#$(shell getconf LONG_BIT)
 
 COPTFLAGS=-Os -fno-plt -fno-stack-protector -fno-stack-check -fno-unwind-tables \
   -fno-asynchronous-unwind-tables -fomit-frame-pointer -ffast-math -no-pie \
-  -fno-pic -fno-PIE -m64 -march=core2 -ffunction-sections -fdata-sections -fno-plt
+  -fno-pic -fno-PIE -m64 -march=i486 -ffunction-sections -fdata-sections -fno-plt 
 CXXOPTFLAGS=$(COPTFLAGS) -fno-exceptions \
   -fno-rtti -fno-enforce-eh-specs -fnothrow-opt -fno-use-cxa-get-exception-ptr \
   -fno-implicit-templates -fno-threadsafe-statics -fno-use-cxa-atexit
@@ -33,25 +33,25 @@ LDFLAGS += -m64
 ASFLAGS += -f elf64
 LDFLAGS_ := -m64
 endif
-LDFLAGS += -nostartfiles -nostdlib
+LDFLAGS += -nostartfiles -nostdlib 
 LDFLAGS_ := $(LDFLAGS_) -T $(LDDIR)/link.ld -Wl,--oformat=binary $(LDFLAGS)
 
 CFLAGS   += -m$(BITS) $(shell pkg-config --cflags sdl2)
 CXXFLAGS += -m$(BITS) $(shell pkg-config --cflags sdl2)
 
-LIBS=-lc
+LIBS=-lc -lSDL2
 
-SMOLFLAGS +=
-ASFLAGS   += -DUSE_INTERP -DNO_START_ARG -DUNSAFE_DYNAMIC -DUSE_DNLOAD_LOADER #-DALIGN_STACK
+SMOLFLAGS += 
+ASFLAGS   += -DUSE_INTERP -DNO_START_ARG -DUNSAFE_DYNAMIC -DUSE_DNLOAD_LOADER -DUSE_DNLOAD_LOADER -DNO_START_ARG #-DALIGN_STACK
 #-DUSE_DNLOAD_LOADER #-DUSE_DT_DEBUG #-DUSE_DL_FINI #-DNO_START_ARG #-DUNSAFE_DYNAMIC
 
 NASM    ?= nasm
 PYTHON3 ?= python3
 
-all:  $(BINDIR)/sdl-crt #$(BINDIR)/flag $(BINDIR)/hello-_start $(BINDIR)/hello-crt
+all:  $(BINDIR)/tetris-crt #$(BINDIR)/flag $(BINDIR)/hello-_start $(BINDIR)/hello-crt
 
 #LIBS += $(filter-out -pthread,$(shell pkg-config --libs sdl2)) #-lX11 #-lGL
-LIBS+=-lSDL2
+
 
 clean:
 	@$(RM) -vrf $(OBJDIR) $(BINDIR)

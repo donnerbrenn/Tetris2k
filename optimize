@@ -1,6 +1,6 @@
 cd bin
 
-cp sdl-crt t
+mv tetris-crt t
 lzma --format=lzma -9 --extreme --lzma1=preset=9,lc=1,lp=0,pb=0 t
 cat ../ext/run t.lzma > t2k
 chmod +x t2k
