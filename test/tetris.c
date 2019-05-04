@@ -30,14 +30,15 @@ static float phase[3]={0};
 static float hertz[3]={0};
 static char previous[3]={0};
 static float vol[3]={0};
+static char notes[3]={0};
 static int starts[3]={0};
-static float wave=0;
+//static float wave=0;
 
 static int song_clock=0;
 static int score=0;
 static int buffersize;
 static unsigned short noteCnt;
-static float freqs[96];
+static float freqs[64];
 
 static char Rotate(char px, char py, char r);
 static bool DoesPieceFit(int nTetromino, int nRotation, int nPosX, int nPosY);
@@ -55,7 +56,6 @@ static void audio_callback(void *unused, uint8_t *byte_stream, int byte_stream_l
 
 int main();
 
-
 void audio_callback(void *unused, uint8_t *byte_stream, int byte_stream_length)
 {
     short *s_byte_stream = (short*)byte_stream;
@@ -63,8 +63,7 @@ void audio_callback(void *unused, uint8_t *byte_stream, int byte_stream_length)
     // generate three voices and mix them
     for (int i = 0; i < byte_stream_length>>1; i ++)
     {
-        wave=.0f;
-        static char notes[3]={0};
+        float wave=0;      
 
         if((song_clock)-(song_clock/speed*speed)==0)
         {
@@ -73,7 +72,7 @@ void audio_callback(void *unused, uint8_t *byte_stream, int byte_stream_length)
                 notes[channel]=cpatterns[channel][(noteCnt>>7)%length][noteCnt%128];
                 if(notes[channel]!=previous[channel]&&notes[channel]!=0)
                 {
-                    vol[channel]=.2f;
+                    vol[channel]=1;
                     starts[channel]=song_clock;
                     previous[channel]=notes[channel];
                 }
@@ -92,15 +91,13 @@ void audio_callback(void *unused, uint8_t *byte_stream, int byte_stream_length)
         {
             phase[j]+=(2 * M_PI * hertz[j]/sample_rate);
 
-            phase[j]-=(phase[j]>M_PI*2)?(M_PI*2):0;
-
-            // if(phase[j]>(M_PI*2))
-            // {
-            //     phase[j]-=(M_PI*2);
-            // }
-            wave+=vol[j]-(vol[j] * phase[j]);
+            if(phase[j]>M_PI*2)
+            {
+                phase[j]=0;
+            }
+            wave+=(vol[j] * phase[j]);
         }
-        s_byte_stream[i] = (short)(8192*wave); // left channel
+        s_byte_stream[i] = (short)(1024*wave); // left channel
         song_clock++;
     }
 }
@@ -199,8 +196,7 @@ bool ProcessEventsSDL()
 
 void drawCharacter(int number, int posX, int posY, int size)
 {
-    unsigned short bit=(1) << 14;
-
+    short bit= 16384;
     for(int x=0;x<3;x++)
         for(int y=0;y<5;y++)
         {
@@ -215,7 +211,7 @@ void drawCharacter(int number, int posX, int posY, int size)
 
 void drawScore(int value, int x, int y, int size)
 {
-        char buffer[10];
+        unsigned char buffer[10];
         sprintf(buffer, "%d", value);
         int i=0;
         while(buffer[i])
@@ -227,7 +223,8 @@ void drawScore(int value, int x, int y, int size)
 
 void drawBufferSDL()
 {
-    SDL_FillRect(screenSurface,NULL,black);
+    SDL_FillRect(screenSurface,NULL,0x12121212);
+    drawScore(score,8,SCREEN_HEIGHT-20-(3<<3),7);
     for(int x=0;x<nFieldWidth;x++)
     {
         for(int y=0;y<nFieldHeight;y++)
@@ -237,7 +234,7 @@ void drawBufferSDL()
             SDL_FillRect(screenSurface,&rect,(int)(colors[(int)(pBackBuffer[i])]));
         }
     }
-    drawScore(score,8,SCREEN_HEIGHT-20-(3<<3),7);
+    
     SDL_UpdateWindowSurface(window);
 }
 
@@ -260,7 +257,7 @@ void DropLine(int line)
     memcpy(pBackBuffer+nFieldWidth,pBuffer,line*nFieldWidth);
     for(int x=0;x<nFieldWidth;x++)
     {
-        pBackBuffer[x]=(x==0 || x == nFieldWidth-1) ? 1:0;
+        pBackBuffer[x]=(x==0 || x == nFieldWidth-1) ? 9:0;
     }
     memcpy(pBuffer,pBackBuffer,nFieldWidth*nFieldHeight);
 }
@@ -272,12 +269,11 @@ void InitPlayField()
         for(int y=0;y<nFieldHeight;y++)
         {
             int i=nFieldWidth*y+x;
-            pBackBuffer[i]=(!x || x == nFieldWidth-1 || y == nFieldHeight -1) ? 1:0;
+            pBackBuffer[i]=(!x || x == nFieldWidth-1 || y == nFieldHeight -1) ? 9:0;
             pBuffer[i]=pBackBuffer[i];
         }
     }
 }
-
 
 bool isLineComplete(int line)
 {
@@ -290,7 +286,6 @@ bool isLineComplete(int line)
     }
     return true;
 }
-
 
 void redraw()
 {
@@ -310,11 +305,10 @@ void redraw()
     drawBufferSDL();
 }
 
-
 int main()
 {
     freqs[0]=16.3516f;
-    for(int i=1;i<96;i++)
+    for(int i=1;i<64;i++)
     {
         freqs[i]=freqs[i-1]*1.05946f;
     }
@@ -335,10 +329,10 @@ int main()
     SDL_PauseAudioDevice(audio_device, false);// unpause audio.
 
     srand(time(NULL));
-    int random=rand()%7;
-    window=SDL_CreateWindow(NULL,SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED,SCREEN_WIDTH,SCREEN_HEIGHT,SDL_WINDOW_SHOWN);
+    nCurrentPiece=rand()%7;
+    window=SDL_CreateWindow(NULL,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,0);
     screenSurface = SDL_GetWindowSurface( window );
-    while(1)
+    while(true)
     {
         bool bGameOver=false;
         InitPlayField();
@@ -350,8 +344,8 @@ int main()
             {
                 redraw();
             }
-            SDL_Delay(8);
-            if(i-(i&4294967168)==0)
+            SDL_Delay(4);
+            if(!(i&127))
             {
                 if(FallDown())
                 {

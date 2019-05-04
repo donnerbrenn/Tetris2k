@@ -3,7 +3,8 @@
 #define length 8
 #define speed 4500
 
-const char cpatterns[3][8][128]=
+
+const char cpatterns[3][length][128]=
 {
     {
         {(char)(62),(char)(0),(char)(0),(char)(0),(char)(0),(char)(0),(char)(0),(char)(0),(char)(57),(char)(0),(char)(0),(char)(0),(char)(58),(char)(0),(char)(0),(char)(0),(char)(60),(char)(0),(char)(0),(char)(0),(char)(62),(char)(0),(char)(60),(char)(0),(char)(58),(char)(0),(char)(0),(char)(0),(char)(57),(char)(0),(char)(0),(char)(0),(char)(55),(char)(0),(char)(0),(char)(0),(char)(0),(char)(0),(char)(0),(char)(0),(char)(55),(char)(0),(char)(0),(char)(0),(char)(58),(char)(0),(char)(0),(char)(0),(char)(62),(char)(0),(char)(0),(char)(0),(char)(0),(char)(0),(char)(0),(char)(0),(char)(60),(char)(0),(char)(0),(char)(0),(char)(58),(char)(0),(char)(0),(char)(0),(char)(57),(char)(0),(char)(0),(char)(0),(char)(0),(char)(0),(char)(0),(char)(0),(char)(57),(char)(0),(char)(0),(char)(0),(char)(58),(char)(0),(char)(0),(char)(0),(char)(60),(char)(0),(char)(0),(char)(0),(char)(0),(char)(0),(char)(0),(char)(0),(char)(62),(char)(0),(char)(0),(char)(0),(char)(0),(char)(0),(char)(0),(char)(0),(char)(58),(char)(0),(char)(0),(char)(0),(char)(0),(char)(0),(char)(0),(char)(0),(char)(55),(char)(0),(char)(0),(char)(0),(char)(0),(char)(0),(char)(0),(char)(0),(char)(55),(char)(0),(char)(0),(char)(0),(char)(0),(char)(0),(char)(0),(char)(0),(char)(0),(char)(0),(char)(0),(char)(0),(char)(0),(char)(0),(char)(0),(char)(0)},

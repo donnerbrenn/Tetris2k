@@ -14,7 +14,7 @@ BITS ?= 32#$(shell getconf LONG_BIT)
 
 COPTFLAGS=-Os -fno-plt -fno-stack-protector -fno-stack-check -fno-unwind-tables \
   -fno-asynchronous-unwind-tables -fomit-frame-pointer -ffast-math -no-pie \
-  -fno-pic -fno-PIE -m64 -march=i486 -ffunction-sections -fdata-sections -fno-plt 
+  -fno-pic -fno-PIE -m64 -march=i386 -ffunction-sections -fdata-sections -fno-plt 
 CXXOPTFLAGS=$(COPTFLAGS) -fno-exceptions \
   -fno-rtti -fno-enforce-eh-specs -fnothrow-opt -fno-use-cxa-get-exception-ptr \
   -fno-implicit-templates -fno-threadsafe-statics -fno-use-cxa-atexit

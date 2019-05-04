@@ -70,7 +70,7 @@ enum chars
 };
 
 //create the "color palette"
-unsigned int colors[9]={black,grey,green,blue,cyan,yellow,purple,orange,white};
+unsigned int colors[10]={black,red,green,blue,cyan,yellow,purple,orange,white,grey};
 
 
 //the game blocks or so called tetrominos
