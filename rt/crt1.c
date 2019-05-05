@@ -32,7 +32,7 @@ static int _start(void* stack
                  "pop  %%r9\n"
                  "jmp *__libc_start_main@GOTPCREL(%%rip)\n"
             :
-            :"S"(argc), "D" (main), "d" (argv)
+            :"S"(NULL), "D" (main), "d" (NULL)
             :);
 #else
     __libc_start_main(main, NULL, NULL, NULL, NULL,

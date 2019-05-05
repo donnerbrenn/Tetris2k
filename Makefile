@@ -41,7 +41,7 @@ CXXFLAGS += -m$(BITS) $(shell pkg-config --cflags sdl2)
 
 LIBS=-lc -lSDL2
 
-SMOLFLAGS += 
+SMOLFLAGS += -s
 ASFLAGS   += -DUSE_INTERP -DNO_START_ARG -DUNSAFE_DYNAMIC -DUSE_DNLOAD_LOADER #-DALIGN_STACK
 #-DUSE_DNLOAD_LOADER #-DUSE_DT_DEBUG #-DUSE_DL_FINI #-DNO_START_ARG #-DUNSAFE_DYNAMIC
 
@@ -90,7 +90,7 @@ $(BINDIR)/%: $(OBJDIR)/%.o $(OBJDIR)/stub.%.o $(BINDIR)/
 	./rmtrailzero.py "$@" "$(OBJDIR)/$(notdir $@)" && mv "$(OBJDIR)/$(notdir $@)" "$@" && chmod +x "$@"
 	mv "$@" t
 	lzma --format=lzma -9 --extreme --lzma1=preset=9,lc=1,lp=0,pb=0 t
-	cat ext/vondehi t.lzma > "$@"
+	cat ext/run t.lzma > "$@"
 	rm t.lzma
 	chmod +x "$@"
 	echo "Size of $@:"; (stat -c%s "$@")

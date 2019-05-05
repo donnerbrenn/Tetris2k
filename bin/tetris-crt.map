@@ -23,7 +23,7 @@ LOAD obj/stub.tetris.start.o
                 0x000000000001008c                _smol_text_start = .
                 0x000000000000008c                _smol_text_off = (_smol_text_start - _smol_origin)
 
-.text           0x00000000000100a0     0x13eb
+.text           0x00000000000100a0     0x13e2
  *(.rodata.dynamic)
  .rodata.dynamic
                 0x00000000000100a0       0x20 obj/stub.tetris.start.o
@@ -40,34 +40,34 @@ LOAD obj/stub.tetris.start.o
  .rodata.cst4   0x0000000000010d00       0x14 obj/tetris.start.o
  *(.text.startup.smol)
  .text.startup.smol
-                0x0000000000010d14       0x70 obj/stub.tetris.start.o
+                0x0000000000010d14       0x67 obj/stub.tetris.start.o
  *(.text.startup._start)
  .text.startup._start
-                0x0000000000010d84       0x1a obj/tetris.start.o
+                0x0000000000010d7b       0x1a obj/tetris.start.o
  *(.text .text.*)
- .text          0x0000000000010d9e      0x45d obj/tetris.start.o
- .text.startup  0x00000000000111fb      0x257 obj/tetris.start.o
-                0x00000000000111fb                main
- .text.smolplt  0x0000000000011452       0x39 obj/stub.tetris.start.o
-                0x0000000000011452                SDL_PollEvent
-                0x0000000000011456                SDL_sinf
-                0x000000000001145a                SDL_CreateWindow
-                0x000000000001145e                SDL_UpdateWindowSurface
-                0x0000000000011462                SDL_uitoa
-                0x0000000000011466                SDL_OpenAudioDevice
-                0x000000000001146a                SDL_PauseAudioDevice
-                0x000000000001146e                SDL_GetWindowSurface
-                0x0000000000011472                SDL_Init
-                0x0000000000011476                SDL_GetTicks
-                0x000000000001147a                SDL_FillRect
-                0x000000000001147e                SDL_Delay
-                0x0000000000011482                __libc_start_main
-                0x0000000000011486                exit
-                0x000000000001148b                _smol_text_end = .
-                0x00000000000013ff                _smol_text_size = (_smol_text_end - _smol_text_start)
-                0x000000000000148b                _smol_textandheader_size = (_smol_text_end - _smol_origin)
-                0x000000000001148b                _smol_data_start = .
-                0x000000000000148b                _smol_data_off = (_smol_data_start - _smol_origin)
+ .text          0x0000000000010d95      0x45d obj/tetris.start.o
+ .text.startup  0x00000000000111f2      0x257 obj/tetris.start.o
+                0x00000000000111f2                main
+ .text.smolplt  0x0000000000011449       0x39 obj/stub.tetris.start.o
+                0x0000000000011449                SDL_FillRect
+                0x000000000001144d                SDL_CreateWindow
+                0x0000000000011451                SDL_OpenAudioDevice
+                0x0000000000011455                SDL_UpdateWindowSurface
+                0x0000000000011459                SDL_uitoa
+                0x000000000001145d                SDL_sinf
+                0x0000000000011461                SDL_GetWindowSurface
+                0x0000000000011465                SDL_PauseAudioDevice
+                0x0000000000011469                SDL_Init
+                0x000000000001146d                SDL_GetTicks
+                0x0000000000011471                SDL_PollEvent
+                0x0000000000011475                SDL_Delay
+                0x0000000000011479                __libc_start_main
+                0x000000000001147d                _Exit
+                0x0000000000011482                _smol_text_end = .
+                0x00000000000013f6                _smol_text_size = (_smol_text_end - _smol_text_start)
+                0x0000000000001482                _smol_textandheader_size = (_smol_text_end - _smol_origin)
+                0x0000000000011482                _smol_data_start = .
+                0x0000000000001482                _smol_data_off = (_smol_data_start - _smol_origin)
 
 .data           0x00000000000114a0       0x69
  *(.data.smolgot)
@@ -83,7 +83,7 @@ LOAD obj/stub.tetris.start.o
 .dynstuff
  *(.symtab .strtab .shstrtab .rel.text .got.plt .gnu.linkonce.* .plt .plt.got .interp)
                 0x0000000000011509                _smol_data_end = .
-                0x000000000000007e                _smol_data_size = (_smol_data_end - _smol_data_start)
+                0x0000000000000087                _smol_data_size = (_smol_data_end - _smol_data_start)
                 0x0000000000001509                _smol_total_filesize = (. - _smol_origin)
                 0x0000000000011509                _smol_bss_start = .
                 0x0000000000001509                _smol_bss_off = (_smol_bss_start - _smol_origin)
@@ -93,7 +93,7 @@ LOAD obj/stub.tetris.start.o
  .bss           0x0000000000011520      0x320 obj/tetris.start.o
                 0x0000000000011840                _smol_bss_end = .
                 0x0000000000000337                _smol_bss_size = (_smol_bss_end - _smol_bss_start)
-                0x00000000000003b5                _smol_dataandbss_size = (_smol_bss_end - _smol_data_start)
+                0x00000000000003be                _smol_dataandbss_size = (_smol_bss_end - _smol_data_start)
 
 /DISCARD/
  *(.*)
