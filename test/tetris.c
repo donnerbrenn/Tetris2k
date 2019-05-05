@@ -53,24 +53,24 @@ static void redraw();
 static void audio_callback(void *unused, uint8_t *byte_stream, int byte_stream_length);
 static void updateBuffer();
 static void drawRect(SDL_Rect *rect, int color);
-static int giveRandomTeronimo();
+static void shuffle();
 int main();
 
 
 
-int giveRandomTeronimo()
+void shuffle()
 {
-    uint32_t x32=SDL_GetTicks();
-    int result=7;
-    // x32=;
+    uint32_t result=7;
     while(result==7 || result==nCurrentPiece)
     {
-        x32 ^= x32 << 13;
-        x32 ^= x32 >> 17;
-        x32 ^= x32 << 5;
-        result=x32&7;
+        result=SDL_GetTicks();
+        for(int i=17;i>2;i-=4)
+        {
+            result ^= result << i;
+        }
+        result&=7;
     }
-    return result;
+    nCurrentPiece=result;
 }
 
 void drawRect(SDL_Rect *rect, int color)
@@ -155,7 +155,7 @@ bool FallDown()
     }
     else
     {
-        nCurrentPiece=giveRandomTeronimo();
+        shuffle();
         nCurrentRotation=0;
         nCurrentY= 0;
         nCurrentX = (nFieldWidth>>1)-2;
@@ -332,7 +332,7 @@ int main()
 
     window=SDL_CreateWindow(NULL,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,0);
     screenSurface = SDL_GetWindowSurface( window );
-    nCurrentPiece=giveRandomTeronimo();
+    shuffle();
 
     bool bGameOver=false;
     InitPlayField();
