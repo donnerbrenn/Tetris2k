@@ -90,7 +90,7 @@ $(BINDIR)/%: $(OBJDIR)/%.o $(OBJDIR)/stub.%.o $(BINDIR)/
 	./rmtrailzero.py "$@" "$(OBJDIR)/$(notdir $@)" && mv "$(OBJDIR)/$(notdir $@)" "$@" && chmod +x "$@"
 	mv "$@" t
 	lzma --format=lzma -9 --extreme --lzma1=preset=9,lc=1,lp=0,pb=0 t
-	cat ext/run t.lzma > "$@"
+	cat ext/vondehi t.lzma > "$@"
 	rm t.lzma
 	chmod +x "$@"
 	echo "Size of $@:"; (stat -c%s "$@")
