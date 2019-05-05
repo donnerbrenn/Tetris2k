@@ -25,7 +25,6 @@ static char nCurrentY;
 
 static SDL_Window *window;
 static SDL_Surface *screenSurface;
-// static SDL_AudioSpec audio_spec;
 static float phase[3]={0};
 static float hertz[3]={0};
 static float vol[3]={0};
@@ -51,7 +50,7 @@ static void DropLine(int line);
 static void InitPlayField();
 static bool isLineComplete(int line);
 static void redraw();
-static void audio_callback(void *unused, short *byte_stream, int byte_stream_length);
+static void audio_callback(void *unused, char *byte_stream, int byte_stream_length);
 static void updateBuffer();
 
 int main();
@@ -61,7 +60,7 @@ void updateBuffer()
     memcpy(pBuffer,pBackBuffer,nFieldHeight*nFieldWidth);
 }
 
-void audio_callback(void *unused, short *byte_stream, int byte_stream_length)
+void audio_callback(void *unused, char *byte_stream, int byte_stream_length)
 {
     // generate three voices and mix them
     for (int i = 0; i < byte_stream_length>>1; i++)
@@ -89,18 +88,12 @@ void audio_callback(void *unused, short *byte_stream, int byte_stream_length)
         }
         for(int j=1;j<3;j++)
         {
-            // phase[j]+=(F_PI*2* hertz[j]/sample_rate);
-
-            // if(phase[j]>F_PI*2)
-            // {
-            //     phase[j]=0;
-            // }
             phase[j]=sin(hertz[j]*6*((float)song_clock/sample_rate));
             phase[j]=phase[j]>0?1:-1;
-
-             wave+=(vol[j] * phase[j]);
+            wave+=(vol[j] * phase[j]);
         }
-        byte_stream[i] = (1024*wave); 
+        short *sbyte_stream=(short*)byte_stream;
+        sbyte_stream[i] = (1024*wave); 
         song_clock++;
     }
 }
