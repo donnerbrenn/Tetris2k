@@ -265,7 +265,7 @@ void InitPlayField()
 
 bool isLineComplete(int line)
 {
-    for(int px=0;px<nFieldWidth>>1;px++)
+    for(int px=0;px<nFieldWidth;px++)
     {
         if(!pBackBuffer[line*nFieldWidth+px])
         {

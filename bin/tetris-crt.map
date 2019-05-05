@@ -53,21 +53,21 @@ LOAD obj/stub.tetris.start.o
  .text.startup  0x0000000000011211      0x28b obj/tetris.start.o
                 0x0000000000011211                main
  .text.smolplt  0x000000000001149c       0x3d obj/stub.tetris.start.o
-                0x000000000001149c                SDL_PauseAudioDevice
-                0x00000000000114a0                SDL_Delay
-                0x00000000000114a4                SDL_OpenAudioDevice
-                0x00000000000114a8                SDL_FillRect
-                0x00000000000114ac                SDL_UpdateWindowSurface
-                0x00000000000114b0                SDL_Init
-                0x00000000000114b4                SDL_GetWindowSurface
-                0x00000000000114b8                SDL_CreateWindow
-                0x00000000000114bc                SDL_PollEvent
+                0x000000000001149c                SDL_Delay
+                0x00000000000114a0                SDL_FillRect
+                0x00000000000114a4                SDL_PauseAudioDevice
+                0x00000000000114a8                SDL_CreateWindow
+                0x00000000000114ac                SDL_PollEvent
+                0x00000000000114b0                SDL_OpenAudioDevice
+                0x00000000000114b4                SDL_Init
+                0x00000000000114b8                SDL_GetWindowSurface
+                0x00000000000114bc                SDL_UpdateWindowSurface
                 0x00000000000114c0                time
-                0x00000000000114c4                __libc_start_main
-                0x00000000000114c8                rand
-                0x00000000000114cc                srand
-                0x00000000000114d0                exit
-                0x00000000000114d4                sprintf
+                0x00000000000114c4                sprintf
+                0x00000000000114c8                __libc_start_main
+                0x00000000000114cc                exit
+                0x00000000000114d0                srand
+                0x00000000000114d4                rand
                 0x00000000000114d9                _smol_text_end = .
                 0x000000000000144d                _smol_text_size = (_smol_text_end - _smol_text_start)
                 0x00000000000014d9                _smol_textandheader_size = (_smol_text_end - _smol_origin)
