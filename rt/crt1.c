@@ -1,7 +1,7 @@
 
 #include <stddef.h>
 
-extern int main(int argc, char* argv[]);
+extern void main();
 
 extern int __libc_start_main(int (*main)(int, char**),
         int argc, char** argv,
@@ -15,13 +15,13 @@ __attribute__((__externally_visible__, __section__(".text.startup._start"),
         , __naked__
 #endif
 ))
-int _start(void* stack
+static int _start(void* stack
 #ifdef USE_DL_FINI
         , void (*dl_fini)(void)
 #endif
 ) {
-    int argc=*(size_t*)stack;
-    char** argv=(void*)(&((size_t*)stack)[1]);
+    // int argc=*(size_t*)stack;
+    // char** argv=(void*)(&((size_t*)stack)[1]);
 
 // avoid problems when -fno-plt is enabled
 #ifdef __x86_64__
@@ -35,13 +35,13 @@ int _start(void* stack
             :"S"(argc), "D" (main), "d" (argv)
             :);
 #else
-    __libc_start_main(main, argc, argv, NULL, NULL,
+    __libc_start_main(main, NULL, NULL, NULL, NULL,
 #ifdef USE_DL_FINI
             dl_fini
 #else
             NULL
 #endif
-            , (void*)stack);
+            , NULL);
 #endif
 
     __builtin_unreachable();

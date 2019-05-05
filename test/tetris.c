@@ -53,7 +53,7 @@ static void redraw();
 static void audio_callback(void *unused, uint8_t *byte_stream, int byte_stream_length);
 static void updateBuffer();
 static void shuffle();
-int main();
+void main();
 
 void shuffle()
 {
@@ -300,7 +300,7 @@ void redraw()
     drawBufferSDL();
 }
 
-int main()
+void main()
 {
     freqs[0]=16.3516f;
     for(int i=1;i<64;i++)
