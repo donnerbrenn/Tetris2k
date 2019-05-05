@@ -52,15 +52,12 @@ static bool isLineComplete(int line);
 static void redraw();
 static void audio_callback(void *unused, uint8_t *byte_stream, int byte_stream_length);
 static void updateBuffer();
-static void drawRect(SDL_Rect *rect, int color);
 static void shuffle();
 int main();
 
-
-
 void shuffle()
 {
-    uint32_t result=7;
+    int32_t result=7;
     while(result==7 || result==nCurrentPiece)
     {
         result=SDL_GetTicks();
@@ -71,11 +68,6 @@ void shuffle()
         result&=7;
     }
     nCurrentPiece=result;
-}
-
-void drawRect(SDL_Rect *rect, int color)
-{
-    SDL_FillRect(screenSurface,rect,color);
 }
 
 void updateBuffer()
@@ -112,9 +104,9 @@ void audio_callback(void *unused, uint8_t *byte_stream, int byte_stream_length)
         for(int j=1;j<3;j++)
         {
             float phase=SDL_sinf(hertz[j]*6*((float)song_clock/sample_rate));
-            wave+=(vol[j] * (phase>0?1:-1));
+            wave+=(vol[j] * (phase>0?1:-1))*1024;
         }
-        ((short*)byte_stream)[i] = (1024*wave); 
+        ((short*)byte_stream)[i] = wave; 
         song_clock++;
     }
 }
@@ -152,6 +144,7 @@ bool FallDown()
     if(DoesPieceFit(nCurrentPiece,nCurrentRotation,nCurrentX,nCurrentY+1))
     {
         nCurrentY++;
+        return(false);
     }
     else
     {
@@ -163,7 +156,6 @@ bool FallDown()
         updateBuffer();
         return (!DoesPieceFit(nCurrentPiece,nCurrentRotation,nCurrentX,nCurrentY));
     }
-    return(false);
 }
 
 bool ProcessEventsSDL()
@@ -207,7 +199,7 @@ void drawCharacter(int number, int posX, int posY, int size)
             if(16384 >> (i) & characters[number])
             {
                 SDL_Rect rect=(SDL_Rect){x*size+posX,y*size+posY,size,size};
-                drawRect(&rect,white);
+                SDL_FillRect(screenSurface,&rect,white);
             }
         }
 }
@@ -226,7 +218,7 @@ void drawScore(int value, int x, int y, int size)
 
 void drawBufferSDL()
 {
-    drawRect(NULL,0x12121212);
+    SDL_FillRect(screenSurface,NULL,0x12121212);
     drawScore(score,8,SCREEN_HEIGHT-20-(3<<3),7);
     for(int x=0;x<nFieldWidth;x++)
     {
@@ -234,7 +226,8 @@ void drawBufferSDL()
         {
             int i=nFieldWidth*y+x;
             SDL_Rect rect=(SDL_Rect){x*50+10,y*50+10,48,48};
-            drawRect(&rect,(int)(colors[(int)(pBackBuffer[i])]));
+            SDL_FillRect(screenSurface,&rect,(int)(colors[(int)(pBackBuffer[i])]));
+            
         }
     }
     SDL_UpdateWindowSurface(window);
