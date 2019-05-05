@@ -3,7 +3,6 @@
 #include "symbols.h"
 #include <time.h>
 #include "tetris_sng.h"
-#include <tgmath.h>
 
 typedef char bool;
 enum { false, true };
@@ -37,6 +36,7 @@ static int song_clock=0;
 static unsigned int score=0;
 static int noteCnt;
 static float freqs[64];
+// static int old;
 
 static char Rotate(char px, char py, char r);
 static bool DoesPieceFit(int nTetromino, int nRotation, int nPosX, int nPosY);
@@ -53,8 +53,25 @@ static void redraw();
 static void audio_callback(void *unused, uint8_t *byte_stream, int byte_stream_length);
 static void updateBuffer();
 static void drawRect(SDL_Rect *rect, int color);
-
+static int giveRandomTeronimo();
 int main();
+
+
+
+int giveRandomTeronimo()
+{
+    uint32_t x32=SDL_GetTicks();
+    int result=7;
+    // x32=;
+    while(result==7 || result==nCurrentPiece)
+    {
+        x32 ^= x32 << 13;
+        x32 ^= x32 >> 17;
+        x32 ^= x32 << 5;
+        result=x32&7;
+    }
+    return result;
+}
 
 void drawRect(SDL_Rect *rect, int color)
 {
@@ -138,7 +155,7 @@ bool FallDown()
     }
     else
     {
-        nCurrentPiece=rand()%7;
+        nCurrentPiece=giveRandomTeronimo();
         nCurrentRotation=0;
         nCurrentY= 0;
         nCurrentX = (nFieldWidth>>1)-2;
@@ -175,7 +192,7 @@ bool ProcessEventsSDL()
         }
         if (e.type==SDL_QUIT)
         {
-            _Exit(0);
+            exit(0);
         }
     }
      return false;
@@ -197,7 +214,7 @@ void drawCharacter(int number, int posX, int posY, int size)
 
 void drawScore(int value, int x, int y, int size)
 {
-        char buffer[10];
+        char buffer[15];
         SDL_uitoa(value,&buffer[0],10);
         int i=0;
         while(buffer[i])
@@ -312,10 +329,10 @@ int main()
      
     SDL_PauseAudioDevice(SDL_OpenAudioDevice(NULL, 0, &want, NULL, 0), false);// unpause audio.
 
-    srand(time(NULL));
-    nCurrentPiece=rand()%7;
+
     window=SDL_CreateWindow(NULL,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,0);
     screenSurface = SDL_GetWindowSurface( window );
+    nCurrentPiece=giveRandomTeronimo();
 
     bool bGameOver=false;
     InitPlayField();
