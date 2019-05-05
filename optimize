@@ -1,11 +1,15 @@
 cd bin
 
-mv tetris-crt t
+INPUT=$1
+OUTPUT=$2
+
+
+mv "$INPUT" t
 lzma --format=lzma -9 --extreme --lzma1=preset=9,lc=1,lp=0,pb=0 t
-cat ../ext/run t.lzma > t2k
-chmod +x t2k
-FILENAME=t2k
-FILESIZE=$(stat -c%s "$FILENAME")
-echo "Size of $FILENAME = $FILESIZE bytes."
+cat ../ext/vondehi t.lzma > $OUTPUT
+chmod +x $OUTPUT
+
+FILESIZE=$(stat -c%s "$OUTPUT")
+echo "Size of $OUTPUT = $FILESIZE bytes."
 rm t.lzma
 cd ..

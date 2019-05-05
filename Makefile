@@ -42,7 +42,7 @@ CXXFLAGS += -m$(BITS) $(shell pkg-config --cflags sdl2)
 LIBS=-lc -lSDL2
 
 SMOLFLAGS += 
-ASFLAGS   += -DUSE_INTERP -DNO_START_ARG -DUNSAFE_DYNAMIC -DUSE_DNLOAD_LOADER -DUSE_DNLOAD_LOADER -DNO_START_ARG #-DALIGN_STACK
+ASFLAGS   += -DUSE_INTERP -DNO_START_ARG -DUNSAFE_DYNAMIC -DUSE_DNLOAD_LOADER #-DALIGN_STACK
 #-DUSE_DNLOAD_LOADER #-DUSE_DT_DEBUG #-DUSE_DL_FINI #-DNO_START_ARG #-DUNSAFE_DYNAMIC
 
 NASM    ?= nasm
@@ -88,10 +88,22 @@ $(OBJDIR)/stub.%.start.o: $(OBJDIR)/symbols.%.start.asm $(SRCDIR)/header32.asm \
 $(BINDIR)/%: $(OBJDIR)/%.o $(OBJDIR)/stub.%.o $(BINDIR)/
 	$(CC) -Wl,-Map=$(BINDIR)/$*.map $(LDFLAGS_) $(OBJDIR)/$*.o $(OBJDIR)/stub.$*.o -o "$@"
 	./rmtrailzero.py "$@" "$(OBJDIR)/$(notdir $@)" && mv "$(OBJDIR)/$(notdir $@)" "$@" && chmod +x "$@"
+	mv "$@" t
+	lzma --format=lzma -9 --extreme --lzma1=preset=9,lc=1,lp=0,pb=0 t
+	cat ext/vondehi t.lzma > "$@"
+	rm t.lzma
+	chmod +x "$@"
+	echo "Size of $@:"; (stat -c%s "$@")
 
 $(BINDIR)/%-crt: $(OBJDIR)/%.start.o $(OBJDIR)/stub.%.start.o $(BINDIR)/
 	$(CC) -Wl,-Map=$(BINDIR)/$*-crt.map $(LDFLAGS_) $(OBJDIR)/$*.start.o $(OBJDIR)/stub.$*.start.o -o "$@"
-	./optimize
+
+	mv "$@" t
+	lzma --format=lzma -9 --extreme --lzma1=preset=9,lc=1,lp=0,pb=0 t
+	cat ext/vondehi t.lzma > "$@"
+	rm t.lzma
+	chmod +x "$@"
+	echo "Size of $@:"; (stat -c%s "$@")
 
 .PHONY: all clean
 
