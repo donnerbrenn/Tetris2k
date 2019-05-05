@@ -12,9 +12,9 @@ BITS ?= 32#$(shell getconf LONG_BIT)
 #  -ffast-math -funsafe-math-optimizations -fno-stack-protector -fomit-frame-pointer \
 #  -fno-exceptions -fno-unwind-tables -fno-asynchronous-unwind-tables
 
-COPTFLAGS=-Os -fno-plt -fno-stack-protector -fno-stack-check -fno-unwind-tables \
-  -fno-asynchronous-unwind-tables -fomit-frame-pointer -ffast-math -no-pie \
-  -fno-pic -fno-PIE -m64 -march=i386 -ffunction-sections -fdata-sections -fno-plt 
+COPTFLAGS=-Os -fno-plt -fwhole-program -fno-stack-protector -fno-stack-check -fno-unwind-tables \
+  -fno-asynchronous-unwind-tables -fno-exceptions  -funsafe-math-optimizations -fomit-frame-pointer -ffast-math -no-pie \
+  -fno-pic -march=i386 -mtune=i386 -ffunction-sections -fdata-sections -fno-plt 
 CXXOPTFLAGS=$(COPTFLAGS) -fno-exceptions \
   -fno-rtti -fno-enforce-eh-specs -fnothrow-opt -fno-use-cxa-get-exception-ptr \
   -fno-implicit-templates -fno-threadsafe-statics -fno-use-cxa-atexit
@@ -25,7 +25,7 @@ CXXFLAGS=-Wall -Wextra -Wpedantic -std=c++11 $(CXXOPTFLAGS) -nostartfiles -fno-P
 ASFLAGS=-I $(SRCDIR)/
 LDFLAGS_ :=
 ifeq ($(BITS),32)
-LDFLAGS += -m32
+LDFLAGS += -m32 -Wl,--build-id=none -Wl,--hash-style=gnu -Wl,-z,norelro
 ASFLAGS += -f elf32
 LDFLAGS_ := -m32
 else
@@ -39,7 +39,7 @@ LDFLAGS_ := $(LDFLAGS_) -T $(LDDIR)/link.ld -Wl,--oformat=binary $(LDFLAGS)
 CFLAGS   += -m$(BITS) $(shell pkg-config --cflags sdl2)
 CXXFLAGS += -m$(BITS) $(shell pkg-config --cflags sdl2)
 
-LIBS=-lc -lSDL2
+LIBS=-lc  -lSDL2
 
 SMOLFLAGS += 
 ASFLAGS   += -DUSE_INTERP -DNO_START_ARG -DUNSAFE_DYNAMIC -DUSE_DNLOAD_LOADER #-DALIGN_STACK

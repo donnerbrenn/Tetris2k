@@ -3,6 +3,7 @@
 #include "symbols.h"
 #include <time.h>
 #include "tetris_sng.h"
+#include <tgmath.h>
 
 typedef char bool;
 enum { false, true };
@@ -14,6 +15,7 @@ enum { false, true };
 #define SCREEN_WIDTH 620
 #define SCREEN_HEIGHT 960
 #define sample_rate 96000
+#define buffersize 512
 
 //tetris variables
 static char pBuffer[nFieldHeight*nFieldWidth];
@@ -25,7 +27,6 @@ static char nCurrentY;
 
 static SDL_Window *window;
 static SDL_Surface *screenSurface;
-static float phase[3]={0};
 static float hertz[3]={0};
 static float vol[3]={0};
 static char previous[3]={0};
@@ -34,7 +35,6 @@ static short starts[3]={0};
 
 static int song_clock=0;
 static unsigned int score=0;
-static int buffersize=1024;
 static int noteCnt;
 static float freqs[64];
 
@@ -50,17 +50,23 @@ static void DropLine(int line);
 static void InitPlayField();
 static bool isLineComplete(int line);
 static void redraw();
-static void audio_callback(void *unused, char *byte_stream, int byte_stream_length);
+static void audio_callback(void *unused, uint8_t *byte_stream, int byte_stream_length);
 static void updateBuffer();
+static void drawRect(SDL_Rect *rect, int color);
 
 int main();
+
+void drawRect(SDL_Rect *rect, int color)
+{
+    SDL_FillRect(screenSurface,rect,color);
+}
 
 void updateBuffer()
 {
     memcpy(pBuffer,pBackBuffer,nFieldHeight*nFieldWidth);
 }
 
-void audio_callback(void *unused, char *byte_stream, int byte_stream_length)
+void audio_callback(void *unused, uint8_t *byte_stream, int byte_stream_length)
 {
     // generate three voices and mix them
     for (int i = 0; i < byte_stream_length>>1; i++)
@@ -77,23 +83,21 @@ void audio_callback(void *unused, char *byte_stream, int byte_stream_length)
                     starts[channel]=song_clock;
                     previous[channel]=notes[channel];
                 }
-                vol[channel]*=.9f;
+                vol[channel]*=.8f;
                 
                 if(notes[channel])
                 {
-                    hertz[channel]=freqs[(notes[channel])];
+                    hertz[channel]=freqs[(int)(notes[channel])];
                 }
             }
             noteCnt++;
         }
         for(int j=1;j<3;j++)
         {
-            phase[j]=sin(hertz[j]*6*((float)song_clock/sample_rate));
-            phase[j]=phase[j]>0?1:-1;
-            wave+=(vol[j] * phase[j]);
+            float phase=SDL_sinf(hertz[j]*6*((float)song_clock/sample_rate));
+            wave+=(vol[j] * (phase>0?1:-1));
         }
-        short *sbyte_stream=(short*)byte_stream;
-        sbyte_stream[i] = (1024*wave); 
+        ((short*)byte_stream)[i] = (1024*wave); 
         song_clock++;
     }
 }
@@ -171,7 +175,7 @@ bool ProcessEventsSDL()
         }
         if (e.type==SDL_QUIT)
         {
-            exit(0);
+            _Exit(0);
         }
     }
      return false;
@@ -186,15 +190,15 @@ void drawCharacter(int number, int posX, int posY, int size)
             if(16384 >> (i) & characters[number])
             {
                 SDL_Rect rect=(SDL_Rect){x*size+posX,y*size+posY,size,size};
-                SDL_FillRect(screenSurface,&rect,white);
+                drawRect(&rect,white);
             }
         }
 }
 
 void drawScore(int value, int x, int y, int size)
 {
-        unsigned char buffer[10];
-        sprintf(buffer, "%d", value);
+        char buffer[10];
+        SDL_uitoa(value,&buffer[0],10);
         int i=0;
         while(buffer[i])
         {
@@ -205,7 +209,7 @@ void drawScore(int value, int x, int y, int size)
 
 void drawBufferSDL()
 {
-    SDL_FillRect(screenSurface,NULL,0x12121212);
+    drawRect(NULL,0x12121212);
     drawScore(score,8,SCREEN_HEIGHT-20-(3<<3),7);
     for(int x=0;x<nFieldWidth;x++)
     {
@@ -213,7 +217,7 @@ void drawBufferSDL()
         {
             int i=nFieldWidth*y+x;
             SDL_Rect rect=(SDL_Rect){x*50+10,y*50+10,48,48};
-            SDL_FillRect(screenSurface,&rect,(int)(colors[(int)(pBackBuffer[i])]));
+            drawRect(&rect,(int)(colors[(int)(pBackBuffer[i])]));
         }
     }
     SDL_UpdateWindowSurface(window);
