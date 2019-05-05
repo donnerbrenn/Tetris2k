@@ -104,6 +104,5 @@ $(BINDIR)/%-crt: $(OBJDIR)/%.start.o $(OBJDIR)/stub.%.start.o $(BINDIR)/
 	rm t.lzma
 	chmod +x "$@"
 	echo "Size of $@:"; (stat -c%s "$@")
-
 .PHONY: all clean
 
