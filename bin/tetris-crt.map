@@ -50,20 +50,20 @@ LOAD obj/stub.tetris.start.o
  .text.startup  0x00000000000111fc      0x257 obj/tetris.start.o
                 0x00000000000111fc                main
  .text.smolplt  0x0000000000011453       0x39 obj/stub.tetris.start.o
-                0x0000000000011453                SDL_Delay
-                0x0000000000011457                SDL_UpdateWindowSurface
-                0x000000000001145b                SDL_sinf
-                0x000000000001145f                SDL_FillRect
-                0x0000000000011463                SDL_PollEvent
-                0x0000000000011467                SDL_PauseAudioDevice
-                0x000000000001146b                SDL_GetTicks
-                0x000000000001146f                SDL_CreateWindow
-                0x0000000000011473                SDL_uitoa
-                0x0000000000011477                SDL_Init
-                0x000000000001147b                SDL_GetWindowSurface
-                0x000000000001147f                SDL_OpenAudioDevice
-                0x0000000000011483                __libc_start_main
-                0x0000000000011487                exit
+                0x0000000000011453                SDL_GetTicks
+                0x0000000000011457                SDL_CreateWindow
+                0x000000000001145b                SDL_Delay
+                0x000000000001145f                SDL_sinf
+                0x0000000000011463                SDL_GetWindowSurface
+                0x0000000000011467                SDL_UpdateWindowSurface
+                0x000000000001146b                SDL_FillRect
+                0x000000000001146f                SDL_uitoa
+                0x0000000000011473                SDL_Init
+                0x0000000000011477                SDL_OpenAudioDevice
+                0x000000000001147b                SDL_PollEvent
+                0x000000000001147f                SDL_PauseAudioDevice
+                0x0000000000011483                exit
+                0x0000000000011487                __libc_start_main
                 0x000000000001148c                _smol_text_end = .
                 0x0000000000001400                _smol_text_size = (_smol_text_end - _smol_text_start)
                 0x000000000000148c                _smol_textandheader_size = (_smol_text_end - _smol_origin)
