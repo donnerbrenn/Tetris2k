@@ -44,25 +44,26 @@ LOAD obj/stub.tetris.start.o
  *(.text.startup._start)
  .text.startup._start
                 0x0000000000010d7b       0x1a obj/tetris.start.o
+                0x0000000000010d7b                _start
  *(.text .text.*)
  .text          0x0000000000010d95      0x45d obj/tetris.start.o
  .text.startup  0x00000000000111f2      0x257 obj/tetris.start.o
                 0x00000000000111f2                main
  .text.smolplt  0x0000000000011449       0x39 obj/stub.tetris.start.o
-                0x0000000000011449                SDL_uitoa
-                0x000000000001144d                SDL_CreateWindow
-                0x0000000000011451                SDL_FillRect
-                0x0000000000011455                SDL_GetWindowSurface
-                0x0000000000011459                SDL_Delay
-                0x000000000001145d                SDL_GetTicks
-                0x0000000000011461                SDL_UpdateWindowSurface
-                0x0000000000011465                SDL_Init
-                0x0000000000011469                SDL_PollEvent
-                0x000000000001146d                SDL_OpenAudioDevice
-                0x0000000000011471                SDL_PauseAudioDevice
-                0x0000000000011475                SDL_sinf
-                0x0000000000011479                exit
-                0x000000000001147d                __libc_start_main
+                0x0000000000011449                SDL_CreateWindow
+                0x000000000001144d                SDL_GetWindowSurface
+                0x0000000000011451                SDL_uitoa
+                0x0000000000011455                SDL_OpenAudioDevice
+                0x0000000000011459                SDL_GetTicks
+                0x000000000001145d                SDL_Delay
+                0x0000000000011461                SDL_PollEvent
+                0x0000000000011465                SDL_UpdateWindowSurface
+                0x0000000000011469                SDL_Init
+                0x000000000001146d                SDL_PauseAudioDevice
+                0x0000000000011471                SDL_sinf
+                0x0000000000011475                SDL_FillRect
+                0x0000000000011479                __libc_start_main
+                0x000000000001147d                exit
                 0x0000000000011482                _smol_text_end = .
                 0x00000000000013f6                _smol_text_size = (_smol_text_end - _smol_text_start)
                 0x0000000000001482                _smol_textandheader_size = (_smol_text_end - _smol_origin)

@@ -104,4 +104,3 @@ $(BINDIR)/%-crt: $(OBJDIR)/%.start.o $(OBJDIR)/stub.%.start.o $(BINDIR)/
 	chmod +x "$@"
 	echo "Size of $@:"; (stat -c%s "$@")
 .PHONY: all clean
-
