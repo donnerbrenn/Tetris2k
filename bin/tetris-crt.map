@@ -50,18 +50,18 @@ LOAD obj/stub.tetris.start.o
  .text.startup  0x00000000000111e9      0x257 obj/tetris.start.o
                 0x00000000000111e9                main
  .text.smolplt  0x0000000000011440       0x39 obj/stub.tetris.start.o
-                0x0000000000011440                SDL_OpenAudioDevice
-                0x0000000000011444                SDL_GetTicks
-                0x0000000000011448                SDL_Init
-                0x000000000001144c                SDL_GetWindowSurface
-                0x0000000000011450                SDL_sinf
+                0x0000000000011440                SDL_FillRect
+                0x0000000000011444                SDL_sinf
+                0x0000000000011448                SDL_CreateWindow
+                0x000000000001144c                SDL_uitoa
+                0x0000000000011450                SDL_Init
                 0x0000000000011454                SDL_UpdateWindowSurface
-                0x0000000000011458                SDL_Delay
-                0x000000000001145c                SDL_CreateWindow
-                0x0000000000011460                SDL_uitoa
-                0x0000000000011464                SDL_PauseAudioDevice
-                0x0000000000011468                SDL_PollEvent
-                0x000000000001146c                SDL_FillRect
+                0x0000000000011458                SDL_PauseAudioDevice
+                0x000000000001145c                SDL_Delay
+                0x0000000000011460                SDL_GetWindowSurface
+                0x0000000000011464                SDL_PollEvent
+                0x0000000000011468                SDL_OpenAudioDevice
+                0x000000000001146c                SDL_GetTicks
                 0x0000000000011470                __libc_start_main
                 0x0000000000011474                exit
                 0x0000000000011479                _smol_text_end = .
