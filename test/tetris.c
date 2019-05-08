@@ -8,7 +8,7 @@ typedef char bool;
 enum { false, true };
 
 //defines
-#define F_PI 3.14159265359f
+// #define F_PI 3.14159265359f
 #define nFieldWidth 12
 #define nFieldHeight 18
 #define SCREEN_WIDTH 620
@@ -21,7 +21,7 @@ static char pBuffer[nFieldHeight*nFieldWidth];
 static char pBackBuffer[nFieldWidth*nFieldHeight];
 static char nCurrentPiece;
 static char nCurrentRotation;
-static char nCurrentX = (nFieldWidth>>1)-2;
+static char nCurrentX=(nFieldWidth>>1)-2;
 static char nCurrentY;
 
 static SDL_Window *window;
@@ -35,7 +35,7 @@ static short starts[voices]={0};
 static int song_clock=0;
 static unsigned int score=0;
 static int noteCnt;
-static float freqs[64];
+static float freqs[70];
 
 static char Rotate(char px, char py, char r);
 static bool DoesPieceFit(int nTetromino, int nRotation, int nPosX, int nPosY);
@@ -52,7 +52,7 @@ static void redraw();
 static void audio_callback(void *unused, uint8_t *byte_stream, int byte_stream_length);
 static void updateBuffer();
 static void shuffle();
-void main();
+int main();
 
 void shuffle()
 {
@@ -299,10 +299,10 @@ void redraw()
     drawBufferSDL();
 }
 
-void main()
+int main()
 {
     freqs[0]=16.3516f;
-    for(int i=1;i<96;i++)
+    for(int i=1;i<70;i++)
     {
         freqs[i]=freqs[i-1]*1.05946f;
     }

@@ -50,20 +50,20 @@ LOAD obj/stub.tetris.start.o
  .text.startup  0x00000000000111e9      0x257 obj/tetris.start.o
                 0x00000000000111e9                main
  .text.smolplt  0x0000000000011440       0x39 obj/stub.tetris.start.o
-                0x0000000000011440                SDL_FillRect
-                0x0000000000011444                SDL_sinf
-                0x0000000000011448                SDL_CreateWindow
-                0x000000000001144c                SDL_uitoa
-                0x0000000000011450                SDL_Init
-                0x0000000000011454                SDL_UpdateWindowSurface
-                0x0000000000011458                SDL_PauseAudioDevice
-                0x000000000001145c                SDL_Delay
-                0x0000000000011460                SDL_GetWindowSurface
+                0x0000000000011440                SDL_PauseAudioDevice
+                0x0000000000011444                SDL_GetWindowSurface
+                0x0000000000011448                SDL_UpdateWindowSurface
+                0x000000000001144c                SDL_FillRect
+                0x0000000000011450                SDL_CreateWindow
+                0x0000000000011454                SDL_GetTicks
+                0x0000000000011458                SDL_Init
+                0x000000000001145c                SDL_OpenAudioDevice
+                0x0000000000011460                SDL_uitoa
                 0x0000000000011464                SDL_PollEvent
-                0x0000000000011468                SDL_OpenAudioDevice
-                0x000000000001146c                SDL_GetTicks
-                0x0000000000011470                __libc_start_main
-                0x0000000000011474                exit
+                0x0000000000011468                SDL_sinf
+                0x000000000001146c                SDL_Delay
+                0x0000000000011470                exit
+                0x0000000000011474                __libc_start_main
                 0x0000000000011479                _smol_text_end = .
                 0x00000000000013ed                _smol_text_size = (_smol_text_end - _smol_text_start)
                 0x0000000000001479                _smol_textandheader_size = (_smol_text_end - _smol_origin)
@@ -89,14 +89,14 @@ LOAD obj/stub.tetris.start.o
                 0x00000000000114e9                _smol_bss_start = .
                 0x00000000000014e9                _smol_bss_off = (_smol_bss_start - _smol_origin)
 
-.bss            0x0000000000011500      0x320
+.bss            0x0000000000011500      0x338
  *(.bss .bss.* .tbss .tbss.* .sbss .sbss.*)
- .bss           0x0000000000011500      0x320 obj/tetris.start.o
-                0x0000000000011820                _smol_bss_end = .
-                0x0000000000000337                _smol_bss_size = (_smol_bss_end - _smol_bss_start)
-                0x00000000000003a7                _smol_dataandbss_size = (_smol_bss_end - _smol_data_start)
+ .bss           0x0000000000011500      0x338 obj/tetris.start.o
+                0x0000000000011838                _smol_bss_end = .
+                0x000000000000034f                _smol_bss_size = (_smol_bss_end - _smol_bss_start)
+                0x00000000000003bf                _smol_dataandbss_size = (_smol_bss_end - _smol_data_start)
 
 /DISCARD/
  *(.*)
-                0x0000000000001820                _smol_total_memsize = (. - _smol_origin)
+                0x0000000000001838                _smol_total_memsize = (. - _smol_origin)
 OUTPUT(bin/tetris-crt binary)
