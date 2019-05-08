@@ -26,17 +26,16 @@ static char nCurrentY;
 
 static SDL_Window *window;
 static SDL_Surface *screenSurface;
-static float hertz[3]={0};
-static float vol[3]={0};
-static char previous[3]={0};
-static char notes[3]={0};
-static short starts[3]={0};
+static float hertz[voices]={0};
+static float vol[voices]={0};
+static char previous[voices]={0};
+static char notes[voices]={0};
+static short starts[voices]={0};
 
 static int song_clock=0;
 static unsigned int score=0;
 static int noteCnt;
 static float freqs[64];
-// static int old;
 
 static char Rotate(char px, char py, char r);
 static bool DoesPieceFit(int nTetromino, int nRotation, int nPosX, int nPosY);
@@ -57,7 +56,7 @@ void main();
 
 void shuffle()
 {
-    int32_t result=7;
+    uint32_t result=7;
     while(result==7 || result==nCurrentPiece)
     {
         result=SDL_GetTicks();
@@ -83,7 +82,7 @@ void audio_callback(void *unused, uint8_t *byte_stream, int byte_stream_length)
         float wave=0;      
         if((song_clock)-(song_clock/speed*speed)==0)
         {
-            for(int channel=0;channel<3;channel++)
+            for(int channel=0;channel<voices;channel++)
             {
                 notes[channel]=cpatterns[channel][(noteCnt>>7)&7][noteCnt&127];
                 if(notes[channel]!=previous[channel]&&notes[channel]!=0)
@@ -101,7 +100,7 @@ void audio_callback(void *unused, uint8_t *byte_stream, int byte_stream_length)
             }
             noteCnt++;
         }
-        for(int j=1;j<3;j++)
+        for(int j=0;j<voices;j++)
         {
             float phase=SDL_sinf(hertz[j]*6*((float)song_clock/sample_rate));
             wave+=(vol[j] * (phase>0?1:-1))*1024;
@@ -303,7 +302,7 @@ void redraw()
 void main()
 {
     freqs[0]=16.3516f;
-    for(int i=1;i<64;i++)
+    for(int i=1;i<96;i++)
     {
         freqs[i]=freqs[i-1]*1.05946f;
     }
