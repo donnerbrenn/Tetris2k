@@ -8,7 +8,7 @@ typedef char bool;
 enum { false, true };
 
 //defines
-// #define F_PI 3.14159265359f
+#define F_PI 3.14159265359f
 #define nFieldWidth 12
 #define nFieldHeight 18
 #define SCREEN_WIDTH 620
@@ -21,7 +21,7 @@ static char pBuffer[nFieldHeight*nFieldWidth];
 static char pBackBuffer[nFieldWidth*nFieldHeight];
 static char nCurrentPiece;
 static char nCurrentRotation;
-static char nCurrentX=(nFieldWidth>>1)-2;
+static char nCurrentX = (nFieldWidth>>1)-2;
 static char nCurrentY;
 
 static SDL_Window *window;
@@ -52,7 +52,7 @@ static void redraw();
 static void audio_callback(void *unused, uint8_t *byte_stream, int byte_stream_length);
 static void updateBuffer();
 static void shuffle();
-int main();
+void main();
 
 void shuffle()
 {
@@ -91,7 +91,7 @@ void audio_callback(void *unused, uint8_t *byte_stream, int byte_stream_length)
                     starts[channel]=song_clock;
                     previous[channel]=notes[channel];
                 }
-                vol[channel]*=.8f;
+                vol[channel]*=.9f;
                 
                 if(notes[channel])
                 {
@@ -102,8 +102,8 @@ void audio_callback(void *unused, uint8_t *byte_stream, int byte_stream_length)
         }
         for(int j=0;j<voices;j++)
         {
-            float phase=SDL_sinf(hertz[j]*6*((float)song_clock/sample_rate));
-            wave+=(vol[j] * (phase>0?1:-1))*1024;
+            float phase=SDL_sinf(hertz[j]*2.0f*F_PI*((float)song_clock/sample_rate));
+            wave+=(vol[j] * (phase>0?1:-1))*2048;
         }
         ((short*)byte_stream)[i] = wave; 
         song_clock++;
@@ -299,7 +299,7 @@ void redraw()
     drawBufferSDL();
 }
 
-int main()
+void main()
 {
     freqs[0]=16.3516f;
     for(int i=1;i<70;i++)
@@ -338,8 +338,8 @@ int main()
             {
                 redraw();
             }
-            SDL_Delay(3);
-            if(!(i&255))
+            SDL_Delay(15);
+            if(!(i&31))
             {
                 if(FallDown())
                 {
@@ -350,8 +350,8 @@ int main()
                     score=0;
                     i=0;
                 }
-                redraw();
             }
+            redraw();
             i++;
         }
     }

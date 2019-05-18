@@ -58,8 +58,8 @@ def main():
 
     paths = get_cc_paths(args.cc)
 
-    spaths = args.libdir + paths['Bibliotheken']
-    libraries=paths['Bibliotheken']
+    spaths = args.libdir + paths['libraries']
+    libraries=paths['libraries']
     libnames = args.library
     libs = list(find_libs(spaths, libnames))
     symbols = {}
