@@ -19,7 +19,7 @@ enum { false, true };
 //tetris variables
 static char pBuffer[nFieldHeight*nFieldWidth];
 static char pBackBuffer[nFieldWidth*nFieldHeight];
-static char nCurrentPiece;
+static uint32_t nCurrentPiece;
 static char nCurrentRotation;
 static char nCurrentX = (nFieldWidth>>1)-2;
 static char nCurrentY;
@@ -52,7 +52,6 @@ static void redraw();
 static void audio_callback(void *unused, uint8_t *byte_stream, int byte_stream_length);
 static void updateBuffer();
 static void shuffle();
-void main();
 
 // extern void _start()
 // {
@@ -304,7 +303,7 @@ void redraw()
     drawBufferSDL();
 }
 
-void main()
+int main()
 {
     freqs[0]=16.3516f;
     for(int i=1;i<70;i++)
