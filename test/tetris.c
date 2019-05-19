@@ -26,11 +26,11 @@ static char nCurrentY;
 
 static SDL_Window *window;
 static SDL_Surface *screenSurface;
-static float hertz[voices]={0};
-static float vol[voices]={0};
-static char previous[voices]={0};
-static char notes[voices]={0};
-static short starts[voices]={0};
+static float hertz[VOICES]={0};
+static float vol[VOICES]={0};
+static char previous[VOICES]={0};
+static char notes[VOICES]={0};
+static short starts[VOICES]={0};
 
 static int song_clock=0;
 static unsigned int score=0;
@@ -53,6 +53,11 @@ static void audio_callback(void *unused, uint8_t *byte_stream, int byte_stream_l
 static void updateBuffer();
 static void shuffle();
 void main();
+
+// extern void _start()
+// {
+//    __libc_start_main(main, NULL, NULL, NULL, NULL,NULL,NULL);
+// }
 
 void shuffle()
 {
@@ -80,9 +85,9 @@ void audio_callback(void *unused, uint8_t *byte_stream, int byte_stream_length)
     for (int i = 0; i < byte_stream_length>>1; i++)
     {
         float wave=0;      
-        if((song_clock)-(song_clock/speed*speed)==0)
+        if((song_clock)-(song_clock/SPEED*SPEED)==0)
         {
-            for(int channel=0;channel<voices;channel++)
+            for(int channel=0;channel<VOICES;channel++)
             {
                 notes[channel]=cpatterns[channel][(noteCnt>>7)&7][noteCnt&127];
                 if(notes[channel]!=previous[channel]&&notes[channel]!=0)
@@ -100,7 +105,7 @@ void audio_callback(void *unused, uint8_t *byte_stream, int byte_stream_length)
             }
             noteCnt++;
         }
-        for(int j=0;j<voices;j++)
+        for(int j=0;j<VOICES;j++)
         {
             float phase=SDL_sinf(hertz[j]*2.0f*F_PI*((float)song_clock/sample_rate));
             wave+=(vol[j] * (phase>0?1:-1))*2048;

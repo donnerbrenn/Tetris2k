@@ -1,10 +1,11 @@
 #ifndef PATTERN_H
 #define PATTERN_H
-#define length 8
-#define voices 3
-#define speed 5000
+#define LENGTH 8
+#define VOICES 3
+#define SPEED 5000
+#define PATTERNLENGTH 128
 
-const char cpatterns[voices][length][128]=
+const char cpatterns[VOICES][LENGTH][PATTERNLENGTH]=
 {
     {
         {62,0,0,0,0,0,0,0,57,0,0,0,58,0,0,0,60,0,0,0,62,0,60,0,58,0,0,0,57,0,0,0,55,0,0,0,0,0,0,0,55,0,0,0,58,0,0,0,62,0,0,0,0,0,0,0,60,0,0,0,58,0,0,0,57,0,0,0,0,0,0,0,57,0,0,0,58,0,0,0,60,0,0,0,0,0,0,0,62,0,0,0,0,0,0,0,58,0,0,0,0,0,0,0,55,0,0,0,0,0,0,0,55,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},

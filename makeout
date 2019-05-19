@@ -5,10 +5,10 @@ python3 src/smol.py -s -lc -lSDL2 "obj/tetris.start.o" "obj/symbols.tetris.start
 nasm -I rt/ -f elf32 -DUSE_INTERP -DNO_START_ARG -DUNSAFE_DYNAMIC -DUSE_DNLOAD_LOADER  obj/symbols.tetris.start.asm -o obj/stub.tetris.start.o
 cc -Wl,-Map=bin/tetris-crt.map -m32 -T ld/link.ld -Wl,--oformat=binary -m32 -Wl,--build-id=none -Wl,--hash-style=gnu -Wl,-z,norelro -nostartfiles -nostdlib  obj/tetris.start.o obj/stub.tetris.start.o -o "bin/tetris-crt"
 mv "bin/tetris-crt" t
-lzma --format=lzma -9 --extreme --lzma1=preset=9,lc=1,lp=0,pb=0 t
+lzma --format=lzma -9 --extreme --lzma1=preset=9,lc=0,lp=0,pb=0 t
 cat ext/vondehi t.lzma > "bin/tetris-crt"
 rm t.lzma
 chmod +x "bin/tetris-crt"
 echo "Size of bin/tetris-crt:"; (stat -c%s "bin/tetris-crt")
 Size of bin/tetris-crt:
-1968
+1963

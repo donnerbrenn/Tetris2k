@@ -52,18 +52,18 @@ LOAD obj/stub.tetris.start.o
  .text.smolplt  0x0000000000011442       0x39 obj/stub.tetris.start.o
                 0x0000000000011442                __libc_start_main
                 0x0000000000011446                exit
-                0x000000000001144a                SDL_Init
-                0x000000000001144e                SDL_CreateWindow
-                0x0000000000011452                SDL_PauseAudioDevice
-                0x0000000000011456                SDL_sinf
-                0x000000000001145a                SDL_uitoa
-                0x000000000001145e                SDL_Delay
-                0x0000000000011462                SDL_FillRect
-                0x0000000000011466                SDL_GetTicks
-                0x000000000001146a                SDL_GetWindowSurface
-                0x000000000001146e                SDL_OpenAudioDevice
-                0x0000000000011472                SDL_PollEvent
-                0x0000000000011476                SDL_UpdateWindowSurface
+                0x000000000001144a                SDL_Delay
+                0x000000000001144e                SDL_sinf
+                0x0000000000011452                SDL_Init
+                0x0000000000011456                SDL_UpdateWindowSurface
+                0x000000000001145a                SDL_PollEvent
+                0x000000000001145e                SDL_FillRect
+                0x0000000000011462                SDL_CreateWindow
+                0x0000000000011466                SDL_uitoa
+                0x000000000001146a                SDL_OpenAudioDevice
+                0x000000000001146e                SDL_GetTicks
+                0x0000000000011472                SDL_PauseAudioDevice
+                0x0000000000011476                SDL_GetWindowSurface
                 0x000000000001147b                _smol_text_end = .
                 0x00000000000013ef                _smol_text_size = (_smol_text_end - _smol_text_start)
                 0x000000000000147b                _smol_textandheader_size = (_smol_text_end - _smol_origin)

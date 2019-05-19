@@ -12,9 +12,27 @@ BITS ?= 32#$(shell getconf LONG_BIT)
 #  -ffast-math -funsafe-math-optimizations -fno-stack-protector -fomit-frame-pointer \
 #  -fno-exceptions -fno-unwind-tables -fno-asynchronous-unwind-tables
 
-COPTFLAGS=-Os -fno-plt -fwhole-program -fno-stack-protector -fno-stack-check -fno-unwind-tables \
-  -fno-asynchronous-unwind-tables -fno-exceptions  -funsafe-math-optimizations -fomit-frame-pointer -ffast-math -no-pie \
-  -fno-pic -march=i386 -mtune=i386 -ffunction-sections -fdata-sections -fno-plt 
+COPTFLAGS=-Os 
+COPTFLAGS+= -fno-plt
+COPTFLAGS+= -fwhole-program
+COPTFLAGS+= -fno-stack-protector
+COPTFLAGS+= -fno-stack-check
+COPTFLAGS+= -fno-unwind-tables
+COPTFLAGS+= -fno-asynchronous-unwind-tables
+COPTFLAGS+= -fno-exceptions
+COPTFLAGS+= -funsafe-math-optimizations
+COPTFLAGS+= -fomit-frame-pointer
+COPTFLAGS+= -ffast-math
+COPTFLAGS+= -no-pie
+COPTFLAGS+= -fno-pic
+COPTFLAGS+= -march=i386
+COPTFLAGS+= -mtune=i386
+COPTFLAGS+= -ffunction-sections
+COPTFLAGS+= -fdata-sections
+COPTFLAGS+= -fno-plt 
+
+
+
 CXXOPTFLAGS=$(COPTFLAGS) -fno-exceptions \
   -fno-rtti -fno-enforce-eh-specs -fnothrow-opt -fno-use-cxa-get-exception-ptr \
   -fno-implicit-templates -fno-threadsafe-statics -fno-use-cxa-atexit
@@ -63,11 +81,13 @@ clean:
 
 $(OBJDIR)/%.lto.o: $(SRCDIR)/%.c $(OBJDIR)/
 	$(CC) -flto $(CFLAGS) -c "$<" -o "$@"
+
 $(OBJDIR)/%.lto.o: $(TESTDIR)/%.c $(OBJDIR)/
 	$(CC) -flto $(CFLAGS) -c "$<" -o "$@"
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c $(OBJDIR)/
 	$(CC) $(CFLAGS) -c "$<" -o "$@"
+
 $(OBJDIR)/%.o: $(TESTDIR)/%.c $(OBJDIR)/
 	$(CC) $(CFLAGS) -c "$<" -o "$@"
 
@@ -77,13 +97,12 @@ $(OBJDIR)/%.start.o: $(OBJDIR)/%.lto.o $(OBJDIR)/crt1.lto.o
 $(OBJDIR)/symbols.%.asm: $(OBJDIR)/%.o
 	$(PYTHON3) $(PYDIR)/smol.py $(SMOLFLAGS) $(LIBS) "$<" "$@"
 
-$(OBJDIR)/stub.%.o: $(OBJDIR)/symbols.%.asm $(SRCDIR)/header32.asm \
-        $(SRCDIR)/loader32.asm
+$(OBJDIR)/stub.%.o: $(OBJDIR)/symbols.%.asm $(SRCDIR)/header32.asm $(SRCDIR)/loader32.asm
 	$(NASM) $(ASFLAGS) $< -o $@
 
-$(OBJDIR)/stub.%.start.o: $(OBJDIR)/symbols.%.start.asm $(SRCDIR)/header32.asm \
-        $(SRCDIR)/loader32.asm
+$(OBJDIR)/stub.%.start.o: $(OBJDIR)/symbols.%.start.asm $(SRCDIR)/header32.asm $(SRCDIR)/loader32.asm
 	$(NASM) $(ASFLAGS) $< -o $@
+
 
 $(BINDIR)/%: $(OBJDIR)/%.o $(OBJDIR)/stub.%.o $(BINDIR)/
 	$(CC) -Wl,-Map=$(BINDIR)/$*.map $(LDFLAGS_) $(OBJDIR)/$*.o $(OBJDIR)/stub.$*.o -o "$@"
@@ -96,11 +115,11 @@ $(BINDIR)/%: $(OBJDIR)/%.o $(OBJDIR)/stub.%.o $(BINDIR)/
 	echo "Size of $@:"; (stat -c%s "$@")
 
 $(BINDIR)/%-crt: $(OBJDIR)/%.start.o $(OBJDIR)/stub.%.start.o $(BINDIR)/
-	$(CC) -Wl,-Map=$(BINDIR)/$*-crt.map $(LDFLAGS_) $(OBJDIR)/$*.start.o $(OBJDIR)/stub.$*.start.o -o "$@"
+	$(CC) -Wl,-Map=$@.map $(LDFLAGS_) $(OBJDIR)/$*.start.o $(OBJDIR)/stub.$*.start.o -o "$@"
 	mv "$@" t
-	lzma --format=lzma -9 --extreme --lzma1=preset=9,lc=1,lp=0,pb=0 t
+	lzma --format=lzma -9 --extreme --lzma1=preset=9,lc=0,lp=0,pb=0 t
 	cat ext/vondehi t.lzma > "$@"
 	rm t.lzma
 	chmod +x "$@"
-	echo "Size of $@:"; (stat -c%s "$@")
+	wc -c $@
 .PHONY: all clean
