@@ -1,8 +1,8 @@
 OBJDIR := obj
 BINDIR := bin
-SRCDIR := rt
-PYDIR  := src
-LDDIR  := ld
+SRCDIR := smol/rt
+PYDIR  := smol/src
+LDDIR  := smol/ld
 TESTDIR:= test
 
 BITS ?= 32#$(shell getconf LONG_BIT)
