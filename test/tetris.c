@@ -53,11 +53,6 @@ static void audio_callback(void *unused, uint8_t *byte_stream, int byte_stream_l
 static void updateBuffer();
 static void shuffle();
 
-// extern void _start()
-// {
-//    __libc_start_main(main, NULL, NULL, NULL, NULL,NULL,NULL);
-// }
-
 void shuffle()
 {
     uint32_t result=7;

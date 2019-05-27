@@ -60,15 +60,14 @@ CXXFLAGS += -m$(BITS) $(shell pkg-config --cflags sdl2)
 LIBS=-lc -lSDL2
 
 SMOLFLAGS += -s
-ASFLAGS   += -DUSE_INTERP -DNO_START_ARG -DUNSAFE_DYNAMIC -DUSE_DNLOAD_LOADER #-DALIGN_STACK
+ASFLAGS   +=  -DUSE_INTERP -DNO_START_ARG -DUNSAFE_DYNAMIC -DUSE_DNLOAD_LOADER  #-DALIGN_STACK
 #-DUSE_DNLOAD_LOADER #-DUSE_DT_DEBUG #-DUSE_DL_FINI #-DNO_START_ARG #-DUNSAFE_DYNAMIC
 
 NASM    ?= nasm
 PYTHON3 ?= python3
 
-all:  $(BINDIR)/tetris-crt #$(BINDIR)/flag $(BINDIR)/hello-_start $(BINDIR)/hello-crt
-
-#LIBS += $(filter-out -pthread,$(shell pkg-config --libs sdl2)) #-lX11 #-lGL
+all:  $(BINDIR)/tetris-crt.vondehi $(BINDIR)/tetris-crt.shelldropper #$(BINDIR)/flag $(BINDIR)/hello-_start $(BINDIR)/hello-crt
+	wc -c $^
 
 
 clean:
@@ -78,6 +77,8 @@ clean:
 	@mkdir -vp "$@"
 
 .SECONDARY:
+
+
 
 $(OBJDIR)/%.lto.o: $(SRCDIR)/%.c $(OBJDIR)/
 	$(CC) -flto $(CFLAGS) -c "$<" -o "$@"
@@ -106,7 +107,7 @@ $(OBJDIR)/stub.%.start.o: $(OBJDIR)/symbols.%.start.asm $(SRCDIR)/header32.asm $
 
 $(BINDIR)/%: $(OBJDIR)/%.o $(OBJDIR)/stub.%.o $(BINDIR)/
 	$(CC) -Wl,-Map=$(BINDIR)/$*.map $(LDFLAGS_) $(OBJDIR)/$*.o $(OBJDIR)/stub.$*.o -o "$@"
-	./rmtrailzero.py "$@" "$(OBJDIR)/$(notdir $@)" && mv "$(OBJDIR)/$(notdir $@)" "$@" && chmod +x "$@"
+	./smol/rmtrailzero.py "$@" "$(OBJDIR)/$(notdir $@)" && mv "$(OBJDIR)/$(notdir $@)" "$@" && chmod +x "$@"
 	mv "$@" t
 	lzma --format=lzma -9 --extreme --lzma1=preset=9,lc=1,lp=0,pb=0 t
 	cat ext/vondehi t.lzma > "$@"
@@ -114,12 +115,25 @@ $(BINDIR)/%: $(OBJDIR)/%.o $(OBJDIR)/stub.%.o $(BINDIR)/
 	chmod +x "$@"
 	echo "Size of $@:"; (stat -c%s "$@")
 
+
+
 $(BINDIR)/%-crt: $(OBJDIR)/%.start.o $(OBJDIR)/stub.%.start.o $(BINDIR)/
 	$(CC) -Wl,-Map=$@.map $(LDFLAGS_) $(OBJDIR)/$*.start.o $(OBJDIR)/stub.$*.start.o -o "$@"
-	mv "$@" t
-	lzma --format=lzma -9 --extreme --lzma1=preset=9,lc=0,lp=0,pb=0 t
-	cat ext/vondehi t.lzma > "$@"
-	rm t.lzma
-	chmod +x "$@"
-	wc -c $@
+
+
+$(BINDIR)/%-crt.lzma: $(BINDIR)/%-crt
+	lzma --format=lzma -9 --extreme --lzma1=preset=9,lc=0,lp=0,pb=0 --stdout $< > $@
+
+$(BINDIR)/%-crt.vondehi: ext/vondehi $(BINDIR)/%-crt.lzma
+	cat $^ > $@
+	chmod +x $@
+
+$(BINDIR)/%-crt.shelldropper: ext/shelldropper $(BINDIR)/%-crt.lzma
+	cat $^ > $@
+	chmod +x $@
+	
+
+
+
+
 .PHONY: all clean
