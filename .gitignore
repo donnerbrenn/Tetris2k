@@ -2,4 +2,5 @@ bin/
 obj/
 .vscode/
 t
+elf32
 __pycache__
