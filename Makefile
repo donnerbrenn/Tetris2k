@@ -62,9 +62,10 @@ ASFLAGS   +=  -DUSE_INTERP -DNO_START_ARG -DUNSAFE_DYNAMIC -DUSE_DNLOAD_LOADER  
 NASM    ?= nasm
 PYTHON3 ?= python3
 
-all:  $(BINDIR)/tetris-crt.vondehi  $(BINDIR)/tetris-crt  #$(BINDIR)/tetris $(BINDIR)/tetris.vondehi $(BINDIR)/tetris-crt.shelldropper $(BINDIR)/tetris.shelldropper
-	wc -c $^ | sort
+all:  $(BINDIR)/tetris-crt.vondehi $(BINDIR)/tetris-crt.shelldropper  $(BINDIR)/tetris-crt  #$(BINDIR)/tetris $(BINDIR)/tetris.vondehi $(BINDIR)/tetris-crt.shelldropper $(BINDIR)/tetris.shelldropper
 	rm $(BINDIR)/*.lzma
+	wc -c $^ | sort
+	
 
 
 clean:
