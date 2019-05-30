@@ -42,20 +42,16 @@ CXXFLAGS=-Wall -Wextra -Wpedantic -std=c++11 $(CXXOPTFLAGS) -nostartfiles -fno-P
 
 ASFLAGS=-I $(SRCDIR)/
 LDFLAGS_ :=
-ifeq ($(BITS),32)
+
 LDFLAGS += -m32 -Wl,--build-id=none -Wl,--hash-style=gnu -Wl,-z,norelro
 ASFLAGS += -f elf32
 LDFLAGS_ := -m32
-else
-LDFLAGS += -m64
-ASFLAGS += -f elf64
-LDFLAGS_ := -m64
-endif
+
 LDFLAGS += -nostartfiles -nostdlib 
 LDFLAGS_ := $(LDFLAGS_) -T $(LDDIR)/link.ld -Wl,--oformat=binary $(LDFLAGS)
 
-CFLAGS   += -m$(BITS) $(shell pkg-config --cflags sdl2)
-CXXFLAGS += -m$(BITS) $(shell pkg-config --cflags sdl2)
+CFLAGS   += -m$(BITS) #$(shell pkg-config --cflags sdl2)
+CXXFLAGS += -m$(BITS) #$(shell pkg-config --cflags sdl2)
 
 LIBS=-lc -lSDL2
 
@@ -66,8 +62,9 @@ ASFLAGS   +=  -DUSE_INTERP -DNO_START_ARG -DUNSAFE_DYNAMIC -DUSE_DNLOAD_LOADER  
 NASM    ?= nasm
 PYTHON3 ?= python3
 
-all:  $(BINDIR)/tetris-crt.vondehi $(BINDIR)/tetris-crt.shelldropper #$(BINDIR)/flag $(BINDIR)/hello-_start $(BINDIR)/hello-crt
-	wc -c $^
+all:  $(BINDIR)/tetris-crt.vondehi  $(BINDIR)/tetris-crt  #$(BINDIR)/tetris $(BINDIR)/tetris.vondehi $(BINDIR)/tetris-crt.shelldropper $(BINDIR)/tetris.shelldropper
+	wc -c $^ | sort
+	rm $(BINDIR)/*.lzma
 
 
 clean:
@@ -105,7 +102,7 @@ $(OBJDIR)/stub.%.start.o: $(OBJDIR)/symbols.%.start.asm $(SRCDIR)/header32.asm $
 	$(NASM) $(ASFLAGS) $< -o $@
 
 
-$(BINDIR)/%: $(OBJDIR)/%.o $(OBJDIR)/stub.%.o $(BINDIR)/
+$(BINDIR)/%.vondehi: ext/vondehi $(OBJDIR)/%.o $(OBJDIR)/stub.%.o $(BINDIR)/
 	$(CC) -Wl,-Map=$(BINDIR)/$*.map $(LDFLAGS_) $(OBJDIR)/$*.o $(OBJDIR)/stub.$*.o -o "$@"
 	./smol/rmtrailzero.py "$@" "$(OBJDIR)/$(notdir $@)" && mv "$(OBJDIR)/$(notdir $@)" "$@" && chmod +x "$@"
 	mv "$@" t
@@ -113,9 +110,19 @@ $(BINDIR)/%: $(OBJDIR)/%.o $(OBJDIR)/stub.%.o $(BINDIR)/
 	cat ext/vondehi t.lzma > "$@"
 	rm t.lzma
 	chmod +x "$@"
-	echo "Size of $@:"; (stat -c%s "$@")
+
+$(BINDIR)/%:  $(OBJDIR)/%.o $(OBJDIR)/stub.%.o $(BINDIR)
+	$(CC) -Wl,-Map=$(BINDIR)/$*.map $(LDFLAGS_) $(OBJDIR)/$*.o $(OBJDIR)/stub.$*.o -o "$@"
 
 
+$(BINDIR)/%.shelldropper: ext/shelldropper  $(OBJDIR)/%.o $(OBJDIR)/stub.%.o $(BINDIR)
+	$(CC) -Wl,-Map=$(BINDIR)/$*.map $(LDFLAGS_) $(OBJDIR)/$*.o $(OBJDIR)/stub.$*.o -o "$@"
+	./smol/rmtrailzero.py "$@" "$(OBJDIR)/$(notdir $@)" && mv "$(OBJDIR)/$(notdir $@)" "$@" && chmod +x "$@"
+	mv "$@" t
+	lzma --format=lzma -9 --extreme --lzma1=preset=9,lc=1,lp=0,pb=0 t
+	cat ext/shelldropper t.lzma > "$@"
+	rm t.lzma
+	chmod +x "$@"
 
 $(BINDIR)/%-crt: $(OBJDIR)/%.start.o $(OBJDIR)/stub.%.start.o $(BINDIR)/
 	$(CC) -Wl,-Map=$@.map $(LDFLAGS_) $(OBJDIR)/$*.start.o $(OBJDIR)/stub.$*.start.o -o "$@"
