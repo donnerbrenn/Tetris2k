@@ -8,11 +8,13 @@ TESTDIR:= test
 BITS ?= 32#$(shell getconf LONG_BIT)
 
 # -mpreferred-stack-boundary=3 messes up the stack and kills SSE!
-#COPTFLAGS=-Os -fvisibility=hidden -fwhole-program -fno-plt \
+#COPTFLAGS=-Os  -fwhole-program -fno-plt \
 #  -ffast-math -funsafe-math-optimizations -fno-stack-protector -fomit-frame-pointer \
 #  -fno-exceptions -fno-unwind-tables -fno-asynchronous-unwind-tables
 
 COPTFLAGS=-Os 
+COPTFLAGS+= -march=i386
+COPTFLAGS+= -mtune=i386
 COPTFLAGS+= -fno-plt
 COPTFLAGS+= -fwhole-program
 COPTFLAGS+= -fno-stack-protector
@@ -24,34 +26,25 @@ COPTFLAGS+= -funsafe-math-optimizations
 COPTFLAGS+= -fomit-frame-pointer
 COPTFLAGS+= -ffast-math
 COPTFLAGS+= -no-pie
+COPTFLAGS+= -flto
 COPTFLAGS+= -fno-pic
-COPTFLAGS+= -march=i386
-COPTFLAGS+= -mtune=i386
 COPTFLAGS+= -ffunction-sections
 COPTFLAGS+= -fdata-sections
 COPTFLAGS+= -fno-plt 
-
-
-
-CXXOPTFLAGS=$(COPTFLAGS) -fno-exceptions \
-  -fno-rtti -fno-enforce-eh-specs -fnothrow-opt -fno-use-cxa-get-exception-ptr \
-  -fno-implicit-templates -fno-threadsafe-statics -fno-use-cxa-atexit
-
-CFLAGS=-Wall -Wextra -Wpedantic -std=gnu11 -nostartfiles -fno-PIC $(COPTFLAGS) #-DUSE_DL_FINI
-CXXFLAGS=-Wall -Wextra -Wpedantic -std=c++11 $(CXXOPTFLAGS) -nostartfiles -fno-PIC
+CFLAGS= -std=gnu11 -nostartfiles $(COPTFLAGS) # -DUSE_DL_FINI
 
 ASFLAGS=-I $(SRCDIR)/
 LDFLAGS_ :=
 
-LDFLAGS += -m32 -Wl,--build-id=none -Wl,--hash-style=gnu -Wl,-z,norelro
-ASFLAGS += -f elf32
-LDFLAGS_ := -m32
+LDFLAGS += -m$(BITS) -Wl,--build-id=none -Wl,--hash-style=gnu -Wl,-z,norelro
+ASFLAGS += -f elf$(BITS)
+LDFLAGS_ := -m$(BITS)
 
 LDFLAGS += -nostartfiles -nostdlib 
 LDFLAGS_ := $(LDFLAGS_) -T $(LDDIR)/link.ld -Wl,--oformat=binary $(LDFLAGS)
 
-CFLAGS   += -m$(BITS) #$(shell pkg-config --cflags sdl2)
-CXXFLAGS += -m$(BITS) #$(shell pkg-config --cflags sdl2)
+CFLAGS   += -m$(BITS) 
+
 
 LIBS=-lc -lSDL2
 
@@ -79,10 +72,10 @@ clean:
 
 
 $(OBJDIR)/%.lto.o: $(SRCDIR)/%.c $(OBJDIR)/
-	$(CC) -flto $(CFLAGS) -c "$<" -o "$@"
+	$(CC)  $(CFLAGS) -c "$<" -o "$@"
 
 $(OBJDIR)/%.lto.o: $(TESTDIR)/%.c $(OBJDIR)/
-	$(CC) -flto $(CFLAGS) -c "$<" -o "$@"
+	$(CC)  $(CFLAGS) -c "$<" -o "$@"
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c $(OBJDIR)/
 	$(CC) $(CFLAGS) -c "$<" -o "$@"
@@ -96,21 +89,19 @@ $(OBJDIR)/%.start.o: $(OBJDIR)/%.lto.o $(OBJDIR)/crt1.lto.o
 $(OBJDIR)/symbols.%.asm: $(OBJDIR)/%.o
 	$(PYTHON3) $(PYDIR)/smol.py $(SMOLFLAGS) $(LIBS) "$<" "$@"
 
-$(OBJDIR)/stub.%.o: $(OBJDIR)/symbols.%.asm $(SRCDIR)/header32.asm $(SRCDIR)/loader32.asm
+$(OBJDIR)/stub.%.o: $(OBJDIR)/symbols.%.asm $(SRCDIR)/header$(BITS).asm $(SRCDIR)/loader$(BITS).asm
 	$(NASM) $(ASFLAGS) $< -o $@
 
-$(OBJDIR)/stub.%.start.o: $(OBJDIR)/symbols.%.start.asm $(SRCDIR)/header32.asm $(SRCDIR)/loader32.asm
+$(OBJDIR)/stub.%.start.o: $(OBJDIR)/symbols.%.start.asm $(SRCDIR)/header$(BITS).asm $(SRCDIR)/loader$(BITS).asm
 	$(NASM) $(ASFLAGS) $< -o $@
 
 
 $(BINDIR)/%.vondehi: ext/vondehi $(OBJDIR)/%.o $(OBJDIR)/stub.%.o $(BINDIR)/
 	$(CC) -Wl,-Map=$(BINDIR)/$*.map $(LDFLAGS_) $(OBJDIR)/$*.o $(OBJDIR)/stub.$*.o -o "$@"
-	./smol/rmtrailzero.py "$@" "$(OBJDIR)/$(notdir $@)" && mv "$(OBJDIR)/$(notdir $@)" "$@" && chmod +x "$@"
+	#./smol/rmtrailzero.py "$@" "$(OBJDIR)/$(notdir $@)" && mv "$(OBJDIR)/$(notdir $@)" "$@" && chmod +x "$@"
 	mv "$@" t
-	lzma --format=lzma -9 --extreme --lzma1=preset=9,lc=1,lp=0,pb=0 t
-	cat ext/vondehi t.lzma > "$@"
-	rm t.lzma
-	chmod +x "$@"
+	lzma --format=lzma -9 --extreme --lzma1=preset=9,lc=0,lp=0,pb=0 t
+	cat ext/vondehi t.lzma > "$@" && rm t.lzma && chmod +x "$@"
 
 $(BINDIR)/%:  $(OBJDIR)/%.o $(OBJDIR)/stub.%.o $(BINDIR)
 	$(CC) -Wl,-Map=$(BINDIR)/$*.map $(LDFLAGS_) $(OBJDIR)/$*.o $(OBJDIR)/stub.$*.o -o "$@"
@@ -119,11 +110,8 @@ $(BINDIR)/%:  $(OBJDIR)/%.o $(OBJDIR)/stub.%.o $(BINDIR)
 $(BINDIR)/%.shelldropper: ext/shelldropper  $(OBJDIR)/%.o $(OBJDIR)/stub.%.o $(BINDIR)
 	$(CC) -Wl,-Map=$(BINDIR)/$*.map $(LDFLAGS_) $(OBJDIR)/$*.o $(OBJDIR)/stub.$*.o -o "$@"
 	./smol/rmtrailzero.py "$@" "$(OBJDIR)/$(notdir $@)" && mv "$(OBJDIR)/$(notdir $@)" "$@" && chmod +x "$@"
-	mv "$@" t
-	lzma --format=lzma -9 --extreme --lzma1=preset=9,lc=1,lp=0,pb=0 t
-	cat ext/shelldropper t.lzma > "$@"
-	rm t.lzma
-	chmod +x "$@"
+	mv "$@" t &&lzma --format=lzma -9 --extreme --lzma1=preset=9,lc=1,lp=0,pb=0 t
+	cat ext/shelldropper t.lzma > "$@" && rm t.lzma && chmod +x "$@"
 
 $(BINDIR)/%-crt: $(OBJDIR)/%.start.o $(OBJDIR)/stub.%.start.o $(BINDIR)/
 	$(CC) -Wl,-Map=$@.map $(LDFLAGS_) $(OBJDIR)/$*.start.o $(OBJDIR)/stub.$*.start.o -o "$@"

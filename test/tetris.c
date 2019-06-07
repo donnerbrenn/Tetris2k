@@ -1,9 +1,8 @@
-
 #include <SDL2/SDL.h>
 #include "symbols.h"
 #include <time.h>
 #include "tetris_sng.h"
-
+// #include "crt1.c"
 typedef char bool;
 enum { false, true };
 
@@ -36,6 +35,7 @@ static int song_clock=0;
 static unsigned int score=0;
 static int noteCnt;
 static float freqs[70];
+static unsigned int lines=0;
 
 static char Rotate(char px, char py, char r);
 static bool DoesPieceFit(int nTetromino, int nRotation, int nPosX, int nPosY);
@@ -52,6 +52,11 @@ static void redraw();
 static void audio_callback(void *unused, uint8_t *byte_stream, int byte_stream_length);
 static void updateBuffer();
 static void shuffle();
+
+// extern void _start()
+// {
+//     main();
+// }
 
 void shuffle()
 {
@@ -217,7 +222,8 @@ void drawScore(int value, int x, int y, int size)
 void drawBufferSDL()
 {
     SDL_FillRect(screenSurface,NULL,0x12121212);
-    drawScore(score,8,SCREEN_HEIGHT-20-(3<<3),7);
+    drawScore(score,8,SCREEN_HEIGHT-45,8);
+    drawScore(lines,400,SCREEN_HEIGHT-45,8);
     for(int x=0;x<nFieldWidth;x++)
     {
         for(int y=0;y<nFieldHeight;y++)
@@ -277,6 +283,7 @@ bool isLineComplete(int line)
             return false;
         }
     }
+    lines++;
     return true;
 }
 
@@ -308,6 +315,7 @@ int main()
     SDL_Init(SDL_INIT_EVERYTHING);
 
     SDL_AudioSpec want;
+
      want.freq = sample_rate;
     // request 16bit signed little-endian sample format.
     // want.format = AUDIO_S16LSB;
@@ -347,6 +355,7 @@ int main()
                     SDL_UpdateWindowSurface(window);
                     SDL_Delay(4000);
                     score=0;
+                    lines=0;
                     i=0;
                 }
             }
