@@ -1,5 +1,13 @@
-Tetris written in C targetting a filesize of 2048 Bytes - Current size: 1987 Bytes - Including 3 channel music.
+Tetris written in C targetting a filesize of 2048 Bytes - Including 3 channel music.
 
-Uses SDL2 (32 Bit version), vondehi and smol.
+Current size: 
+1876 bytes (shelldropper)
+1988 bytes (Vondehi)
+
+Build dependencies:
+libSDL2 x86
+python 3
+smol (included)
+vondehi or a shelldropper script (both included)
 
 Just run make on your Linux-System, the binaries (tetris-crt.shelldropper + vondehi) can be found in the bin folder after compilation. 
