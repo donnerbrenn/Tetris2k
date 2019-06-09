@@ -1,4 +1,4 @@
-Tetris written in C targetting a filesize of 2048 Bytes - Current size: 2022 Bytes - Including 3 channel music.
+Tetris written in C targetting a filesize of 2048 Bytes - Current size: 1987 Bytes - Including 3 channel music.
 
 Uses SDL2 (32 Bit version), vondehi and smol.
 
