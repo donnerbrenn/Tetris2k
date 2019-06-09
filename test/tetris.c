@@ -88,7 +88,7 @@ void audio_callback(void *unused, uint8_t *byte_stream, int byte_stream_length)
         {
             for(int channel=0;channel<VOICES;channel++)
             {
-                notes[channel]=cpatterns[channel][(noteCnt>>7)&7][noteCnt&127];
+                notes[channel]=cpatterns[channel][(noteCnt>>6)&7][noteCnt&63];
                 if(notes[channel]!=previous[channel]&&notes[channel]!=0)
                 {
                     vol[channel]=2;

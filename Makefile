@@ -12,7 +12,7 @@ BITS ?= 32#$(shell getconf LONG_BIT)
 #  -ffast-math -funsafe-math-optimizations -fno-stack-protector -fomit-frame-pointer \
 #  -fno-exceptions -fno-unwind-tables -fno-asynchronous-unwind-tables
 
-COPTFLAGS=-Os 
+COPTFLAGS=-Os -s
 COPTFLAGS+= -march=i386
 COPTFLAGS+= -mtune=i386
 COPTFLAGS+= -fno-plt
@@ -31,7 +31,7 @@ COPTFLAGS+= -fno-pic
 COPTFLAGS+= -ffunction-sections
 COPTFLAGS+= -fdata-sections
 COPTFLAGS+= -fno-plt 
-CFLAGS= -std=gnu11 -nostartfiles $(COPTFLAGS) # -DUSE_DL_FINI
+CFLAGS= -std=gnu11 -nostartfiles -nostdlib $(COPTFLAGS) # -DUSE_DL_FINI
 
 ASFLAGS=-I $(SRCDIR)/
 LDFLAGS_ :=
@@ -40,13 +40,14 @@ LDFLAGS += -m$(BITS) -Wl,--build-id=none -Wl,--hash-style=gnu -Wl,-z,norelro
 ASFLAGS += -f elf$(BITS)
 LDFLAGS_ := -m$(BITS)
 
-LDFLAGS += -nostartfiles -nostdlib 
+LDFLAGS += -nostartfiles -nostdlib -s
 LDFLAGS_ := $(LDFLAGS_) -T $(LDDIR)/link.ld -Wl,--oformat=binary $(LDFLAGS)
 
 CFLAGS   += -m$(BITS) 
 
-
 LIBS=-lc -lSDL2
+
+COMPRESS=lzma --format=lzma -9 --extreme --lzma1=preset=9,lc=0,lp=0,pb=0
 
 SMOLFLAGS += -s
 ASFLAGS   +=  -DUSE_INTERP -DNO_START_ARG -DUNSAFE_DYNAMIC -DUSE_DNLOAD_LOADER  #-DALIGN_STACK
@@ -100,7 +101,7 @@ $(BINDIR)/%.vondehi: ext/vondehi $(OBJDIR)/%.o $(OBJDIR)/stub.%.o $(BINDIR)/
 	$(CC) -Wl,-Map=$(BINDIR)/$*.map $(LDFLAGS_) $(OBJDIR)/$*.o $(OBJDIR)/stub.$*.o -o "$@"
 	#./smol/rmtrailzero.py "$@" "$(OBJDIR)/$(notdir $@)" && mv "$(OBJDIR)/$(notdir $@)" "$@" && chmod +x "$@"
 	mv "$@" t
-	lzma --format=lzma -9 --extreme --lzma1=preset=9,lc=0,lp=0,pb=0 t
+	$(COMPRESS) t
 	cat ext/vondehi t.lzma > "$@" && rm t.lzma && chmod +x "$@"
 
 $(BINDIR)/%:  $(OBJDIR)/%.o $(OBJDIR)/stub.%.o $(BINDIR)
@@ -110,7 +111,7 @@ $(BINDIR)/%:  $(OBJDIR)/%.o $(OBJDIR)/stub.%.o $(BINDIR)
 $(BINDIR)/%.shelldropper: ext/shelldropper  $(OBJDIR)/%.o $(OBJDIR)/stub.%.o $(BINDIR)
 	$(CC) -Wl,-Map=$(BINDIR)/$*.map $(LDFLAGS_) $(OBJDIR)/$*.o $(OBJDIR)/stub.$*.o -o "$@"
 	./smol/rmtrailzero.py "$@" "$(OBJDIR)/$(notdir $@)" && mv "$(OBJDIR)/$(notdir $@)" "$@" && chmod +x "$@"
-	mv "$@" t &&lzma --format=lzma -9 --extreme --lzma1=preset=9,lc=1,lp=0,pb=0 t
+	mv "$@" t && $(COMPRESS) t
 	cat ext/shelldropper t.lzma > "$@" && rm t.lzma && chmod +x "$@"
 
 $(BINDIR)/%-crt: $(OBJDIR)/%.start.o $(OBJDIR)/stub.%.start.o $(BINDIR)/
@@ -118,7 +119,7 @@ $(BINDIR)/%-crt: $(OBJDIR)/%.start.o $(OBJDIR)/stub.%.start.o $(BINDIR)/
 
 
 $(BINDIR)/%-crt.lzma: $(BINDIR)/%-crt
-	lzma --format=lzma -9 --extreme --lzma1=preset=9,lc=0,lp=0,pb=0 --stdout $< > $@
+	$(COMPRESS) --stdout $< > $@
 
 $(BINDIR)/%-crt.vondehi: ext/vondehi $(BINDIR)/%-crt.lzma
 	cat $^ > $@
@@ -127,9 +128,5 @@ $(BINDIR)/%-crt.vondehi: ext/vondehi $(BINDIR)/%-crt.lzma
 $(BINDIR)/%-crt.shelldropper: ext/shelldropper $(BINDIR)/%-crt.lzma
 	cat $^ > $@
 	chmod +x $@
-	
-
-
-
 
 .PHONY: all clean
