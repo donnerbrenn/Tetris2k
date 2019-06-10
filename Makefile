@@ -3,7 +3,7 @@ BINDIR := bin
 SRCDIR := smol/rt
 PYDIR  := smol/src
 LDDIR  := smol/ld
-TESTDIR:= test
+TESTDIR:= src
 
 BITS ?= 32#$(shell getconf LONG_BIT)
 
@@ -12,9 +12,12 @@ BITS ?= 32#$(shell getconf LONG_BIT)
 #  -ffast-math -funsafe-math-optimizations -fno-stack-protector -fomit-frame-pointer \
 #  -fno-exceptions -fno-unwind-tables -fno-asynchronous-unwind-tables
 
+ARCH=i386
+
 COPTFLAGS=-Os -s
-COPTFLAGS+= -march=i386
-COPTFLAGS+= -mtune=i386
+COPTFLAGS+=-mno-fancy-math-387
+COPTFLAGS+= -march=$(ARCH)
+COPTFLAGS+= -mtune=$(ARCH)
 COPTFLAGS+= -fno-plt
 COPTFLAGS+= -fwhole-program
 COPTFLAGS+= -fno-stack-protector
