@@ -16,6 +16,8 @@ ARCH=i386
 
 COPTFLAGS=-Os -s
 COPTFLAGS+=-mno-fancy-math-387
+COPTFLAGS+=-mno-ieee-fp 
+COPTFLAGS+=-fno-stack-limit
 COPTFLAGS+= -march=$(ARCH)
 COPTFLAGS+= -mtune=$(ARCH)
 COPTFLAGS+= -fno-plt
@@ -34,23 +36,27 @@ COPTFLAGS+= -fno-pic
 COPTFLAGS+= -ffunction-sections
 COPTFLAGS+= -fdata-sections
 COPTFLAGS+= -fno-plt 
-CFLAGS= -std=gnu11 -nostartfiles -nostdlib $(COPTFLAGS) # -DUSE_DL_FINI
+
+
+CFLAGS = -m$(BITS) 
+
+
+CFLAGS+= -std=gnu11 -nostartfiles -nostdlib $(COPTFLAGS) # -DUSE_DL_FINI
 
 ASFLAGS=-I $(SRCDIR)/
 LDFLAGS_ :=
 
 LDFLAGS += -m$(BITS) -Wl,--build-id=none -Wl,--hash-style=gnu -Wl,-z,norelro
 ASFLAGS += -f elf$(BITS)
-LDFLAGS_ := -m$(BITS)
+
 
 LDFLAGS += -nostartfiles -nostdlib -s
-LDFLAGS_ := $(LDFLAGS_) -T $(LDDIR)/link.ld -Wl,--oformat=binary $(LDFLAGS)
-
-CFLAGS   += -m$(BITS) 
+LDFLAGS_ += $(LDFLAGS_) -T $(LDDIR)/link.ld -Wl,--oformat=binary $(LDFLAGS)
+LDFLAGS_ += $(LDFLAGS)
 
 LIBS=-lc -lSDL2
 
-COMPRESS=lzma --format=lzma -9 --extreme --lzma1=preset=9,lc=0,lp=0,pb=0
+COMPRESS=lzma --format=lzma -v -9 --extreme --lzma1=preset=9,lc=0,lp=0,pb=0
 
 SMOLFLAGS += -s
 ASFLAGS   +=  -DUSE_INTERP -DNO_START_ARG -DUNSAFE_DYNAMIC -DUSE_DNLOAD_LOADER  #-DALIGN_STACK
@@ -90,6 +96,7 @@ $(OBJDIR)/%.o: $(TESTDIR)/%.c $(OBJDIR)/
 $(OBJDIR)/%.start.o: $(OBJDIR)/%.lto.o $(OBJDIR)/crt1.lto.o
 	$(CC) $(LDFLAGS) -r -o "$@" $^
 
+
 $(OBJDIR)/symbols.%.asm: $(OBJDIR)/%.o
 	$(PYTHON3) $(PYDIR)/smol.py $(SMOLFLAGS) $(LIBS) "$<" "$@"
 
@@ -102,7 +109,6 @@ $(OBJDIR)/stub.%.start.o: $(OBJDIR)/symbols.%.start.asm $(SRCDIR)/header$(BITS).
 
 $(BINDIR)/%.vondehi: ext/vondehi $(OBJDIR)/%.o $(OBJDIR)/stub.%.o $(BINDIR)/
 	$(CC) -Wl,-Map=$(BINDIR)/$*.map $(LDFLAGS_) $(OBJDIR)/$*.o $(OBJDIR)/stub.$*.o -o "$@"
-	#./smol/rmtrailzero.py "$@" "$(OBJDIR)/$(notdir $@)" && mv "$(OBJDIR)/$(notdir $@)" "$@" && chmod +x "$@"
 	mv "$@" t
 	$(COMPRESS) t
 	cat ext/vondehi t.lzma > "$@" && rm t.lzma && chmod +x "$@"
@@ -112,8 +118,7 @@ $(BINDIR)/%:  $(OBJDIR)/%.o $(OBJDIR)/stub.%.o $(BINDIR)
 
 
 $(BINDIR)/%.shelldropper: ext/shelldropper  $(OBJDIR)/%.o $(OBJDIR)/stub.%.o $(BINDIR)
-	$(CC) -Wl,-Map=$(BINDIR)/$*.map $(LDFLAGS_) $(OBJDIR)/$*.o $(OBJDIR)/stub.$*.o -o "$@"
-	./smol/rmtrailzero.py "$@" "$(OBJDIR)/$(notdir $@)" && mv "$(OBJDIR)/$(notdir $@)" "$@" && chmod +x "$@"
+	$(CC) -Wl,-Map=$(BINDIR)/$*.map $(LDFLAGS_) $(OBJDIR)/$*.o $(OBJDIR)/stub.$*.o -o "$@
 	mv "$@" t && $(COMPRESS) t
 	cat ext/shelldropper t.lzma > "$@" && rm t.lzma && chmod +x "$@"
 

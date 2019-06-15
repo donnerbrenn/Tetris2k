@@ -53,11 +53,6 @@ static void audio_callback(void *unused, uint8_t *byte_stream, int byte_stream_l
 static void updateBuffer();
 static void shuffle();
 
-// extern void _start()
-// {
-//     main();
-// }
-
 void shuffle()
 {
     uint32_t result=7;
@@ -307,6 +302,7 @@ void redraw()
 
 int main()
 {
+    // asm volatile("sub $8, %rsp\n");
     freqs[0]=16.3516f;
     for(int i=1;i<70;i++)
     {
@@ -364,4 +360,3 @@ int main()
         }
     }
 }
-
