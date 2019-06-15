@@ -1,9 +1,9 @@
-#Tetris 2k
+# Tetris 2k
 
 Tetris written in C targetting a filesize of 2048 Bytes - Including 3 channel music.
 
 
-##Current size: 
+## Current size: 
 
 1872 bytes (shelldropper)
 
@@ -11,7 +11,7 @@ Tetris written in C targetting a filesize of 2048 Bytes - Including 3 channel mu
 
 
 
-##Build dependencies:
+## Build dependencies:
 
 libSDL2 x86
 
@@ -21,6 +21,6 @@ smol (included)
 
 vondehi or a shelldropper script (both included)
 
-##Build:
+## Build:
 
 Just run make on your Linux-System, the binaries (tetris-crt.shelldropper + vondehi) can be found in the bin folder after compilation. 
