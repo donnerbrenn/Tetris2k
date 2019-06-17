@@ -1,0 +1,8 @@
+bin/
+crt1.o
+main.elf
+main.o
+main.needssmol
+main.smolstub.o
+main.symbols.asm
+smol.map

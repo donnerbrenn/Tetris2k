@@ -1,140 +1,80 @@
-OBJDIR := obj
-BINDIR := bin
-SRCDIR := smol/rt
-PYDIR  := smol/src
-LDDIR  := smol/ld
-TESTDIR:= src
+LIBS := -lSDL2
 
-BITS ?= 32#$(shell getconf LONG_BIT)
+BITS=64
 
-# -mpreferred-stack-boundary=3 messes up the stack and kills SSE!
-#COPTFLAGS=-Os  -fwhole-program -fno-plt \
-#  -ffast-math -funsafe-math-optimizations -fno-stack-protector -fomit-frame-pointer \
-#  -fno-exceptions -fno-unwind-tables -fno-asynchronous-unwind-tables
+BIN=bin
+OBJ=obj
+SRC=src
 
-ARCH=i386
+CFLAGS=-Os -s
+CFLAGS+= -fno-plt
+CFLAGS+= -fno-stack-protector -fno-stack-check -fno-stack-limit
+CFLAGS+= -fno-unwind-tables -fno-asynchronous-unwind-tables
+CFLAGS+= -fno-exceptions
+CFLAGS+= -funsafe-math-optimizations -ffast-math
+CFLAGS+= -fomit-frame-pointer
+CFLAGS+= -fno-pic -fno-PIC
+CFLAGS+= -no-pie -fno-PIE
+CFLAGS+= -ffunction-sections -fdata-sections
+CFLAGS+= -mno-fancy-math-387 -mno-ieee-fp 
+CFLAGS+= -flto -nostdlib
 
-COPTFLAGS=-Os -s
-COPTFLAGS+=-mno-fancy-math-387
-COPTFLAGS+=-mno-ieee-fp 
-COPTFLAGS+=-fno-stack-limit
-COPTFLAGS+= -march=$(ARCH)
-COPTFLAGS+= -mtune=$(ARCH)
-COPTFLAGS+= -fno-plt
-COPTFLAGS+= -fwhole-program
-COPTFLAGS+= -fno-stack-protector
-COPTFLAGS+= -fno-stack-check
-COPTFLAGS+= -fno-unwind-tables
-COPTFLAGS+= -fno-asynchronous-unwind-tables
-COPTFLAGS+= -fno-exceptions
-COPTFLAGS+= -funsafe-math-optimizations
-COPTFLAGS+= -fomit-frame-pointer
-COPTFLAGS+= -ffast-math
-COPTFLAGS+= -no-pie
-COPTFLAGS+= -flto
-COPTFLAGS+= -fno-pic
-COPTFLAGS+= -ffunction-sections
-COPTFLAGS+= -fdata-sections
-COPTFLAGS+= -fno-plt 
-
-
-CFLAGS = -m$(BITS) 
-
-
-CFLAGS+= -std=gnu11 -nostartfiles -nostdlib $(COPTFLAGS) # -DUSE_DL_FINI
-
-ASFLAGS=-I $(SRCDIR)/
-LDFLAGS_ :=
-
-LDFLAGS += -m$(BITS) -Wl,--build-id=none -Wl,--hash-style=gnu -Wl,-z,norelro
-ASFLAGS += -f elf$(BITS)
-
-
-LDFLAGS += -nostartfiles -nostdlib -s
-LDFLAGS_ += $(LDFLAGS_) -T $(LDDIR)/link.ld -Wl,--oformat=binary $(LDFLAGS)
-LDFLAGS_ += $(LDFLAGS)
-
-LIBS=-lc -lSDL2
-
-COMPRESS=lzma --format=lzma -v -9 --extreme --lzma1=preset=9,lc=0,lp=0,pb=0
-
-SMOLFLAGS += -s
-ASFLAGS   +=  -DUSE_INTERP -DNO_START_ARG -DUNSAFE_DYNAMIC -DUSE_DNLOAD_LOADER  #-DALIGN_STACK
-#-DUSE_DNLOAD_LOADER #-DUSE_DT_DEBUG #-DUSE_DL_FINI #-DNO_START_ARG #-DUNSAFE_DYNAMIC
-
-NASM    ?= nasm
-PYTHON3 ?= python3
-
-all:  $(BINDIR)/tetris-crt.vondehi $(BINDIR)/tetris-crt.shelldropper  $(BINDIR)/tetris-crt  #$(BINDIR)/tetris $(BINDIR)/tetris.vondehi $(BINDIR)/tetris-crt.shelldropper $(BINDIR)/tetris.shelldropper
-	rm $(BINDIR)/*.lzma
-	wc -c $^ | sort
-	
-
-
-clean:
-	@$(RM) -vrf $(OBJDIR) $(BINDIR)
+all : $(BIN)/ t2k.vondehi t2k
 
 %/:
-	@mkdir -vp "$@"
+	mkdir -p $@
 
-.SECONDARY:
+packer : vondehi/vondehi.asm 
+	cd vondehi; nasm -DNO_FILE_MANAGER_COMPAT -DNO_UBUNTU_COMPAT -fbin -o vondehi vondehi.asm
 
+main.o: $(SRC)/tetris.c Makefile
+ifeq ($(BITS),32)
+	gcc -m$(BITS) -c -o $@ $< $(CFLAGS) -march=i386
+else
+	gcc -m$(BITS) -c -o $@ $< $(CFLAGS) -march=core2
+endif
 
+crt1.o: smol/rt/crt1.c
+	gcc -m$(BITS) -c -o $@ $< $(CFLAGS)
+main.needssmol.o: main.o crt1.o
+	gcc -m$(BITS) -Wl,-i -o "$@" $^ $(CFLAGS)  \
+		-Wl,--entry -Wl,_start -Wl,--print-gc-sections
+main.symbols.asm: main.needssmol.o
+ifeq ($(BITS),32)
+	python3 smol/src/smol.py -s --det $(LIBS) -lc "$<" "$@"
+else
+	python3 smol/src/smol.py --det $(LIBS) -lc "$<" "$@"
+endif
 
-$(OBJDIR)/%.lto.o: $(SRCDIR)/%.c $(OBJDIR)/
-	$(CC)  $(CFLAGS) -c "$<" -o "$@"
+main.smolstub.o: main.symbols.asm
+	nasm -DUSE_INTERP -DNO_START_ARG -DUNSAFE_DYNAMIC -DUSE_DNLOAD_LOADER -DALIGN_STACK -felf$(BITS) -I smol/rt/ -o "$@" "$^"
+main.elf: main.needssmol.o main.smolstub.o
+ifeq ($(BITS),32)
+	ld -Map=smol.map --cref -m elf_i386 -nostartfiles -T smol/ld/link.ld --oformat=binary -o "$@" $^
+else
+	ld -Map=smol.map --cref -m elf_x86_64 -nostartfiles -T smol/ld/link.ld --oformat=binary -o "$@" $^
+endif	
+t2k.vondehi : main.elf.packed
+	mv $< $@
+	wc -c $@
+	mv $@ $(BIN)
 
-$(OBJDIR)/%.lto.o: $(TESTDIR)/%.c $(OBJDIR)/
-	$(CC)  $(CFLAGS) -c "$<" -o "$@"
+t2k : main.elf.bad_packed
+	mv $< $@
+	wc -c $@
+	mv $@ $(BIN)
 
-$(OBJDIR)/%.o: $(SRCDIR)/%.c $(OBJDIR)/
-	$(CC) $(CFLAGS) -c "$<" -o "$@"
+%.xz : % Makefile
+	-rm $@
+	lzma --format=lzma -9 --extreme --lzma1=preset=9,lc=0,lp=0,pb=0 --keep --stdout $< > $@
 
-$(OBJDIR)/%.o: $(TESTDIR)/%.c $(OBJDIR)/
-	$(CC) $(CFLAGS) -c "$<" -o "$@"
-
-$(OBJDIR)/%.start.o: $(OBJDIR)/%.lto.o $(OBJDIR)/crt1.lto.o
-	$(CC) $(LDFLAGS) -r -o "$@" $^
-
-
-$(OBJDIR)/symbols.%.asm: $(OBJDIR)/%.o
-	$(PYTHON3) $(PYDIR)/smol.py $(SMOLFLAGS) $(LIBS) "$<" "$@"
-
-$(OBJDIR)/stub.%.o: $(OBJDIR)/symbols.%.asm $(SRCDIR)/header$(BITS).asm $(SRCDIR)/loader$(BITS).asm
-	$(NASM) $(ASFLAGS) $< -o $@
-
-$(OBJDIR)/stub.%.start.o: $(OBJDIR)/symbols.%.start.asm $(SRCDIR)/header$(BITS).asm $(SRCDIR)/loader$(BITS).asm
-	$(NASM) $(ASFLAGS) $< -o $@
-
-
-$(BINDIR)/%.vondehi: ext/vondehi $(OBJDIR)/%.o $(OBJDIR)/stub.%.o $(BINDIR)/
-	$(CC) -Wl,-Map=$(BINDIR)/$*.map $(LDFLAGS_) $(OBJDIR)/$*.o $(OBJDIR)/stub.$*.o -o "$@"
-	mv "$@" t
-	$(COMPRESS) t
-	cat ext/vondehi t.lzma > "$@" && rm t.lzma && chmod +x "$@"
-
-$(BINDIR)/%:  $(OBJDIR)/%.o $(OBJDIR)/stub.%.o $(BINDIR)
-	$(CC) -Wl,-Map=$(BINDIR)/$*.map $(LDFLAGS_) $(OBJDIR)/$*.o $(OBJDIR)/stub.$*.o -o "$@"
-
-
-$(BINDIR)/%.shelldropper: ext/shelldropper  $(OBJDIR)/%.o $(OBJDIR)/stub.%.o $(BINDIR)
-	$(CC) -Wl,-Map=$(BINDIR)/$*.map $(LDFLAGS_) $(OBJDIR)/$*.o $(OBJDIR)/stub.$*.o -o "$@
-	mv "$@" t && $(COMPRESS) t
-	cat ext/shelldropper t.lzma > "$@" && rm t.lzma && chmod +x "$@"
-
-$(BINDIR)/%-crt: $(OBJDIR)/%.start.o $(OBJDIR)/stub.%.start.o $(BINDIR)/
-	$(CC) -Wl,-Map=$@.map $(LDFLAGS_) $(OBJDIR)/$*.start.o $(OBJDIR)/stub.$*.start.o -o "$@"
-
-
-$(BINDIR)/%-crt.lzma: $(BINDIR)/%-crt
-	$(COMPRESS) --stdout $< > $@
-
-$(BINDIR)/%-crt.vondehi: ext/vondehi $(BINDIR)/%-crt.lzma
-	cat $^ > $@
+%.packed : %.xz packer Makefile
+	cat ./vondehi/vondehi $< > $@
 	chmod +x $@
 
-$(BINDIR)/%-crt.shelldropper: ext/shelldropper $(BINDIR)/%-crt.lzma
-	cat $^ > $@
+%.bad_packed : %.xz shelldropper.sh Makefile
+	cat shelldropper.sh $< > $@
 	chmod +x $@
 
-.PHONY: all clean
+clean:
+	rm -rf main.elf *.asm *.map *.o $(BIN)/

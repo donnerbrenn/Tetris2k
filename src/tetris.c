@@ -2,9 +2,7 @@
 #include "symbols.h"
 #include <time.h>
 #include "tetris_sng.h"
-// #include "crt1.c"
-typedef char bool;
-enum { false, true };
+#include <stdbool.h>
 
 //defines
 #define F_PI 3.14159265359f
@@ -13,7 +11,7 @@ enum { false, true };
 #define SCREEN_WIDTH 620
 #define SCREEN_HEIGHT 960
 #define sample_rate 96000
-#define buffersize 512
+#define buffersize 1024
 
 //tetris variables
 static char pBuffer[nFieldHeight*nFieldWidth];
@@ -34,8 +32,8 @@ static short starts[VOICES]={0};
 static int song_clock=0;
 static unsigned int score=0;
 static int noteCnt;
-static float freqs[70];
-static unsigned int lines=0;
+static float freqs[68];
+// static unsigned int lines=0;
 
 static char Rotate(char px, char py, char r);
 static bool DoesPieceFit(int nTetromino, int nRotation, int nPosX, int nPosY);
@@ -218,15 +216,14 @@ void drawBufferSDL()
 {
     SDL_FillRect(screenSurface,NULL,0x12121212);
     drawScore(score,8,SCREEN_HEIGHT-45,8);
-    drawScore(lines,400,SCREEN_HEIGHT-45,8);
+    // drawScore(lines,400,SCREEN_HEIGHT-45,8);
     for(int x=0;x<nFieldWidth;x++)
     {
         for(int y=0;y<nFieldHeight;y++)
         {
             int i=nFieldWidth*y+x;
             SDL_Rect rect=(SDL_Rect){x*50+10,y*50+10,48,48};
-            SDL_FillRect(screenSurface,&rect,(int)(colors[(int)(pBackBuffer[i])]));
-            
+            SDL_FillRect(screenSurface,&rect,(int)(colors[(int)(pBackBuffer[i])])); 
         }
     }
     SDL_UpdateWindowSurface(window);
@@ -278,7 +275,7 @@ bool isLineComplete(int line)
             return false;
         }
     }
-    lines++;
+    // lines++;
     return true;
 }
 
@@ -302,19 +299,18 @@ void redraw()
 
 int main()
 {
-    // asm volatile("sub $8, %rsp\n");
     freqs[0]=16.3516f;
-    for(int i=1;i<70;i++)
+    for(int i=1;i<68;i++)
     {
         freqs[i]=freqs[i-1]*1.05946f;
     }
-    SDL_Init(SDL_INIT_EVERYTHING);
+    SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
 
     SDL_AudioSpec want;
 
      want.freq = sample_rate;
     // request 16bit signed little-endian sample format.
-    // want.format = AUDIO_S16LSB;
+     want.format = AUDIO_S16LSB;
      want.channels = 1;
      want.samples = buffersize;
     /*
@@ -323,7 +319,6 @@ int main()
     want.callback = audio_callback;
      
     SDL_PauseAudioDevice(SDL_OpenAudioDevice(NULL, 0, &want, NULL, 0), false);// unpause audio.
-
 
     window=SDL_CreateWindow(NULL,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,0);
     screenSurface = SDL_GetWindowSurface( window );
@@ -351,7 +346,7 @@ int main()
                     SDL_UpdateWindowSurface(window);
                     SDL_Delay(4000);
                     score=0;
-                    lines=0;
+                    // lines=0;
                     i=0;
                 }
             }
