@@ -5,13 +5,13 @@ Tetris written in C targetting a filesize of 2048 Bytes - Including 3 channel mu
 
 ## Current size: 
 
-### 32 Bit
+### 32 Bit:
 
 1833 bytes (shelldropper)
 
 1945 bytes (vondehi)
 
-### 64 Bit
+### 64 Bit:
 
 1987 bytes (shelldropper)
 
@@ -23,6 +23,10 @@ Tetris written in C targetting a filesize of 2048 Bytes - Including 3 channel mu
 libSDL2
 
 Python 3
+
+nasm
+
+pax-utils
 
 Smol (included)
 
