@@ -1,6 +1,6 @@
 LIBS := -lSDL2
 
-BITS=32
+BITS=$(shell getconf LONG_BIT)
 
 BIN=bin
 OBJ=obj
