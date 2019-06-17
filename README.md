@@ -30,4 +30,4 @@ vondehi or a shelldropper script (both included)
 
 ## Howto build:
 
-Just run make on your Linux-System, the binaries (tetris-crt.shelldropper + vondehi) can be found in the bin folder after compilation. 
+Just run make on your Linux-System, the binaries (t2k + t2k.vondehi) can be found in the bin folder after compilation. 
