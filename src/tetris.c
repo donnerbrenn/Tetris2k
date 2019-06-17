@@ -39,13 +39,13 @@ static char Rotate(char px, char py, char r);
 static bool DoesPieceFit(int nTetromino, int nRotation, int nPosX, int nPosY);
 static bool FallDown();
 static bool ProcessEventsSDL();
+static bool isLineComplete(int line);
 static void drawCharacter(int number, int posX, int posY, int size);
 static void drawScore(int value, int x, int y, int size);
 static void drawBufferSDL();
 static void placeTetromino(int piece,int x, int y, int rotation);
 static void DropLine(int line);
 static void InitPlayField();
-static bool isLineComplete(int line);
 static void redraw();
 static void audio_callback(void *unused, uint8_t *byte_stream, int byte_stream_length);
 static void updateBuffer();
@@ -188,8 +188,8 @@ bool ProcessEventsSDL()
 
 void drawCharacter(int number, int posX, int posY, int size)
 {
-    for(int x=0;x<3;x++)
-        for(int y=0;y<5;y++)
+    for(int y=0;y<5;y++)
+        for(int x=0;x<3;x++)
         {
             int i=y*3+x;
             if(16384 >> (i) & characters[number])
@@ -217,9 +217,9 @@ void drawBufferSDL()
     SDL_FillRect(screenSurface,NULL,0x12121212);
     drawScore(score,8,SCREEN_HEIGHT-45,8);
     // drawScore(lines,400,SCREEN_HEIGHT-45,8);
-    for(int x=0;x<nFieldWidth;x++)
+    for(int y=0;y<nFieldHeight;y++)
     {
-        for(int y=0;y<nFieldHeight;y++)
+        for(int x=0;x<nFieldWidth;x++)
         {
             int i=nFieldWidth*y+x;
             SDL_Rect rect=(SDL_Rect){x*50+10,y*50+10,48,48};
@@ -231,9 +231,9 @@ void drawBufferSDL()
 
 void placeTetromino(int piece,int x, int y, int rotation)
 {
-    for(int px=0;px<4;px++)
+    for(int py=0;py<4;py++)
     {
-        for(int py=0;py<4;py++)
+        for(int px=0;px<4;px++)
         {
             if((1 << (Rotate((px),(py),(rotation)))) & characters[piece])
             {
@@ -246,18 +246,18 @@ void placeTetromino(int piece,int x, int y, int rotation)
 void DropLine(int line)
 {
     memcpy(pBackBuffer+nFieldWidth,pBuffer,line*nFieldWidth);
-    for(int x=0;x<nFieldWidth;x++)
+    for(int x=1;x<nFieldWidth-1;x++)
     {
-        pBackBuffer[x]=(x==0 || x == nFieldWidth-1) ? 9:0;
+        pBackBuffer[x]=0;
     }
     updateBuffer();
 }
 
 void InitPlayField()
 {
-    for(int x=0;x<nFieldWidth;x++)
+    for(int y=0;y<nFieldHeight;y++)
     {
-        for(int y=0;y<nFieldHeight;y++)
+        for(int x=0;x<nFieldWidth;x++)
         {
             int i=nFieldWidth*y+x;
             pBackBuffer[i]=(!x || x == nFieldWidth-1 || y == nFieldHeight -1) ? 9:0;

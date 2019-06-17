@@ -1,6 +1,6 @@
 LIBS := -lSDL2
 
-BITS=64
+BITS=32
 
 BIN=bin
 OBJ=obj
