@@ -29,5 +29,7 @@ smol (included)
 vondehi or a shelldropper script (both included)
 
 ## Howto build:
+Clone with 
+git clone --recursive https://github.com/donnerbrenn/Tetris2k.git
 
 Just run make on your Linux-System, the binaries (t2k + t2k.vondehi) can be found in the bin folder after compilation. 
