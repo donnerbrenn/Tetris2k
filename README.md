@@ -9,24 +9,24 @@ Tetris written in C targetting a filesize of 2048 Bytes - Including 3 channel mu
 
 1836 bytes (shelldropper)
 
-1948 bytes (Vondehi)
+1948 bytes (vondehi)
 
 ### 64 Bits:
 
 2011 bytes (shelldropper)
 
-2123 bytes (Vondehi)
+2123 bytes (vondehi)
 
 
 ## Build dependencies:
 
 libSDL2
 
-python 3
+Python 3
 
-smol (included)
+Smol (included)
 
-vondehi or a shelldropper script (both included)
+Vondehi or a shelldropper script (both included)
 
 ## Howto build:
 Clone with 
