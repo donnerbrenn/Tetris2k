@@ -288,7 +288,7 @@ void redraw()
     {
         if(isLineComplete(py))
         {
-            multi+=25;;
+            multi+=25;
             score+=multi;
             DropLine(py);
         }
@@ -305,7 +305,6 @@ int main()
         freqs[i]=freqs[i-1]*1.05946f;
     }
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
-
     SDL_AudioSpec want;
 
      want.freq = sample_rate;
