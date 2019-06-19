@@ -6,6 +6,9 @@ BIN=bin
 OBJ=obj
 SRC=src
 
+CC=gcc
+
+
 CFLAGS=-Os -s
 CFLAGS+= -fno-plt
 CFLAGS+= -fno-stack-protector -fno-stack-check -fno-stack-limit
@@ -29,15 +32,15 @@ packer : vondehi/vondehi.asm
 
 main.o: $(SRC)/tetris.c Makefile
 ifeq ($(BITS),32)
-	gcc -m$(BITS) -c -o $@ $< $(CFLAGS) -march=i386
+	$(CC) -m$(BITS) -c -o $@ $< $(CFLAGS) -march=i386
 else
-	gcc -m$(BITS) -c -o $@ $< $(CFLAGS) -march=core2
+	$(CC) -m$(BITS) -c -o $@ $< $(CFLAGS) -march=core2
 endif
 
-crt1.o: smol/rt/crt1.c
-	gcc -m$(BITS) -c -o $@ $< $(CFLAGS)
+crt1.o: $(SRC)/crt1.c
+	$(CC) -m$(BITS) -c -o $@ $< $(CFLAGS)
 main.needssmol.o: main.o crt1.o
-	gcc -m$(BITS) -Wl,-i -o "$@" $^ $(CFLAGS)  \
+	$(CC) -m$(BITS) -Wl,-i -o "$@" $^ $(CFLAGS)  \
 		-Wl,--entry -Wl,_start -Wl,--print-gc-sections
 main.symbols.asm: main.needssmol.o
 ifeq ($(BITS),32)
@@ -66,7 +69,8 @@ t2k : main.elf.bad_packed
 
 %.xz : % Makefile
 	-rm $@
-	lzma --format=lzma -9 --extreme --lzma1=preset=9,lc=0,lp=0,pb=0 --keep --stdout $< > $@
+	# lzma --format=lzma -9 --extreme --lzma1=preset=9,lc=0,lp=0,pb=0,nice=24 --keep --stdout $< > $@
+	python3 ./opt_lzma.py $< -o $@
 
 %.packed : %.xz packer Makefile
 	cat ./vondehi/vondehi $< > $@
