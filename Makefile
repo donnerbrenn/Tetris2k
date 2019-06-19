@@ -37,11 +37,7 @@ else
 	$(CC) -m$(BITS) -c -o $@ $< $(CFLAGS) -march=core2
 endif
 
-<<<<<<< HEAD
 crt1.o: $(SRC)/crt1.c
-=======
-crt1.o: crt1.c
->>>>>>> 421f3a86e068202ac3a88d1b23c39b34cb465f32
 	$(CC) -m$(BITS) -c -o $@ $< $(CFLAGS)
 main.needssmol.o: main.o crt1.o
 	$(CC) -m$(BITS) -Wl,-i -o "$@" $^ $(CFLAGS)  \
@@ -73,12 +69,8 @@ t2k : main.elf.bad_packed
 
 %.xz : % Makefile
 	-rm $@
-<<<<<<< HEAD
 	# lzma --format=lzma -9 --extreme --lzma1=preset=9,lc=0,lp=0,pb=0,nice=24 --keep --stdout $< > $@
 	python3 ./opt_lzma.py $< -o $@
-=======
-	lzma --format=lzma -9 --extreme --lzma1=preset=9,lc=0,lp=0,pb=0,nice=54 --keep --stdout $< > $@
->>>>>>> 421f3a86e068202ac3a88d1b23c39b34cb465f32
 
 %.packed : %.xz packer Makefile
 	cat ./vondehi/vondehi $< > $@
