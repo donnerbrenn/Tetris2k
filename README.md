@@ -13,15 +13,13 @@ Tetris written in C targetting a filesize of 2048 Bytes - Including 3 channel mu
 
 ### 64 Bit:
 
-1977 bytes (shelldropper)
+1976 bytes (shelldropper)
 
-2089 bytes (vondehi)
+2088 bytes (vondehi)
 
 
 ## Build dependencies:
 gcc 8.3.0
-
-gcc 8-3-0
 
 libSDL2
 
