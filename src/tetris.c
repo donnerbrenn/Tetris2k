@@ -4,6 +4,7 @@
 #include "tetris_sng.h"
 #include <stdbool.h>
 
+
 //defines
 #define F_PI 3.14159265359f
 #define nFieldWidth 12
@@ -20,19 +21,10 @@ static uint32_t nCurrentPiece;
 static char nCurrentRotation;
 static char nCurrentX = (nFieldWidth>>1)-2;
 static char nCurrentY;
-
 static SDL_Window *window;
 static SDL_Surface *screenSurface;
-static float hertz[VOICES]={0};
-static float vol[VOICES]={0};
-static char previous[VOICES]={0};
-static char notes[VOICES]={0};
-static short starts[VOICES]={0};
-
-static int song_clock=0;
 static unsigned int score=0;
-static int noteCnt;
-static float freqs[68];
+
 // static unsigned int lines=0;
 
 static char Rotate(char px, char py, char r);
@@ -50,18 +42,19 @@ static void redraw();
 static void audio_callback(void *unused, uint8_t *byte_stream, int byte_stream_length);
 static void updateBuffer();
 static void shuffle();
+static float getFrq(uint32_t note);
 
 void shuffle()
 {
     uint32_t result=7;
     while(result==7 || result==nCurrentPiece)
     {
-        result=SDL_GetTicks();
-        for(int i=17;i>2;i-=4)
-        {
-            result ^= result << i;
-        }
-        result&=7;
+        result=SDL_GetTicks()&7;
+        // for(int i=17;i>2;i-=4)
+        // {
+        //     // result ^= result << i;
+        // }
+        // result&=7;
     }
     nCurrentPiece=result;
 }
@@ -71,8 +64,26 @@ void updateBuffer()
     memcpy(pBuffer,pBackBuffer,nFieldHeight*nFieldWidth);
 }
 
+float getFrq(uint32_t note)
+{
+    float freq=16.3516f;
+    for(uint32_t i=1;i<note;i++)
+    {
+        freq*=1.05946f;
+    }
+    return freq;
+}
+
 void audio_callback(void *unused, uint8_t *byte_stream, int byte_stream_length)
 {
+    static float hertz[VOICES]={0};
+    static float vol[VOICES]={0};
+    static char previous[VOICES]={0};
+    static char notes[VOICES]={0};
+    static short starts[VOICES]={0};
+    static int song_clock=0;
+    static int noteCnt;
+
     // generate three voices and mix them
     for (int i = 0; i < byte_stream_length>>1; i++)
     {
@@ -92,7 +103,7 @@ void audio_callback(void *unused, uint8_t *byte_stream, int byte_stream_length)
                 
                 if(notes[channel])
                 {
-                    hertz[channel]=freqs[(int)(notes[channel])];
+                    hertz[channel]=getFrq(notes[channel]); //freq;//freqs[(int)(notes[channel])];
                 }
             }
             noteCnt++;
@@ -123,7 +134,7 @@ bool DoesPieceFit(int nTetromino, int nRotation, int nPosX, int nPosY)
             short pi = (Rotate((px),(py),(nRotation)));
             //Get index into field
             short fi = (nPosY+py)*nFieldWidth+(nPosX+px);
-            if(nPosX + py >=0 && nPosY + py <nFieldHeight)
+            if(nPosX + py >=0 && nPosY + py <nFieldHeight && characters[nTetromino]&(1 << pi) && pBuffer[fi]!=0)
             {
                 if(characters[nTetromino]&(1 << pi) && pBuffer[fi]!=0)
                 {
@@ -299,11 +310,6 @@ void redraw()
 
 int main()
 {
-    freqs[0]=16.3516f;
-    for(int i=1;i<68;i++)
-    {
-        freqs[i]=freqs[i-1]*1.05946f;
-    }
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
 
     SDL_AudioSpec want;
@@ -324,9 +330,9 @@ int main()
     screenSurface = SDL_GetWindowSurface( window );
     shuffle();
 
-    bool bGameOver=false;
+    static bool bGameOver=false;
     InitPlayField();
-    char i=0;
+    static char i=0;
 
     while(true)
     {
