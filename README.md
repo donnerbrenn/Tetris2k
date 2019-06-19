@@ -13,9 +13,9 @@ Tetris written in C targetting a filesize of 2048 Bytes - Including 3 channel mu
 
 ### 64 Bit:
 
-1987 bytes (shelldropper)
+1979 bytes (shelldropper)
 
-2099 bytes (vondehi)
+2091 bytes (vondehi)
 
 
 ## Build dependencies:
