@@ -69,7 +69,7 @@ t2k : main.elf.bad_packed
 
 %.xz : % Makefile
 	-rm $@
-	lzma --format=lzma -9 --extreme --lzma1=preset=9,lc=0,lp=0,pb=0 --keep --stdout $< > $@
+	lzma --format=lzma -9 --extreme --lzma1=preset=9,lc=0,lp=0,pb=0,nice=54 --keep --stdout $< > $@
 
 %.packed : %.xz packer Makefile
 	cat ./vondehi/vondehi $< > $@
