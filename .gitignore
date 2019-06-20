@@ -8,3 +8,4 @@ main.smolstub.o
 main.symbols.asm
 smol.map
 main.elf.xz
+main.elf.lzma
