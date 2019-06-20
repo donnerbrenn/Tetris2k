@@ -5,7 +5,7 @@ Tetris written in C targetting a filesize of 2048 Bytes - Including 3 channel mu
 
 ## Current size: 
 
-### 32 Bit:
+### 32 Bit (Broken at the moment):
 
 1833 bytes (shelldropper)
 
@@ -13,9 +13,9 @@ Tetris written in C targetting a filesize of 2048 Bytes - Including 3 channel mu
 
 ### 64 Bit:
 
-1976 bytes (shelldropper)
+1961 bytes (shelldropper)
 
-2088 bytes (vondehi)
+2073 bytes (vondehi)
 
 
 ## Build dependencies:
