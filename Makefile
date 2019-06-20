@@ -1,6 +1,6 @@
 LIBS := -lSDL2
 
-BITS=$(shell getconf LONG_BIT)
+BITS=64#$(shell getconf LONG_BIT)
 
 BIN=bin
 OBJ=obj
@@ -20,7 +20,7 @@ CFLAGS+= -fno-pic -fno-PIC
 CFLAGS+= -no-pie -fno-PIE
 CFLAGS+= -ffunction-sections -fdata-sections
 CFLAGS+= -mno-fancy-math-387 -mno-ieee-fp 
-CFLAGS+= -flto -nostdlib
+CFLAGS+= -flto -nostdlib -g
 
 all : $(BIN)/ t2k.vondehi t2k
 
@@ -39,6 +39,7 @@ endif
 
 crt1.o: $(SRC)/crt1.c
 	$(CC) -m$(BITS) -c -o $@ $< $(CFLAGS)
+	
 main.needssmol.o: main.o crt1.o
 	$(CC) -m$(BITS) -Wl,-i -o "$@" $^ $(CFLAGS)  \
 		-Wl,--entry -Wl,_start -Wl,--print-gc-sections

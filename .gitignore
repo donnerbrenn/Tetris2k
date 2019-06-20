@@ -7,3 +7,4 @@ main.needssmol.o
 main.smolstub.o
 main.symbols.asm
 smol.map
+main.elf.xz
