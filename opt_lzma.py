@@ -13,10 +13,14 @@ args=sys.argv
 
 args.pop(0)
 
+v=False
+
 o=False
 for arg in args:
 
-    if(arg=="-o"):
+    if(arg=="-v"):
+        v=True
+    elif(arg=="-o"):
         o=True
     elif o:
         output=arg
@@ -46,12 +50,16 @@ def main():
         result = os.popen(exe).read()
         result=int(result.split(" ")[0])
         results.append([result,str(i)])
-        # print(result)
         progress+=tick
-        print("Optimizing LZMA parameters", int(progress),"%",end="\r")
+        print("Finding optimal LZMA-nice-parameter", int(progress),"%",end="\r")
 
     print("\n")
+
     results.sort(key=lambda x: x[0])
+
+    if(v==True):
+        for row in results:
+            print(row)
     print("Best choice:")
     print("nice="+str(results[0][1]), "Uses "+str(results[0][0]) + " bytes")
     exe="lzma --format=lzma -9 --extreme --lzma1=preset=9,depth=64,dict=16384,lc=0,lp=0,pb=0,nice=" +str(results[0][1]) +" --keep --stdout " +input +" > " +output

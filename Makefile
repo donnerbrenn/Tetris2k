@@ -20,7 +20,7 @@ CFLAGS+= -fno-pic -fno-PIC
 CFLAGS+= -no-pie -fno-PIE
 CFLAGS+= -ffunction-sections -fdata-sections
 CFLAGS+= -mno-fancy-math-387 -mno-ieee-fp 
-CFLAGS+= -flto -nostdlib -g
+CFLAGS+= -flto -nostdlib -std=gnu11
 
 all : $(BIN)/ t2k.vondehi t2k
 
@@ -71,7 +71,7 @@ t2k : main.elf.bad_packed
 %.xz : % Makefile
 	-rm $@
 	# lzma --format=lzma -9 --extreme --lzma1=preset=9,lc=0,lp=0,pb=0,nice=24 --keep --stdout $< > $@
-	python3 ./opt_lzma.py $< -o $@
+	python3 ./opt_lzma.py -v $< -o $@
 
 %.packed : %.xz packer Makefile
 	cat ./vondehi/vondehi $< > $@

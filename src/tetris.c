@@ -18,14 +18,14 @@
 #define buffersize 1024
 
 //tetris variables
-static char pBuffer[nFieldHeight*nFieldWidth];
-static char pBackBuffer[nFieldWidth*nFieldHeight];
-static uint32_t nCurrentPiece;
-static char nCurrentRotation;
+static char pBuffer[nFieldHeight*nFieldWidth]={0};
+static char pBackBuffer[nFieldWidth*nFieldHeight]={0};
+static uint32_t nCurrentPiece=0;
+static char nCurrentRotation=0;
 static char nCurrentX = (nFieldWidth>>1)-2;
-static char nCurrentY;
-static SDL_Window *window;
-static SDL_Surface *screenSurface;
+static char nCurrentY=0;
+static SDL_Window *window=NULL;
+static SDL_Surface *screenSurface=NULL;
 static unsigned int score=0;
 
 // static unsigned int lines=0;
@@ -126,6 +126,7 @@ char Rotate(char px, char py, char r)
 {
     r&=3;
     return (r==0)?(py<<2)+px:r==1?(12)+py-(px<<2):r==2?(15)-(py<<2)-px:(3)-py+(px<<2);
+
 }
 
 bool DoesPieceFit(int nTetromino, int nRotation, int nPosX, int nPosY)
@@ -261,8 +262,19 @@ void placeTetromino(int piece,int x, int y, int rotation)
 
 void DropLine(int line)
 {
+    // for(int i=line;i>=0;i--)
+    // {
+    //     uint dest=i*nFieldWidth;
+    //     memcpy(pBackBuffer+dest,pBackBuffer+dest-12,11);
+    // }
+
+    // for(int i=(line+1)*nFieldWidth;i>12;i--)
+    // {
+    //     pBackBuffer[i]=pBackBuffer[i-nFieldWidth];
+    // }
+    // memmove(pBackBuffer+nFieldWidth,pBackBuffer,line*nFieldWidth);
     memcpy(pBackBuffer+nFieldWidth,pBuffer,line*nFieldWidth);
-    memset(pBackBuffer+1,0,10);
+    memset(pBackBuffer+1,0,9);
     updateBuffer();
 }
 
