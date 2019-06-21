@@ -328,7 +328,7 @@ void initSDL()
     want.channels=1;
     want.samples = buffersize;
     want.callback = audio_callback;     
-    SDL_OpenAudio(&want, NULL);
+    SDL_OpenAudio((&want), NULL);
     SDL_PauseAudio(0);
 
     window=SDL_CreateWindow(NULL,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,0);
@@ -337,10 +337,10 @@ void initSDL()
     InitPlayField();
 }
 
-int main(int argc, char* argv[])
+int main(int argc, char* argv[],char i, int score)
 {
     initSDL();
-    static char i=0;
+    // static char i=0;
 
     while(true)
     {
