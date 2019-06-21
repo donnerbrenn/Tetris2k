@@ -18,14 +18,14 @@
 #define buffersize 1024
 
 //tetris variables
-static char pBuffer[nFieldHeight*nFieldWidth]={0};
-static char pBackBuffer[nFieldWidth*nFieldHeight]={0};
-static uint32_t nCurrentPiece=0;
-static char nCurrentRotation=0;
+static char pBuffer[nFieldHeight*nFieldWidth*2]={0};
+static char *pBackBuffer=pBuffer+nFieldHeight*nFieldWidth;
+static uint32_t nCurrentPiece;
+static char nCurrentRotation;
 static char nCurrentX = (nFieldWidth>>1)-2;
-static char nCurrentY=0;
-static SDL_Window *window=NULL;
-static SDL_Surface *screenSurface=NULL;
+static char nCurrentY;
+static SDL_Window *window;
+static SDL_Surface *screenSurface;
 static unsigned int score=0;
 
 // static unsigned int lines=0;
@@ -33,21 +33,21 @@ static unsigned int score=0;
 static char Rotate(char px, char py, char r);
 static bool DoesPieceFit(int nTetromino, int nRotation, int nPosX, int nPosY);
 static bool FallDown();
-static void ProcessEventsSDL();
+static bool ProcessEventsSDL();
 static bool isLineComplete(int line);
-
-static void drawcharacter(int num, int posX,int posY, int size, int w, int h);
+static void drawCharacter(int number, int posX, int posY, int size);
 static void drawScore(int value, int x, int y, int size);
 static void drawBufferSDL();
 static void placeTetromino(int piece,int x, int y, int rotation);
 static void DropLine(int line);
 static void InitPlayField();
-static void redraw(int multi);
+static void redraw();
 static void audio_callback(void *unused, uint8_t *byte_stream, int byte_stream_length);
 static void updateBuffer();
 static void shuffle();
 static float getFrq(int note);
 static void initSDL();
+
 
 void shuffle()
 {
@@ -84,8 +84,10 @@ void audio_callback(void *unused, Uint8 *byte_stream, int byte_stream_length)
 {
     static float hertz[VOICES]={0};
     static float vol[VOICES]={0};
+
     static char previous[VOICES]={0};
     static char notes[VOICES]={0};
+
     static int song_clock=0;
     static int noteCnt;
     static float wave;      
@@ -118,7 +120,7 @@ void audio_callback(void *unused, Uint8 *byte_stream, int byte_stream_length)
             float phase=SDL_sinf(hertz[j]*2.0f*F_PI*((float)song_clock/sample_rate));
             wave+=(vol[j] * (phase>0?1:-1))*2048;
         }
-        ((short*)byte_stream)[i] = (short)wave; 
+        ((short*)byte_stream)[i] = wave; 
         song_clock++;
     }
 }
@@ -127,7 +129,6 @@ char Rotate(char px, char py, char r)
 {
     r&=3;
     return (r==0)?(py<<2)+px:r==1?(12)+py-(px<<2):r==2?(15)-(py<<2)-px:(3)-py+(px<<2);
-
 }
 
 bool DoesPieceFit(int nTetromino, int nRotation, int nPosX, int nPosY)
@@ -165,13 +166,13 @@ bool FallDown()
         nCurrentRotation=0;
         nCurrentY= 0;
         nCurrentX = (nFieldWidth>>1)-2;
-        // score++;
+        score++;
         updateBuffer();
         return (!DoesPieceFit(nCurrentPiece,nCurrentRotation,nCurrentX,nCurrentY));
     }
 }
 
-void ProcessEventsSDL()
+bool ProcessEventsSDL()
 {
     SDL_Event e;
     while(SDL_PollEvent(&e))
@@ -192,6 +193,7 @@ void ProcessEventsSDL()
                 nCurrentRotation=newRot;
                 nCurrentX=newX;
                 nCurrentY=newY;
+                return true;
             }
         }
         else if (e.type==SDL_QUIT)
@@ -199,14 +201,15 @@ void ProcessEventsSDL()
             exit(0);
         }
     }
+     return false;
 }
 
-static void drawcharacter(int number, int posX,int posY, int size, int w, int h)
+void drawCharacter(int number, int posX, int posY, int size)
 {
-        for(int y=0;y<h;y++)
-        for(int x=0;x<w;x++)
+    for(int y=0;y<5;y++)
+        for(int x=0;x<3;x++)
         {
-            int i=y*w+x;
+            int i=y*3+x;
             if(16384 >> (i) & characters[number])
             {
                 SDL_Rect rect=(SDL_Rect){x*size+posX,y*size+posY,size,size};
@@ -218,11 +221,11 @@ static void drawcharacter(int number, int posX,int posY, int size, int w, int h)
 void drawScore(int value, int x, int y, int size)
 {
         char buffer[15];
-        SDL_uitoa(value,&buffer,10);
+        SDL_uitoa(value,&buffer[0],10);
         int i=0;
         while(buffer[i])
         {
-            drawcharacter(buffer[i]-41,x+size*4*i,y,size,3,5);
+            drawCharacter(buffer[i]-41,x+size*4*i,y,size);
             i++;
         }
 }
@@ -261,11 +264,8 @@ void placeTetromino(int piece,int x, int y, int rotation)
 
 void DropLine(int line)
 {
-    for(line=(line+1)*nFieldWidth;line>12;line--)
-    {
-        pBackBuffer[line]=pBackBuffer[line-nFieldWidth];
-    }
-    memset(pBackBuffer+1,0,9);
+    memcpy(pBackBuffer+nFieldWidth,pBuffer,line*nFieldWidth);
+    memset(pBackBuffer+1,0,10);
     updateBuffer();
 }
 
@@ -292,16 +292,16 @@ bool isLineComplete(int line)
     return true;
 }
 
-void redraw(int multi)
+void redraw()
 {
-    // int multi=0;
+    int multi=0;
     memcpy(pBackBuffer,pBuffer,nFieldHeight*nFieldWidth);
 
     for(int py=0;py<nFieldHeight-1;py++)
     {
         if(isLineComplete(py))
         {
-            multi+=25;
+            multi+=25;;
             score+=multi;
             DropLine(py);
         }
@@ -319,7 +319,7 @@ void initSDL()
     want.channels=1;
     want.samples = buffersize;
     want.callback = audio_callback;     
-    SDL_OpenAudio((&want), NULL);
+    SDL_OpenAudio(&want, NULL);
     SDL_PauseAudio(0);
 
     window=SDL_CreateWindow(NULL,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,0);
@@ -328,19 +328,17 @@ void initSDL()
     InitPlayField();
 }
 
-int main(int argc, char* argv[], int score, char i)
+int main(int argc, char* argv[])
 {
     initSDL();
-    // static char i=0;
+    static char i=0;
 
     while(true)
     {
-        ProcessEventsSDL();
-        redraw(0);
-        // if(ProcessEventsSDL())
-        // {
-        //     redraw();
-        // }
+        if(ProcessEventsSDL())
+        {
+            redraw();
+        }
         SDL_Delay(15);
         if(!(i&31))
         {
@@ -355,7 +353,7 @@ int main(int argc, char* argv[], int score, char i)
                 i=0;
             }
         }
-        // redraw();
+        redraw();
         i++;
     }
 }
