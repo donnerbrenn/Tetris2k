@@ -35,13 +35,14 @@ static bool DoesPieceFit(int nTetromino, int nRotation, int nPosX, int nPosY);
 static bool FallDown();
 static void ProcessEventsSDL();
 static bool isLineComplete(int line);
-static void drawCharacter(int number, int posX, int posY, int size);
+
+static void drawcharacter(int num, int posX,int posY, int size, int w, int h);
 static void drawScore(int value, int x, int y, int size);
 static void drawBufferSDL();
 static void placeTetromino(int piece,int x, int y, int rotation);
 static void DropLine(int line);
 static void InitPlayField();
-static void redraw();
+static void redraw(int multi);
 static void audio_callback(void *unused, uint8_t *byte_stream, int byte_stream_length);
 static void updateBuffer();
 static void shuffle();
@@ -164,7 +165,7 @@ bool FallDown()
         nCurrentRotation=0;
         nCurrentY= 0;
         nCurrentX = (nFieldWidth>>1)-2;
-        score++;
+        // score++;
         updateBuffer();
         return (!DoesPieceFit(nCurrentPiece,nCurrentRotation,nCurrentX,nCurrentY));
     }
@@ -200,12 +201,12 @@ void ProcessEventsSDL()
     }
 }
 
-void drawCharacter(int number, int posX, int posY, int size)
+static void drawcharacter(int number, int posX,int posY, int size, int w, int h)
 {
-    for(int y=0;y<5;y++)
-        for(int x=0;x<3;x++)
+        for(int y=0;y<h;y++)
+        for(int x=0;x<w;x++)
         {
-            int i=y*3+x;
+            int i=y*w+x;
             if(16384 >> (i) & characters[number])
             {
                 SDL_Rect rect=(SDL_Rect){x*size+posX,y*size+posY,size,size};
@@ -217,11 +218,11 @@ void drawCharacter(int number, int posX, int posY, int size)
 void drawScore(int value, int x, int y, int size)
 {
         char buffer[15];
-        SDL_uitoa(value,&buffer[0],10);
+        SDL_uitoa(value,&buffer,10);
         int i=0;
         while(buffer[i])
         {
-            drawCharacter(buffer[i]-41,x+size*4*i,y,size);
+            drawcharacter(buffer[i]-41,x+size*4*i,y,size,3,5);
             i++;
         }
 }
@@ -260,18 +261,10 @@ void placeTetromino(int piece,int x, int y, int rotation)
 
 void DropLine(int line)
 {
-    // for(int i=line;i>=0;i--)
-    // {
-    //     uint dest=i*nFieldWidth;
-    //     memcpy(pBackBuffer+dest,pBackBuffer+dest-12,11);
-    // }
-
-    // for(int i=(line+1)*nFieldWidth;i>12;i--)
-    // {
-    //     pBackBuffer[i]=pBackBuffer[i-nFieldWidth];
-    // }
-    // memmove(pBackBuffer+nFieldWidth,pBackBuffer,line*nFieldWidth);
-    memcpy(pBackBuffer+nFieldWidth,pBuffer,line*nFieldWidth);
+    for(line=(line+1)*nFieldWidth;line>12;line--)
+    {
+        pBackBuffer[line]=pBackBuffer[line-nFieldWidth];
+    }
     memset(pBackBuffer+1,0,9);
     updateBuffer();
 }
@@ -299,16 +292,16 @@ bool isLineComplete(int line)
     return true;
 }
 
-void redraw()
+void redraw(int multi)
 {
-    int multi=0;
+    // int multi=0;
     memcpy(pBackBuffer,pBuffer,nFieldHeight*nFieldWidth);
 
     for(int py=0;py<nFieldHeight-1;py++)
     {
         if(isLineComplete(py))
         {
-            multi+=25;;
+            multi+=25;
             score+=multi;
             DropLine(py);
         }
@@ -343,7 +336,7 @@ int main(int argc, char* argv[], int score, char i)
     while(true)
     {
         ProcessEventsSDL();
-        redraw();
+        redraw(0);
         // if(ProcessEventsSDL())
         // {
         //     redraw();
