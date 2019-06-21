@@ -1,5 +1,5 @@
 .vscode/
-bin/
+# bin/
 crt1.o
 main.elf
 main.o
