@@ -33,7 +33,7 @@ static unsigned int score=0;
 static char Rotate(char px, char py, char r);
 static bool DoesPieceFit(int nTetromino, int nRotation, int nPosX, int nPosY);
 static bool FallDown();
-static bool ProcessEventsSDL();
+static void ProcessEventsSDL();
 static bool isLineComplete(int line);
 static void drawCharacter(int number, int posX, int posY, int size);
 static void drawScore(int value, int x, int y, int size);
@@ -117,7 +117,7 @@ void audio_callback(void *unused, Uint8 *byte_stream, int byte_stream_length)
             float phase=SDL_sinf(hertz[j]*2.0f*F_PI*((float)song_clock/sample_rate));
             wave+=(vol[j] * (phase>0?1:-1))*2048;
         }
-        ((short*)byte_stream)[i] = wave; 
+        ((short*)byte_stream)[i] = (short)wave; 
         song_clock++;
     }
 }
@@ -170,7 +170,7 @@ bool FallDown()
     }
 }
 
-bool ProcessEventsSDL()
+void ProcessEventsSDL()
 {
     SDL_Event e;
     while(SDL_PollEvent(&e))
@@ -191,7 +191,6 @@ bool ProcessEventsSDL()
                 nCurrentRotation=newRot;
                 nCurrentX=newX;
                 nCurrentY=newY;
-                return true;
             }
         }
         else if (e.type==SDL_QUIT)
@@ -199,7 +198,6 @@ bool ProcessEventsSDL()
             exit(0);
         }
     }
-     return false;
 }
 
 void drawCharacter(int number, int posX, int posY, int size)
@@ -337,17 +335,19 @@ void initSDL()
     InitPlayField();
 }
 
-int main(int argc, char* argv[],char i, int score)
+int main(int argc, char* argv[], int score, char i)
 {
     initSDL();
     // static char i=0;
 
     while(true)
     {
-        if(ProcessEventsSDL())
-        {
-            redraw();
-        }
+        ProcessEventsSDL();
+        redraw();
+        // if(ProcessEventsSDL())
+        // {
+        //     redraw();
+        // }
         SDL_Delay(15);
         if(!(i&31))
         {
@@ -362,7 +362,7 @@ int main(int argc, char* argv[],char i, int score)
                 i=0;
             }
         }
-        redraw();
+        // redraw();
         i++;
     }
 }
