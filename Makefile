@@ -6,7 +6,8 @@ BIN=bin
 OBJ=obj
 SRC=src
 
-CC=gcc
+
+CC=gcc-8
 
 
 CFLAGS=-Os -s
@@ -28,7 +29,7 @@ all : $(BIN)/ t2k.vondehi t2k
 	mkdir -p $@
 
 packer : vondehi/vondehi.asm 
-	cd vondehi; nasm -DNO_FILE_MANAGER_COMPAT -DNO_UBUNTU_COMPAT -fbin -o vondehi vondehi.asm
+	cd vondehi; nasm -DNO_FILE_MANAGER_COMPAT -fbin -o vondehi vondehi.asm
 
 main.o: $(SRC)/tetris.c Makefile
 ifeq ($(BITS),32)
