@@ -23,7 +23,7 @@ CFLAGS+= -ffunction-sections -fdata-sections
 CFLAGS+= -mno-fancy-math-387 -mno-ieee-fp 
 CFLAGS+= -flto -nostdlib -std=gnu11
 
-all : $(BIN)/ t2k.vondehi t2k
+all : $(BIN)/ t2k
 
 %/:
 	mkdir -p $@
@@ -59,12 +59,12 @@ ifeq ($(BITS),32)
 else
 	ld -Map=smol.map --cref -m elf_x86_64 -nostartfiles -T smol/ld/link.ld --oformat=binary -o "$@" $^
 endif	
-t2k.vondehi : main.elf.packed
-	mv $< $@
-	wc -c $@
-	mv $@ $(BIN)
+# t2k.vondehi : main.elf.packed
+# 	mv $< $@
+# 	wc -c $@
+# 	mv $@ $(BIN)
 
-t2k : main.elf.bad_packed
+t2k : main.elf.packed
 	mv $< $@
 	wc -c $@
 	mv $@ $(BIN)
