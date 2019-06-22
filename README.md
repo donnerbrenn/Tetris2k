@@ -19,7 +19,7 @@ nasm
 
 pax-utils
 
-Smol (included)1
+Smol (included)
 
 Vondehi (included)
 
