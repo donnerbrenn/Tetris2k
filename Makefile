@@ -7,7 +7,7 @@ OBJ=obj
 SRC=src
 
 
-CC=gcc-8
+#CC=gcc-8
 
 
 CFLAGS=-Os -s
