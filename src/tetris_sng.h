@@ -2,7 +2,7 @@
 #define PATTERN_H
 #define LENGTH 8
 #define VOICES 3
-#define SPEED 10000
+#define SPEED 5500
 #define PATTERNLENGTH 64
 
 const char cpatterns[VOICES][LENGTH][PATTERNLENGTH]=

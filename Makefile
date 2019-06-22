@@ -72,7 +72,7 @@ t2k : main.elf.bad_packed
 %.xz : % Makefile
 	-rm $@
 	# lzma --format=lzma -9 --extreme --lzma1=preset=9,lc=0,lp=0,pb=0,nice=24 --keep --stdout $< > $@
-	python3 ./opt_lzma.py -v $< -o $@
+	python3 ./opt_lzma.py $< -o $@
 
 %.packed : %.xz packer Makefile
 	cat ./vondehi/vondehi $< > $@

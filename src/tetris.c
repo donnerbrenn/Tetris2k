@@ -15,19 +15,19 @@
 #define nFieldHeight 18
 #define SCREEN_WIDTH 620
 #define SCREEN_HEIGHT 960
-#define sample_rate 96000
+#define sample_rate 44100
 #define buffersize 1024
 
 //tetris variables
 static char pBuffer[nFieldHeight*nFieldWidth]={0};
 static char pBackBuffer[nFieldWidth*nFieldHeight]={0};
-static uint32_t nCurrentPiece=0;
 static char nCurrentRotation=0;
 static char nCurrentX = (nFieldWidth>>1)-2;
 static char nCurrentY=0;
 static SDL_Window *window=NULL;
 static SDL_Surface *screenSurface=NULL;
 static unsigned int score=0;
+static uint32_t nCurrentPiece=0;
 
 // static unsigned int lines=0;
 
@@ -53,6 +53,7 @@ static void initSDL();
 void shuffle()
 {
     uint32_t result=7;
+    
     while(result==7 || result==nCurrentPiece)
     {
         result=SDL_GetTicks();
@@ -65,16 +66,25 @@ void shuffle()
     nCurrentPiece=result;
 }
 
+// static void copy(char *dst, char *src, int n)
+// {
+//     while(--n>-1)
+//     {
+//         *dst++ = *src++;
+//     }
+
+// }
+
 
 void updateBuffer()
 {
-    memcpy(pBuffer,pBackBuffer,nFieldHeight*nFieldWidth);
+    memcpy(pBuffer,pBackBuffer,nFieldHeight*nFieldWidth); 
 }
 
 float getFrq(int note)
 {
     float freq=16.3516f;
-    for(int i=1;i<note;i++)
+    for(int i=1;i<note;++i)
     {
         freq*=1.05946f;
     }
@@ -92,12 +102,12 @@ void audio_callback(void *unused, Uint8 *byte_stream, int byte_stream_length)
     static float wave;      
 
     // generate three voices and mix them
-    for (int i = 0; i < byte_stream_length>>1; i++)
+    for (int i = 0; i < byte_stream_length>>1; ++i)
     {
         wave=0;
         if((song_clock)-(song_clock/SPEED*SPEED)==0)
         {
-            for(int channel=0;channel<VOICES;channel++)
+            for(int channel=0;channel<VOICES;++channel)
             {
                 notes[channel]=cpatterns[channel][(noteCnt>>6)&7][noteCnt&63];
                 if(notes[channel]!=previous[channel]&&notes[channel]!=0)
@@ -114,13 +124,13 @@ void audio_callback(void *unused, Uint8 *byte_stream, int byte_stream_length)
             }
             noteCnt++;
         }
-        for(int j=0;j<VOICES;j++)
+        for(int j=0;j<VOICES;++j)
         {
             float phase=SDL_sinf(hertz[j]*2.0f*F_PI*((float)song_clock/sample_rate));
             wave+=(vol[j] * (phase>0?1:-1))*2048;
         }
         ((short*)byte_stream)[i] = (short)wave; 
-        song_clock++;
+        ++song_clock;
     }
 }
 
@@ -133,9 +143,9 @@ char Rotate(char px, char py, char r)
 
 bool DoesPieceFit(int nTetromino, int nRotation, int nPosX, int nPosY)
 {
-    for(int px=0;px<4;px++)
+    for(int px=0;px<4;++px)
     {
-        for(int py=0;py<4;py++)
+        for(int py=0;py<4;++py)
         {
             // Get index into piece
             short pi = (Rotate((px),(py),(nRotation)));
@@ -157,7 +167,7 @@ bool FallDown()
 {
     if(DoesPieceFit(nCurrentPiece,nCurrentRotation,nCurrentX,nCurrentY+1))
     {
-        nCurrentY++;
+        ++nCurrentY;
         return(false);
     }
     else
@@ -204,8 +214,8 @@ void ProcessEventsSDL()
 
 static void drawcharacter(int number, int posX,int posY, int size, int w, int h)
 {
-        for(int y=0;y<h;y++)
-        for(int x=0;x<w;x++)
+        for(int y=0;y<h;++y)
+        for(int x=0;x<w;++x)
         {
             int i=y*w+x;
             if(16384 >> (i) & characters[number])
@@ -219,12 +229,12 @@ static void drawcharacter(int number, int posX,int posY, int size, int w, int h)
 void drawScore(int value, int x, int y, int size)
 {
         char buffer[15];
-        SDL_uitoa(value,&buffer,10);
+        SDL_uitoa(value,&buffer[0],10);
         int i=0;
         while(buffer[i])
         {
             drawcharacter(buffer[i]-41,x+size*4*i,y,size,3,5);
-            i++;
+            ++i;
         }
 }
 
@@ -233,9 +243,9 @@ void drawBufferSDL()
     SDL_FillRect(screenSurface,NULL,0x12121212);
     drawScore(score,8,SCREEN_HEIGHT-45,8);
     SDL_Rect rect;
-    for(int y=0;y<nFieldHeight;y++)
+    for(int y=0;y<nFieldHeight;++y)
     {
-        for(int x=0;x<nFieldWidth;x++)
+        for(int x=0;x<nFieldWidth;++x)
         {
             int i=nFieldWidth*y+x;
             rect=(SDL_Rect){x*50+10,y*50+10,48,48};
@@ -255,9 +265,9 @@ void drawBufferSDL()
 
 void placeTetromino(int piece,int x, int y, int rotation)
 {
-    for(int py=0;py<4;py++)
+    for(int py=0;py<4;++py)
     {
-        for(int px=0;px<4;px++)
+        for(int px=0;px<4;++px)
         {
             if((1 << (Rotate((px),(py),(rotation)))) & characters[piece])
             {
@@ -270,7 +280,7 @@ void placeTetromino(int piece,int x, int y, int rotation)
 
 void DropLine(int line)
 {
-    for(line=(line+1)*nFieldWidth;line>12;line--)
+    for(line=(line+1)*nFieldWidth;line>12;--line)
     {
         pBackBuffer[line]=pBackBuffer[line-nFieldWidth];
     }
@@ -280,7 +290,14 @@ void DropLine(int line)
 
 void InitPlayField()
 {
+    // int y=0;
     memset(pBackBuffer,9,nFieldWidth*nFieldHeight);
+
+    // do {
+    //     memset(pBackBuffer+nFieldWidth*y+1,0,10);
+    //     y++;
+    // } while (y<nFieldHeight-1);
+
     for(int y=0;y<nFieldHeight-1;y++)
     {
         memset(pBackBuffer+nFieldWidth*y+1,0,10);
@@ -290,7 +307,7 @@ void InitPlayField()
 
 bool isLineComplete(int line)
 {
-    for(int px=0;px<nFieldWidth;px++)
+    for(int px=0;px<nFieldWidth;++px)
     {
         if(!pBackBuffer[line*nFieldWidth+px])
         {
@@ -306,7 +323,7 @@ void redraw(int multi)
     // int multi=0;
     memcpy(pBackBuffer,pBuffer,nFieldHeight*nFieldWidth);
 
-    for(int py=0;py<nFieldHeight-1;py++)
+    for(int py=0;py<nFieldHeight-1;++py)
     {
         if(isLineComplete(py))
         {
@@ -337,8 +354,9 @@ void initSDL()
     InitPlayField();
 }
 
-int main(int argc, char* argv[], char i)
+int main(int argc, char* argv[])
 {
+    static int i=0;
     initSDL();
     // static char i=0;
 
@@ -361,10 +379,10 @@ int main(int argc, char* argv[], char i)
                 SDL_Delay(4000);
                 score=0;
                 // lines=0;
-                i=0;
+                 i=0;
             }
         }
         // redraw();
-        i++;
+        ++i;
     }
 }
