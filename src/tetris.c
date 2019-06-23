@@ -335,7 +335,7 @@ void redraw()
 
 void initSDL()
 {
-    SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
+    SDL_Init(SDL_INIT_AUDIO);
     SDL_AudioSpec want;
     want.freq = sample_rate;
     want.format = AUDIO_S16LSB;
