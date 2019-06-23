@@ -294,6 +294,7 @@ void InitPlayField()
     // int y=0;
     memset(pBackBuffer,9,nFieldWidth*nFieldHeight);
 
+
     for(int y=0;y<nFieldHeight-1;y++)
     {
         memset(pBackBuffer+nFieldWidth*y+1,0,10);
