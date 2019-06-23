@@ -42,8 +42,8 @@ crt1.o: $(SRC)/crt1.c
 	$(CC) -m$(BITS) -c -o $@ $< $(CFLAGS)
 	
 main.needssmol.o: main.o crt1.o
-	$(CC) -m$(BITS) -Wl,-i -o "$@" $^ $(CFLAGS)  \
-		-Wl,--entry -Wl,_start -Wl,--print-gc-sections
+	$(CC) -m$(BITS) -Wl,-i -flinker-output=nolto-rel -o "$@" $^ $(CFLAGS)  \
+ 		-Wl,--entry -Wl,_start -Wl,--print-gc-sections
 main.symbols.asm: main.needssmol.o
 ifeq ($(BITS),32)
 	python3 smol/src/smol.py -s --det $(LIBS) -lc "$<" "$@"
