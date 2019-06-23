@@ -16,10 +16,10 @@
 #define SCREEN_WIDTH 620
 #define SCREEN_HEIGHT 960
 #define sample_rate 44100
-#define buffersize 1024
+#define buffersize 255
 
 //tetris variables
-static char pBuffer[nFieldHeight*nFieldWidth]={0};
+static char pBuffer[nFieldHeight*nFieldWidth*2]={0};
 static char pBackBuffer[nFieldWidth*nFieldHeight]={0};
 static char nCurrentRotation=0;
 static char nCurrentX = (nFieldWidth>>1)-2;
@@ -190,10 +190,10 @@ void ProcessEventsSDL()
     {
         if(e.type==SDL_KEYDOWN)
         {
-            char letter=(e.key.keysym.sym);
-            char newRot=nCurrentRotation+(letter=='w');
-            char newX=(nCurrentX)+(letter=='d')-(letter=='a');
-            char newY=(nCurrentY)+(letter=='s');
+            char key=(e.key.keysym.sym);
+            char newRot=nCurrentRotation+(key=='w');
+            char newX=(nCurrentX)+(key=='d')-(key=='a');
+            char newY=(nCurrentY)+(key=='s');
             
             if(DoesPieceFit(nCurrentPiece,newRot,newX,newY))
             {
@@ -252,7 +252,7 @@ void drawBufferSDL()
             rect=(SDL_Rect){x*50+10,y*50+10,48,48};
             
             #ifdef DEBUG
-            SDL_FillRect(screenSurface,&rect,(int)white); 
+            SDL_FillRect(screenSurface,&rect,white); 
             SDL_UpdateWindowSurface(window);
             SDL_Delay(1);
             
@@ -335,8 +335,8 @@ void redraw()
 
 void initSDL()
 {
-    SDL_Init(SDL_INIT_AUDIO);
-    SDL_AudioSpec want;
+    // SDL_Init(SDL_INIT_AUDIO);
+    SDL_AudioSpec want;           
     want.freq = sample_rate;
     want.format = AUDIO_S16LSB;
     want.channels=1;
