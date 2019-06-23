@@ -43,12 +43,13 @@ static void drawBufferSDL();
 static void placeTetromino(int piece,int x, int y, int rotation);
 static void DropLine(int line);
 static void InitPlayField();
-static void redraw(int multi);
+static void redraw();
 static void audio_callback(void *unused, uint8_t *byte_stream, int byte_stream_length);
 static void updateBuffer();
 static void shuffle();
 static float getFrq(int note);
 static void initSDL();
+
 
 void shuffle()
 {
@@ -293,11 +294,6 @@ void InitPlayField()
     // int y=0;
     memset(pBackBuffer,9,nFieldWidth*nFieldHeight);
 
-    // do {
-    //     memset(pBackBuffer+nFieldWidth*y+1,0,10);
-    //     y++;
-    // } while (y<nFieldHeight-1);
-
     for(int y=0;y<nFieldHeight-1;y++)
     {
         memset(pBackBuffer+nFieldWidth*y+1,0,10);
@@ -318,9 +314,9 @@ bool isLineComplete(int line)
     return true;
 }
 
-void redraw(int multi)
+void redraw()
 {
-    // int multi=0;
+    int multi=0;
     memcpy(pBackBuffer,pBuffer,nFieldHeight*nFieldWidth);
 
     for(int py=0;py<nFieldHeight-1;++py)
@@ -358,23 +354,17 @@ int main(int argc, char* argv[])
 {
     static int i=0;
     initSDL();
-    // static char i=0;
 
     while(true)
     {
         ProcessEventsSDL();
-        redraw(0);
-        // if(ProcessEventsSDL())
-        // {
-        //     redraw();
-        // }
+        redraw();
         SDL_Delay(15);
         if(!(i&31))
         {
             if(FallDown())
             {
                 InitPlayField();
-                // drawScore(score,60,300,16);
                 SDL_UpdateWindowSurface(window);
                 SDL_Delay(4000);
                 score=0;
@@ -382,7 +372,6 @@ int main(int argc, char* argv[])
                  i=0;
             }
         }
-        // redraw();
         ++i;
     }
 }
