@@ -9,7 +9,7 @@ Tetris written in C targetting a filesize of 2048 Bytes - Including 3 channel mu
 
 
 ## Build dependencies:
-gcc 9.1.0
+Works with gcc 8.3.0 or 9.1.0 (no other version tested...)
 
 libSDL2
 
