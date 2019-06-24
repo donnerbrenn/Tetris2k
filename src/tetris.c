@@ -360,13 +360,14 @@ int main(int argc, char* argv[])
     {
         ProcessEventsSDL();
         redraw();
-        SDL_Delay(15);
+        SDL_Delay(20);
         if(!(i&31))
         {
+
             if(FallDown())
             {
                 InitPlayField();
-                SDL_UpdateWindowSurface(window);
+                //SDL_UpdateWindowSurface(window);
                 SDL_Delay(4000);
                 score=0;
                 // lines=0;
