@@ -23,7 +23,10 @@ CFLAGS+= -ffunction-sections -fdata-sections
 CFLAGS+= -mno-fancy-math-387 -mno-ieee-fp 
 CFLAGS+= -flto -nostdlib -std=gnu11
 
+GCCVERSION=$(shell gcc --version | grep ^gcc | sed 's/^.* //g')
+
 all : $(BIN)/ t2k t2k.sh
+	
 
 %/:
 	mkdir -p $@
@@ -42,8 +45,13 @@ crt1.o: $(SRC)/crt1.c
 	$(CC) -m$(BITS) -c -o $@ $< $(CFLAGS)
 	
 main.needssmol.o: main.o crt1.o
+ifeq ("$(GCCVERSION)","9.1.0")
 	$(CC) -m$(BITS) -Wl,-i -flinker-output=nolto-rel -o "$@" $^ $(CFLAGS)  \
  		-Wl,--entry -Wl,_start -Wl,--print-gc-sections
+else
+	$(CC) -m$(BITS) -o "$@" $^ $(CFLAGS)  \
+ 		-Wl,--entry -Wl,_start -Wl,--print-gc-sections
+endif
 main.symbols.asm: main.needssmol.o
 ifeq ($(BITS),32)
 	python3 smol/src/smol.py -s --det $(LIBS) -lc "$<" "$@"
