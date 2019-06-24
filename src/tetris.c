@@ -16,7 +16,7 @@
 #define SCREEN_WIDTH 620
 #define SCREEN_HEIGHT 960
 #define sample_rate 44100
-#define buffersize 255
+#define buffersize 1024
 
 //tetris variables
 static char pBuffer[nFieldHeight*nFieldWidth*2]={0};
