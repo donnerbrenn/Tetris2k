@@ -5,10 +5,7 @@ BITS=64#$(shell getconf LONG_BIT)
 BIN=bin
 OBJ=obj
 SRC=src
-
-
-# CC=gcc
-
+GCCVERSION=$(shell gcc --version | grep ^gcc | sed 's/^.* //g')
 
 CFLAGS=-Os -s
 CFLAGS+= -fno-plt
@@ -23,10 +20,7 @@ CFLAGS+= -ffunction-sections -fdata-sections
 CFLAGS+= -mno-fancy-math-387 -mno-ieee-fp 
 CFLAGS+= -flto -nostdlib -std=gnu11
 
-GCCVERSION=$(shell gcc --version | grep ^gcc | sed 's/^.* //g')
-
 all : $(BIN)/ t2k t2k.sh
-	
 
 %/:
 	mkdir -p $@
@@ -78,7 +72,6 @@ t2k : main.elf.packed
 
 %.xz : % Makefile
 	-rm $@
-	# lzma --format=lzma -9 --extreme --lzma1=preset=9,lc=0,lp=0,pb=0,nice=24 --keep --stdout $< > $@
 	python3 ./opt_lzma.py $< -o $@
 
 %.packed : %.xz packer Makefile
