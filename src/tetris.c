@@ -94,13 +94,15 @@ float getFrq(int note)
 
 void audio_callback(void *unused, Uint8 *byte_stream, int byte_stream_length)
 {
+    static float wave;   
     static float hertz[VOICES]={0};
     static float vol[VOICES]={0};
-    static char previous[VOICES]={0};
-    static char notes[VOICES]={0};
     static int song_clock=0;
     static int noteCnt;
-    static float wave;      
+    static char previous[VOICES]={0};
+    static char notes[VOICES]={0};
+
+      
 
     // generate three voices and mix them
     for (int i = 0; i < byte_stream_length>>1; ++i)
