@@ -32,7 +32,7 @@ main.o: $(SRC)/tetris.c Makefile
 ifeq ($(BITS),32)
 	$(CC) -m$(BITS) -c -o $@ $< $(CFLAGS) -march=i386
 else
-	$(CC) -m$(BITS) -c -o $@ $< $(CFLAGS) -march=core2
+	$(CC) -m$(BITS) -c -o $@ $< $(CFLAGS) -march=nano
 endif
 
 crt1.o: $(SRC)/crt1.c

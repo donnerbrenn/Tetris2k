@@ -6,10 +6,11 @@
 #include <stdint.h>
 // #include "crt1.c"
 
-// #define DEBUG
+
 
 
 //defines
+// #define DEBUG
 #define F_PI 3.14159265359f
 #define nFieldWidth 12
 #define nFieldHeight 18
@@ -19,24 +20,20 @@
 #define buffersize 1024
 
 //tetris variables
-static char pBuffer[nFieldHeight*nFieldWidth*2]={0};
+static char pBuffer[nFieldHeight*nFieldWidth]={0};
 static char pBackBuffer[nFieldWidth*nFieldHeight]={0};
 static char nCurrentRotation=0;
 static char nCurrentX = (nFieldWidth>>1)-2;
 static char nCurrentY=0;
+static unsigned int score=0;
+static unsigned int nCurrentPiece=0;
 static SDL_Window *window=NULL;
 static SDL_Surface *screenSurface=NULL;
-static unsigned int score=0;
-static uint32_t nCurrentPiece=0;
 
 // static unsigned int lines=0;
 
-static char Rotate(char px, char py, char r);
-static bool DoesPieceFit(int nTetromino, int nRotation, int nPosX, int nPosY);
-static bool FallDown();
-static void ProcessEventsSDL();
-static bool isLineComplete(int line);
 
+static void ProcessEventsSDL();
 static void drawcharacter(int num, int posX,int posY, int size, int w, int h);
 static void drawScore(int value, int x, int y, int size);
 static void drawBufferSDL();
@@ -47,9 +44,12 @@ static void redraw();
 static void audio_callback(void *unused, uint8_t *byte_stream, int byte_stream_length);
 static void updateBuffer();
 static void shuffle();
-static float getFrq(int note);
 static void initSDL();
-
+static char Rotate(char px, char py, char r);
+static bool DoesPieceFit(int nTetromino, int nRotation, int nPosX, int nPosY);
+static bool FallDown();
+static bool isLineComplete(int line);
+static float getFrq(int note);
 
 void shuffle()
 {
@@ -66,16 +66,6 @@ void shuffle()
     }
     nCurrentPiece=result;
 }
-
-// static void copy(char *dst, char *src, int n)
-// {
-//     while(--n>-1)
-//     {
-//         *dst++ = *src++;
-//     }
-
-// }
-
 
 void updateBuffer()
 {
@@ -256,7 +246,7 @@ void drawBufferSDL()
             #ifdef DEBUG
             SDL_FillRect(screenSurface,&rect,white); 
             SDL_UpdateWindowSurface(window);
-            SDL_Delay(1);
+            SDL_Delay(10);
             
             #endif
 
