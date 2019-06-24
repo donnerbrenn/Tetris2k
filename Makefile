@@ -49,8 +49,7 @@ ifeq ("$(GCCVERSION)","9.1.0")
 	$(CC) -m$(BITS) -Wl,-i -flinker-output=nolto-rel -o "$@" $^ $(CFLAGS)  \
  		-Wl,--entry -Wl,_start -Wl,--print-gc-sections
 else
-	$(CC) -m$(BITS) -o "$@" $^ $(CFLAGS)  \
- 		-Wl,--entry -Wl,_start -Wl,--print-gc-sections
+	$(CC) -m$(BITS) -Wl,-i -o "$@" $^ -flto -fuse-linker-plugin $(CFLAGS) -nostdlib 	-Wl,--entry -Wl,_start -Wl,--print-gc-sections
 endif
 main.symbols.asm: main.needssmol.o
 ifeq ($(BITS),32)
