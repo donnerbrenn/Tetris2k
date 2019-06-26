@@ -40,11 +40,11 @@ crt1.o: $(SRC)/crt1.c
 	
 main.needssmol.o: main.o crt1.o
 ifeq ("$(GCCVERSION)","9.1.0")
-	$(CC) -m$(BITS) -Wl,-i -flinker-output=nolto-rel -o "$@" $^ $(CFLAGS)  \
- 		-Wl,--entry -Wl,_start -Wl,--print-gc-sections
+	$(CC) -m$(BITS) -Wl,-i -flinker-output=nolto-rel -o "$@" $^ $(CFLAGS)  -Wl,--entry -Wl,_start -Wl,--print-gc-sections
 else
-	$(CC) -m$(BITS) -Wl,-i -o "$@" $^ -flto -fuse-linker-plugin $(CFLAGS) -nostdlib 	-Wl,--entry -Wl,_start -Wl,--print-gc-sections
+	$(CC) -m$(BITS) -Wl,-i -o "$@" $^ -flto -fuse-linker-plugin $(CFLAGS) -nostdlib -Wl,--entry -Wl,_start -Wl,--print-gc-sections
 endif
+
 main.symbols.asm: main.needssmol.o
 ifeq ($(BITS),32)
 	python3 smol/src/smol.py -s --det $(LIBS) -lc "$<" "$@"
@@ -54,12 +54,14 @@ endif
 
 main.smolstub.o: main.symbols.asm
 	nasm -DUSE_INTERP -DNO_START_ARG -DUNSAFE_DYNAMIC -DUSE_DNLOAD_LOADER -DALIGN_STACK -felf$(BITS) -I smol/rt/ -o "$@" "$^"
+
 main.elf: main.needssmol.o main.smolstub.o
 ifeq ($(BITS),32)
 	ld -Map=smol.map --cref -m elf_i386 -nostartfiles -T smol/ld/link.ld --oformat=binary -o "$@" $^
 else
 	ld -Map=smol.map --cref -m elf_x86_64 -nostartfiles -T smol/ld/link.ld --oformat=binary -o "$@" $^
 endif	
+
 t2k.sh : main.elf.bad_packed
 	mv $< $@
 	wc -c $@
