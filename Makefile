@@ -26,7 +26,7 @@ all : $(BIN)/ t2k t2k.sh
 	mkdir -p $@
 
 packer : vondehi/vondehi.asm 
-	cd vondehi; nasm -DNO_FILE_MANAGER_COMPAT -DUSE_DNLOAD_LOADER  -fbin -o vondehi vondehi.asm
+	cd vondehi; nasm -DUSE_DNLOAD_LOADER  -fbin -o vondehi vondehi.asm
 
 main.o: $(SRC)/tetris.c Makefile
 ifeq ($(BITS),32)

@@ -15,9 +15,9 @@ libSDL2
 
 Python 3
 
-nasm
+Nasm
 
-pax-utils
+Pax-utils
 
 Smol (included)
 
@@ -27,4 +27,4 @@ Vondehi (included)
 Clone with 
 git clone --recursive https://github.com/donnerbrenn/Tetris2k.git
 
-Just run make on your Linux-System, the binaries (t2k) can be found in the bin folder after compilation. A precompiled binary is provided though.
+Just run make on your Linux-System, the binary (t2k) can be found in the bin folder after compilation. A precompiled binary is provided though.
