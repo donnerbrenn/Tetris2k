@@ -51,6 +51,17 @@ static bool FallDown();
 static bool isLineComplete(int line);
 static float getFrq(int note);
 
+static void quit()
+{
+  asm volatile(".intel_syntax noprefix");
+  asm volatile("push 231"); //exit_group
+  asm volatile("pop rax");
+  asm volatile("xor edi, edi");
+  asm volatile("syscall");
+  asm volatile(".att_syntax prefix");
+  __builtin_unreachable();
+}
+
 void shuffle()
 {
     uint32_t result=7;
@@ -91,8 +102,6 @@ void audio_callback(void *unused, Uint8 *byte_stream, int byte_stream_length)
     static int noteCnt;
     static char previous[VOICES]={0};
     static char notes[VOICES]={0};
-
-      
 
     // generate three voices and mix them
     for (int i = 0; i < byte_stream_length>>1; ++i)
@@ -200,7 +209,7 @@ void ProcessEventsSDL()
         }
         else if (e.type==SDL_QUIT)
         {
-            exit(0);
+            quit();
         }
     }
 }
@@ -343,8 +352,9 @@ void initSDL()
     InitPlayField();
 }
 
-int main(int argc, char* argv[])
+extern void _start()
 {
+    asm volatile("sub $8, %rsp\n");
     static int i=0;
     initSDL();
 

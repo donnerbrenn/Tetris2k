@@ -72,9 +72,9 @@ enum chars
 };
 
 //create the "color palette"
-unsigned int colors[10]={black,red,green,blue,cyan,yellow,purple,orange,white,grey};
+const unsigned int colors[10]={black,red,green,blue,cyan,yellow,purple,orange,white,grey};
 
 //letters c64 style - just numbers for our score
-unsigned short characters[17]={O,L,J,I,Z,T,S,C0,C1,C2,C3,C4,C5,C6,C7,C8,C9};
+const unsigned short characters[17]={O,L,J,I,Z,T,S,C0,C1,C2,C3,C4,C5,C6,C7,C8,C9};
 #endif // SYMBOLS_H
 

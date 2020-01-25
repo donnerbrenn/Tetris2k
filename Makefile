@@ -1,11 +1,8 @@
-LIBS := -lSDL2
-
-BITS=64#$(shell getconf LONG_BIT)
-
 BIN=bin
 OBJ=obj
 SRC=src
-GCCVERSION=$(shell gcc --version | grep ^gcc | sed 's/^.* //g')
+
+CC=gcc
 
 CFLAGS=-Os -s
 CFLAGS+= -fno-plt
@@ -18,71 +15,36 @@ CFLAGS+= -fno-pic -fno-PIC
 CFLAGS+= -no-pie -fno-PIE
 CFLAGS+= -ffunction-sections -fdata-sections
 CFLAGS+= -mno-fancy-math-387 -mno-ieee-fp 
-CFLAGS+= -flto -nostdlib -std=gnu11
+CFLAGS+= -nolibc -nodefaultlibs -nostartfiles -std=gnu11
 
-all : $(BIN)/ t2k t2k.sh
-
-%/:
-	mkdir -p $@
-
-packer : vondehi/vondehi.asm 
-	cd vondehi; nasm -DUSE_DNLOAD_LOADER  -fbin -o vondehi vondehi.asm
-
-main.o: $(SRC)/tetris.c Makefile
-ifeq ($(BITS),32)
-	$(CC) -m$(BITS) -c -o $@ $< $(CFLAGS) -march=i386
-else
-	$(CC) -m$(BITS) -c -o $@ $< $(CFLAGS) -march=nano
-endif
-
-crt1.o: $(SRC)/crt1.c
-	$(CC) -m$(BITS) -c -o $@ $< $(CFLAGS)
-	
-main.needssmol.o: main.o crt1.o
-ifeq ("$(GCCVERSION)","9.1.0")
-	$(CC) -m$(BITS) -Wl,-i -flinker-output=nolto-rel -o "$@" $^ $(CFLAGS)  -Wl,--entry -Wl,_start -Wl,--print-gc-sections
-else
-	$(CC) -m$(BITS) -Wl,-i -o "$@" $^ -flto -fuse-linker-plugin $(CFLAGS) -nostdlib -Wl,--entry -Wl,_start -Wl,--print-gc-sections
-endif
-
-main.symbols.asm: main.needssmol.o
-ifeq ($(BITS),32)
-	python3 smol/src/smol.py -s --det $(LIBS) -lc "$<" "$@"
-else
-	python3 smol/src/smol.py --det $(LIBS) -lc "$<" "$@"
-endif
-
-main.smolstub.o: main.symbols.asm
-	nasm -DUSE_INTERP -DNO_START_ARG -DUNSAFE_DYNAMIC -DUSE_DNLOAD_LOADER -DALIGN_STACK -felf$(BITS) -I smol/rt/ -o "$@" "$^"
-
-main.elf: main.needssmol.o main.smolstub.o
-ifeq ($(BITS),32)
-	ld -Map=smol.map --cref -m elf_i386 -nostartfiles -T smol/ld/link.ld --oformat=binary -o "$@" $^
-else
-	ld -Map=smol.map --cref -m elf_x86_64 -nostartfiles -T smol/ld/link.ld --oformat=binary -o "$@" $^
-endif	
-
-t2k.sh : main.elf.bad_packed
-	mv $< $@
+main.o: $(SRC)/tetris.c
+	$(CC) -c -o $@ $< $(CFLAGS) -march=nano
 	wc -c $@
-	mv $@ $(BIN)
 
-t2k : main.elf.packed
+main: main.o
+	$(CC) $(CFLAGS) -lSDL2 $< -o $@
+
+main.nover: main
+	./noelfver $< > $@
+
+main.stripped: main.nover
+	strip $< -R .note -R .comment -R .eh_frame -R .eh_frame_hdr -R .note.gnu.build-id -R .got -R .got.plt -R .gnu.version -R .shstrtab -R .gnu.version_r -R .note.ABI-tag -R .note.gnu.gold-version -s 
+	sed -i 's/_edata/\x00\x00\x00\x00\x00\x00/g' $<;
+	sed -i 's/__bss_start/\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00/g' $<;
+	sed -i 's/_end/\x00\x00\x00\x00/g' $<;
+	sed -i 's/GLIBC_2\.2\.5/\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00/g' $<;
+	sstrip -z $<
 	mv $< $@
-	wc -c $@
-	mv $@ $(BIN)
 
-%.xz : % Makefile
-	-rm $@
-	python3 ./opt_lzma.py $< -o $@
+main.lzma: main.stripped
+	python3 opt_lzma.py $< -o $@
 
-%.packed : %.xz packer Makefile
-	cat ./vondehi/vondehi $< > $@
-	chmod +x $@
+t2k: shelldropper.sh main.lzma
+	cat $^ > $@
+	chmod +x t2k
+	wc -c t2k
 
-%.bad_packed : %.xz shelldropper.sh Makefile
-	cat shelldropper.sh $< > $@
-	chmod +x $@
+all: t2k
 
 clean:
-	rm -rf main.elf *.asm *.map *.o $(BIN)/
+	-rm main.lzma main.stripped main.o t2k
