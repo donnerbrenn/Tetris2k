@@ -13,8 +13,8 @@ CFLAGS+= -funsafe-math-optimizations -ffast-math
 CFLAGS+= -fomit-frame-pointer
 CFLAGS+= -fno-pic -fno-PIC
 CFLAGS+= -no-pie -fno-PIE
-CFLAGS+= -ffunction-sections -fdata-sections
-CFLAGS+= -mno-fancy-math-387 -mno-ieee-fp 
+CFLAGS+= -ffunction-sections -fdata-sections -Wl,--gc-sections
+CFLAGS+= -mno-fancy-math-387 -mno-ieee-fp #-flto
 CFLAGS+= -nolibc -nodefaultlibs -nostartfiles -std=gnu11
 
 main.o: $(SRC)/tetris.c
