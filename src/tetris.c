@@ -4,7 +4,6 @@
 #include "tetris_sng.h"
 #include <stdbool.h>
 #include <stdint.h>
-// #include "crt1.c"
 
 
 
@@ -27,7 +26,7 @@ static char nCurrentX = (nFieldWidth>>1)-2;
 static char nCurrentY=0;
 static unsigned int score=0;
 static unsigned int nCurrentPiece=0;
-static SDL_Window *window=NULL;
+static SDL_Window *window;
 static SDL_Surface *screenSurface=NULL;
 
 // static unsigned int lines=0;
