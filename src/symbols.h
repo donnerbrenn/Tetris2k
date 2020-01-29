@@ -31,6 +31,12 @@ enum tetronimos
     S=0x4620
 };
 
+//4x4
+
+
+//3x4
+
+
 enum chars
 {
     C0=0x7B6F,     //0
@@ -77,4 +83,3 @@ const unsigned int colors[10]={black,red,green,blue,cyan,yellow,purple,orange,wh
 //letters c64 style - just numbers for our score
 const unsigned short characters[17]={O,L,J,I,Z,T,S,C0,C1,C2,C3,C4,C5,C6,C7,C8,C9};
 #endif // SYMBOLS_H
-

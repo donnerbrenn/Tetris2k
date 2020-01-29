@@ -5,23 +5,13 @@ Tetris written in C targetting a filesize of 2048 Bytes - Including 3 channel mu
 
 ## Current size: 
 
-2044 bytes
+1983 bytes
 
 
 ## Build dependencies:
-Works with gcc 8.3.0 or 9.1.0 (no other version tested...)
 
 libSDL2
-
 Python 3
-
-Nasm
-
-Pax-utils
-
-Smol (included)
-
-Vondehi (included)
 
 ## Howto build:
 Clone with 

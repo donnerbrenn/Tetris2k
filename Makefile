@@ -1,8 +1,13 @@
+default: all
+
 BIN=bin
 OBJ=obj
 SRC=src
 
-CC=gcc
+CC=gcc-8
+
+LIBS=-lSDL2
+LDFLAGS=$(LIBS) -Wl,--entry -Wl,_start -Wl,--print-gc-sections  -Wl,--build-id=none -Wl,-z,norelro
 
 CFLAGS=-Os -s
 CFLAGS+= -fno-plt
@@ -15,7 +20,7 @@ CFLAGS+= -fno-pic -fno-PIC
 CFLAGS+= -no-pie -fno-PIE
 CFLAGS+= -ffunction-sections -fdata-sections -Wl,--gc-sections
 CFLAGS+= -mno-fancy-math-387 -mno-ieee-fp #-flto
-CFLAGS+= -nolibc -nodefaultlibs -nostartfiles -std=gnu11 -fuse-ld=gold
+CFLAGS+= -nodefaultlibs -nostartfiles -std=gnu11 -fuse-ld=gold
 
 STRIP= -R .bss
 STRIP+=-R .gnu.hash
@@ -31,7 +36,7 @@ STRIP+=-R .shstrtab
 STRIP+=-R .gnu.version_r
 STRIP+=-R .note.ABI-tag
 STRIP+=-R .note.gnu.gold-version
-STRIP+=-s 
+STRIP+=-S 
 
 
 main.o: $(SRC)/tetris.c
@@ -39,13 +44,14 @@ main.o: $(SRC)/tetris.c
 	wc -c $@
 
 main: main.o
-	$(CC) $(CFLAGS) -lSDL2 $< -o $@
+	$(CC) $(CFLAGS) $(LDFLAGS) $< -o $@
 
 main.nover: main
 	./noelfver $< > $@
 
 main.stripped: main.nover
 	strip $< $(STRIP)
+	readelf -as $<
 	sed -i 's/_edata/\x00\x00\x00\x00\x00\x00/g' $<;
 	sed -i 's/__bss_start/\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00/g' $<;
 	sed -i 's/_end/\x00\x00\x00\x00/g' $<;
@@ -54,10 +60,14 @@ main.stripped: main.nover
 	mv $< $@
 	wc -c $@
 
-main.lzma: main.stripped 
+main.lzma: main.stripped
 	python3 opt_lzma.py $< -o $@
 
-t2k: shelldropper main.lzma
+vondehi/vondehi: vondehi/vondehi.asm
+	-rm $@
+	nasm -fbin -DNO_CHEATING -DNO_FILE_MANAGER_COMPAT -DNO_UBUNTU_COMPAT -o"$@" "$<"
+
+t2k: vondehi/vondehi main.lzma
 	cat $^ > $@
 	chmod +x t2k
 	rm main.lzma main.stripped main main.o
@@ -66,4 +76,5 @@ t2k: shelldropper main.lzma
 all: t2k
 
 clean:
-	-rm main.lzma main.stripped main.o t2k
+	-rm t2k
+	-rm vondehi/vondehi
