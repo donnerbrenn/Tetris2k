@@ -5,16 +5,17 @@ Tetris written in C targetting a filesize of 2048 Bytes - Including 3 channel mu
 
 ## Current size: 
 
-1983 bytes
+2045 bytes
 
 
 ## Build dependencies:
 
 libSDL2
+
 Python 3
 
 ## Howto build:
 Clone with 
 git clone --recursive https://github.com/donnerbrenn/Tetris2k.git
 
-Just run make on your Linux-System, the binary (t2k) can be found in the bin folder after compilation. A precompiled binary is provided though.
+Just run make on your Linux-System, the binary (t2k) can be found in the main folder after compilation. A precompiled binary is provided though.
