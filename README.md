@@ -10,6 +10,8 @@ Tetris written in C targetting a filesize of 2048 Bytes - Including 3 channel mu
 
 ## Build dependencies:
 
+gcc8
+
 libSDL2
 
 Python 3
