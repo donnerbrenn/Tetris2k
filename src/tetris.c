@@ -23,8 +23,8 @@ static char pBackBuffer[nFieldWidth*nFieldHeight]={0};
 static char nCurrentRotation=0;
 static char nCurrentX = (nFieldWidth>>1)-2;
 static char nCurrentY=0;
-static unsigned int score=0;
-static unsigned int nCurrentPiece=0;
+static int score=0;
+static int nCurrentPiece=0;
 static SDL_Window *window;
 static SDL_Surface *screenSurface=NULL;
 
@@ -46,13 +46,13 @@ inline bool DoesPieceFit(int nTetromino, int nRotation, int nPosX, int nPosY);
 static bool FallDown();
 static bool isLineComplete(int line);
 static float getFrq(int note);
-static void draw(int x, int y, int w, int h, int col);
+static void drawRect(int x, int y, int w, int col);
 
-void draw(int x, int y, int w, int h, int col)
+void drawRect(int x, int y, int w, int col)
 {
-
+    SDL_Rect rect=(SDL_Rect){x,y,w,w};
+    SDL_FillRect(screenSurface,&rect,col);
 }
-
 
 void quit()
 {
@@ -64,6 +64,7 @@ void quit()
   asm volatile(".att_syntax prefix");
   __builtin_unreachable();
 }
+
 
 void shuffle()
 {
@@ -224,8 +225,7 @@ static void drawcharacter(int number, int posX,int posY, int size, int w, int h)
                 int i=y*w+x;
                 if(16384 >> (i) & characters[number])
                 {
-                    SDL_Rect rect=(SDL_Rect){x*size+posX,y*size+posY,size,size};
-                    SDL_FillRect(screenSurface,&rect,white);
+                    drawRect(x*size+posX,y*size+posY,size,white);
                 }
             }
 }
@@ -233,7 +233,7 @@ static void drawcharacter(int number, int posX,int posY, int size, int w, int h)
 void drawScore(int value, int x, int y, int size)
 {
         char buffer[15];
-        SDL_uitoa(value,&buffer[0],10);
+        SDL_itoa(value,buffer,10);
         int i=0;
         while(buffer[i])
         {
@@ -246,20 +246,18 @@ void drawBufferSDL()
 {
     SDL_FillRect(screenSurface,NULL,0x12121212);
      drawScore(score,8,SCREEN_HEIGHT-45,8);
-    SDL_Rect rect;
+
     for(int y=0;y<nFieldHeight;++y)
     {
         for(int x=0;x<nFieldWidth;++x)
         {
-            int i=nFieldWidth*y+x;
-            rect=(SDL_Rect){x*50+10,y*50+10,48,48};
-            
             #ifdef DEBUG
             SDL_FillRect(screenSurface,&rect,white); 
             SDL_UpdateWindowSurface(window);
             SDL_Delay(10);
             #endif
-            SDL_FillRect(screenSurface,&rect,(int)(colors[(int)(pBackBuffer[i])])); 
+            int i=nFieldWidth*y+x;
+            drawRect(x*50+10,y*50+10,48,(int)(colors[(int)(pBackBuffer[i])]));
         }
     }
     SDL_UpdateWindowSurface(window);
@@ -338,7 +336,7 @@ void initSDL()
     want.format = AUDIO_S16SYS;
     want.channels=1;
     want.samples = buffersize;
-    want.callback = audio_callback;     
+    want.callback = audio_callback;    
     SDL_OpenAudio((&want), NULL);
     SDL_PauseAudio(0);
 
@@ -346,7 +344,6 @@ void initSDL()
     screenSurface = SDL_GetWindowSurface( window );
     shuffle();
     InitPlayField();
-    
 }
 
 

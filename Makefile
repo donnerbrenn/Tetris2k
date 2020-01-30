@@ -52,10 +52,10 @@ main.o: $(SRC)/tetris.c
 	$(CC) -c -o $@ $< $(CFLAGS) -march=nano
 	wc -c $@
 
-main: main.o
+main.elf: main.o
 	$(CC) $(CFLAGS) $(LDFLAGS) $< -o $@
 
-main.nover: main
+main.nover: main.elf
 	objcopy -R .gnu.version -R .gnu.version_r $<
 	./noelfver $< > $@
 
@@ -73,18 +73,18 @@ main.stripped: main.nover
 main.lzma: main.stripped
 	python3 opt_lzma.py $< -o $@
 
-vondehi/vondehi: vondehi/vondehi.asm
+vondehi.elf: vondehi/vondehi.asm
 	-rm $@
 	nasm -fbin -DUSE_DNLOAD_LOADER -DNO_CHEATING -DNO_FILE_MANAGER_COMPAT -DNO_UBUNTU_COMPAT -o"$@" "$<"
 
-t2k: vondehi/vondehi main.lzma
+t2k: vondehi.elf main.lzma
 	cat $^ > $@
 	chmod +x t2k
-	rm main.lzma main.stripped main main.o
+	rm main.lzma main.stripped main.elf main.o
 	wc -c t2k
 
 all: t2k
 
 clean:
 	-rm t2k
-	-rm vondehi/vondehi
+	-rm vondehi
