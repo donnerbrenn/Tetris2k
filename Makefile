@@ -6,8 +6,16 @@ SRC=src
 
 CC=gcc-8
 
-LIBS=-lSDL2
-LDFLAGS=$(LIBS) -Wl,--entry -Wl,_start -Wl,--print-gc-sections  -Wl,--build-id=none -Wl,-z,norelro
+LIBS=-lSDL2 
+LDFLAGS= $(LIBS) 
+LDFLAGS+=-Wl,--print-gc-sections
+LDFLAGS+=-Wl,--build-id=none
+LDFLAGS+=-Wl,-z,norelro
+LDFLAGS+=-Wl,-z,nocombreloc
+LDFLAGS+=-Wl,--gc-sections
+LDFLAGS+=-fuse-ld=gold
+LDFLAGS+=-nodefaultlibs -nostdlib
+LDFLAGS+=-nostartfiles -Wl,-Map=smol.map
 
 CFLAGS=-Os -s
 CFLAGS+= -fno-plt
@@ -18,9 +26,9 @@ CFLAGS+= -funsafe-math-optimizations -ffast-math
 CFLAGS+= -fomit-frame-pointer
 CFLAGS+= -fno-pic -fno-PIC
 CFLAGS+= -no-pie -fno-PIE
-CFLAGS+= -ffunction-sections -fdata-sections -Wl,--gc-sections
-CFLAGS+= -mno-fancy-math-387 -mno-ieee-fp #-flto
-CFLAGS+= -nodefaultlibs -nostartfiles -std=gnu11 -fuse-ld=gold
+CFLAGS+= -ffunction-sections -fdata-sections 
+CFLAGS+= -mno-fancy-math-387 -mno-ieee-fp 
+CFLAGS+= -std=gnu11
 
 STRIP= -R .bss
 STRIP+=-R .gnu.hash
@@ -36,8 +44,7 @@ STRIP+=-R .shstrtab
 STRIP+=-R .gnu.version_r
 STRIP+=-R .note.ABI-tag
 STRIP+=-R .note.gnu.gold-version
-STRIP+=-S 
-
+STRIP+=-S
 
 main.o: $(SRC)/tetris.c
 	$(CC) -c -o $@ $< $(CFLAGS) -march=nano
@@ -65,7 +72,7 @@ main.lzma: main.stripped
 
 vondehi/vondehi: vondehi/vondehi.asm
 	-rm $@
-	nasm -fbin -DNO_CHEATING -DNO_FILE_MANAGER_COMPAT -DNO_UBUNTU_COMPAT -o"$@" "$<"
+	nasm -fbin -DUSE_DNLOAD_LOADER -DNO_CHEATING -DNO_FILE_MANAGER_COMPAT -DNO_UBUNTU_COMPAT -o"$@" "$<"
 
 t2k: vondehi/vondehi main.lzma
 	cat $^ > $@

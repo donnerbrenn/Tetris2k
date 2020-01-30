@@ -8,16 +8,16 @@
 
 enum color
 {
-    black=0x00000000,
-    white=0x00FFFFFF,
-    grey=0x00808080,
-    red=0x00FF0000,
-    green=0x0000FF00,
-    blue=0x000000FF,
-    cyan=0x0000FFFF,
-    yellow=0x00FFFF00,
-    purple=0x00FF00FF,
-    orange=0x00FF8000
+    black= 0x00000000, //    black= 0xF000,
+    white= 0x00FFFFFF, //    white= 0x0FFF,
+    grey=  0x00808080, //    grey=  0x0888,
+    red=   0x00FF0000, //    red=   0x0F00,
+    green= 0x0000FF00, //    green= 0x00F0,
+    blue=  0x000000FF, //    blue=  0x000F,
+    cyan=  0x0000FFFF, //    cyan=  0x00FF,
+    yellow=0x00FFFF00, //    yellow=0x0FF0,
+    purple=0x00FF00FF, //    purple=0x0F0F,
+    orange=0x00FF8000  //    orange=0x0F80
 };
 
 enum tetronimos
@@ -78,7 +78,7 @@ enum chars
 };
 
 //create the "color palette"
-const unsigned int colors[10]={black,red,green,blue,cyan,yellow,purple,orange,white,grey};
+const uint colors[10]={black,red,green,blue,cyan,yellow,purple,orange,white,grey};
 
 //letters c64 style - just numbers for our score
 const unsigned short characters[17]={O,L,J,I,Z,T,S,C0,C1,C2,C3,C4,C5,C6,C7,C8,C9};

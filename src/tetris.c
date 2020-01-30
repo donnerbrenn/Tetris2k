@@ -5,6 +5,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+
+
 //defines
 // #define DEBUG
 #define F_PI 3.14159265359f
@@ -44,6 +46,12 @@ inline bool DoesPieceFit(int nTetromino, int nRotation, int nPosX, int nPosY);
 static bool FallDown();
 static bool isLineComplete(int line);
 static float getFrq(int note);
+static void draw(int x, int y, int w, int h, int col);
+
+void draw(int x, int y, int w, int h, int col)
+{
+
+}
 
 
 void quit()
@@ -237,7 +245,7 @@ void drawScore(int value, int x, int y, int size)
 void drawBufferSDL()
 {
     SDL_FillRect(screenSurface,NULL,0x12121212);
-    drawScore(score,8,SCREEN_HEIGHT-45,8);
+     drawScore(score,8,SCREEN_HEIGHT-45,8);
     SDL_Rect rect;
     for(int y=0;y<nFieldHeight;++y)
     {
@@ -327,7 +335,7 @@ void initSDL()
 {
     SDL_AudioSpec want;           
     want.freq = sample_rate;
-    want.format = AUDIO_S16LSB;
+    want.format = AUDIO_S16SYS;
     want.channels=1;
     want.samples = buffersize;
     want.callback = audio_callback;     
@@ -338,7 +346,9 @@ void initSDL()
     screenSurface = SDL_GetWindowSurface( window );
     shuffle();
     InitPlayField();
+    
 }
+
 
 extern void _start()
 {
@@ -356,7 +366,7 @@ extern void _start()
             if(FallDown())
             {
                 InitPlayField();
-                SDL_Delay(20000);
+                SDL_Delay(2000);
                 score=0;
                 i=0;
             }
