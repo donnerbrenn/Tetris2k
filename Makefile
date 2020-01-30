@@ -6,16 +6,18 @@ SRC=src
 
 CC=gcc-8
 
-LIBS=-lSDL2 
+LIBS=-lSDL2
 LDFLAGS= $(LIBS) 
 LDFLAGS+=-Wl,--print-gc-sections
 LDFLAGS+=-Wl,--build-id=none
 LDFLAGS+=-Wl,-z,norelro
 LDFLAGS+=-Wl,-z,nocombreloc
-LDFLAGS+=-Wl,--gc-sections
+LDFLAGS+=-Wl,--gc-sections 
 LDFLAGS+=-fuse-ld=gold
 LDFLAGS+=-nodefaultlibs -nostdlib
-LDFLAGS+=-nostartfiles -Wl,-Map=smol.map
+LDFLAGS+=-nostartfiles 
+LDFLAGS+=-Wl,--spare-dynamic-tags=7
+LDFLAGS+=-Wl,-z,max-page-size=1
 
 CFLAGS=-Os -s
 CFLAGS+= -fno-plt
@@ -25,10 +27,10 @@ CFLAGS+= -fno-exceptions
 CFLAGS+= -funsafe-math-optimizations -ffast-math
 CFLAGS+= -fomit-frame-pointer
 CFLAGS+= -fno-pic -fno-PIC
-CFLAGS+= -no-pie -fno-PIE
+CFLAGS+= -no-pie -fno-PIE 
 CFLAGS+= -ffunction-sections -fdata-sections 
 CFLAGS+= -mno-fancy-math-387 -mno-ieee-fp 
-CFLAGS+= -std=gnu11
+CFLAGS+= -std=gnu11 
 
 STRIP= -R .bss
 STRIP+=-R .gnu.hash
@@ -44,7 +46,7 @@ STRIP+=-R .shstrtab
 STRIP+=-R .gnu.version_r
 STRIP+=-R .note.ABI-tag
 STRIP+=-R .note.gnu.gold-version
-STRIP+=-S
+STRIP+=-S 
 
 main.o: $(SRC)/tetris.c
 	$(CC) -c -o $@ $< $(CFLAGS) -march=nano
@@ -54,11 +56,12 @@ main: main.o
 	$(CC) $(CFLAGS) $(LDFLAGS) $< -o $@
 
 main.nover: main
+	objcopy -R .gnu.version -R .gnu.version_r $<
 	./noelfver $< > $@
 
 main.stripped: main.nover
 	strip $< $(STRIP)
-	readelf -as $<
+	# readelf -as $<
 	sed -i 's/_edata/\x00\x00\x00\x00\x00\x00/g' $<;
 	sed -i 's/__bss_start/\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00/g' $<;
 	sed -i 's/_end/\x00\x00\x00\x00/g' $<;
