@@ -75,7 +75,7 @@ vondehi.elf: vondehi/vondehi.asm
 t2k: vondehi.elf main.lzma
 	cat $^ > $@
 	chmod +x t2k
-	rm main.lzma main.o
+	rm main.*
 	wc -c t2k
 
 all: t2k
