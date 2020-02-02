@@ -1,9 +1,6 @@
 #ifndef SYMBOLS_H
 #define SYMBOLS_H
 
-#include <sys/syscall.h>
-
-
 //define colors as 32 integers / hex for easy reading
 
 enum color

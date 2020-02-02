@@ -1,9 +1,9 @@
 #include <SDL2/SDL.h>
 #include "symbols.h"
-#include <time.h>
 #include "tetris_sng.h"
 #include <stdbool.h>
 #include <stdint.h>
+
 
 
 
@@ -16,6 +16,7 @@
 #define SCREEN_HEIGHT 960
 #define sample_rate 44100
 #define buffersize 1024
+#define SIZE 8
 
 //tetris variables
 static char pBuffer[nFieldHeight*nFieldWidth]={0};
@@ -28,9 +29,9 @@ static int nCurrentPiece=0;
 static SDL_Window *window;
 static SDL_Surface *screenSurface=NULL;
 
-static void ProcessEventsSDL();
-static void drawcharacter(int num, int posX,int posY, int size, int w, int h);
-static void drawScore(int value, int x, int y, int size);
+
+static void ProcessEventsSDL() ;
+static void drawScore();
 static void drawBufferSDL();
 static void placeTetromino(int piece,int x, int y, int rotation);
 static void DropLine(int line);
@@ -40,13 +41,34 @@ static void audio_callback(void *unused, uint8_t *byte_stream, int byte_stream_l
 static void updateBuffer();
 static void shuffle();
 static void initSDL();
-inline void quit();
-static char Rotate(char px, char py, char r);
-inline bool DoesPieceFit(int nTetromino, int nRotation, int nPosX, int nPosY);
 static bool FallDown();
 static bool isLineComplete(int line);
 static float getFrq(int note);
 static void drawRect(int x, int y, int w, int col);
+static void _memcpy(void* dest, void* src, size_t numbytes);
+static void _memset(void* dest,char val,size_t numbytes);
+static void _exit() ;
+inline void quit();
+inline char Rotate(char px, char py, char r);
+inline bool DoesPieceFit(int nTetromino, int nRotation, int nPosX, int nPosY);
+inline void drawcharacter(int num, int posX,int posY);
+
+void _memset(void* dest,char val,size_t numbytes)
+{
+    for(size_t i=0;i<numbytes;i++)
+    {
+        ((char*)dest)[i]=val;
+    }
+}
+
+void _memcpy(void* dest, void* src, size_t numbytes) 
+{
+	for(size_t i=0;i<numbytes;i++)
+    {
+        ((char*)dest)[i]=((char*)src)[i];
+    }
+}
+
 
 void drawRect(int x, int y, int w, int col)
 {
@@ -54,21 +76,22 @@ void drawRect(int x, int y, int w, int col)
     SDL_FillRect(screenSurface,&rect,col);
 }
 
-void quit()
+void _exit()
 {
-  asm volatile(".intel_syntax noprefix");
-  asm volatile("push 231"); //exit_group
-  asm volatile("pop rax");
-  asm volatile("xor edi, edi");
-  asm volatile("syscall");
-  asm volatile(".att_syntax prefix");
-  __builtin_unreachable();
+    // SDL_DestroyWindow(window);
+    asm volatile(".intel_syntax noprefix");
+    asm volatile("push 231"); //exit_group
+    asm volatile("pop rax");
+    asm volatile("xor edi, edi");
+    asm volatile("syscall");
+    asm volatile(".att_syntax prefix");
+    __builtin_unreachable();
 }
 
 
 void shuffle()
 {
-    uint32_t result=7;
+    int result=7;
     while(result==7 || result==nCurrentPiece)
     {
         result=SDL_GetTicks();
@@ -84,7 +107,7 @@ void shuffle()
 
 void updateBuffer()
 {
-    memcpy(pBuffer,pBackBuffer,nFieldHeight*nFieldWidth); 
+    _memcpy(pBuffer,pBackBuffer,nFieldHeight*nFieldWidth); 
 }
 
 float getFrq(int note)
@@ -99,18 +122,23 @@ float getFrq(int note)
 
 void audio_callback(void *unused, Uint8 *byte_stream, int byte_stream_length)
 {
-    static float wave;   
+    // static float wave;   
     static float hertz[VOICES];
     static float vol[VOICES];
     static int song_clock=0;
     static int noteCnt;
     static char previous[VOICES];
     static char notes[VOICES];
+    static int counter[VOICES];
+    static int temp;
+    static int temp1;
+    short *stream=((short*)byte_stream);
+    
 
     // generate three voices and mix them
     for (int i = 0; i < byte_stream_length>>1; ++i)
     {
-        wave=0;
+        stream[i]=0;
         if((song_clock)-(song_clock/SPEED*SPEED)==0)
         {
             for(int channel=0;channel<VOICES;++channel)
@@ -130,12 +158,14 @@ void audio_callback(void *unused, Uint8 *byte_stream, int byte_stream_length)
             }
             noteCnt++;
         }
+        
         for(int j=0;j<VOICES;++j)
         {
-            float phase=(SDL_sinf(hertz[j]*2.0f*F_PI*((float)song_clock/sample_rate)));
-            wave+=(vol[j] * (phase>0?1:-1))*2048;
+            temp=sample_rate/hertz[j]; 
+            counter[j]=(counter[j]>=temp)?0:counter[j];
+            temp>>=1;
+            stream[i]+=(((++counter[j]<=temp)?1:-1)<<9)*vol[j];
         }
-        ((short*)byte_stream)[i] = (short)wave; 
         ++song_clock;
     }
 }
@@ -192,6 +222,10 @@ void ProcessEventsSDL()
     SDL_Event e;
     while(SDL_PollEvent(&e))
     {
+        if (e.type==SDL_QUIT)
+        {
+            _exit();
+        }
         if(e.type==SDL_KEYDOWN)
         {
             char key=(e.key.keysym.sym);
@@ -210,52 +244,44 @@ void ProcessEventsSDL()
                 nCurrentY=newY;
             }
         }
-        else if (e.type==SDL_QUIT)
-        {
-            quit();
-        }
+
     }
 }
 
-static void drawcharacter(int number, int posX,int posY, int size, int w, int h)
+static void drawcharacter(int number, int posX,int posY)
 {
-        for(int y=0;y<h;++y)
-            for(int x=0;x<w;++x)
+        for(int y=0;y<5;++y)
+            for(int x=0;x<3;++x)
             {
-                int i=y*w+x;
+                int i=y*3+x;
                 if(16384 >> (i) & characters[number])
                 {
-                    drawRect(x*size+posX,y*size+posY,size,white);
+                    drawRect(x*SIZE+posX,y*SIZE+posY,SIZE,white);
                 }
             }
 }
 
-void drawScore(int value, int x, int y, int size)
+void drawScore()
 {
-        char buffer[15];
-        SDL_itoa(value,buffer,10);
-        int i=0;
-        while(buffer[i])
-        {
-            drawcharacter(buffer[i]-41,x+size*4*i,y,size,3,5);
-            ++i;
-        }
+    static char buffer[15];
+    SDL_itoa(score,buffer,10);
+    int i=0;
+    while(buffer[i])
+    {
+        drawcharacter(buffer[i]-41,SIZE+SIZE*4*i,SCREEN_HEIGHT-45);
+        ++i;
+    }
 }
 
 void drawBufferSDL()
 {
     SDL_FillRect(screenSurface,NULL,0x12121212);
-     drawScore(score,8,SCREEN_HEIGHT-45,8);
+     drawScore();
 
     for(int y=0;y<nFieldHeight;++y)
     {
         for(int x=0;x<nFieldWidth;++x)
         {
-            #ifdef DEBUG
-            SDL_FillRect(screenSurface,&rect,white); 
-            SDL_UpdateWindowSurface(window);
-            SDL_Delay(10);
-            #endif
             int i=nFieldWidth*y+x;
             drawRect(x*50+10,y*50+10,48,(int)(colors[(int)(pBackBuffer[i])]));
         }
@@ -284,17 +310,17 @@ void DropLine(int line)
     {
         pBackBuffer[line]=pBackBuffer[line-nFieldWidth];
     }
-    memset(pBackBuffer+1,0,9);
+    _memset(pBackBuffer+1,0,9);
     updateBuffer();
 }
 
 void InitPlayField()
 {
-    memset(pBackBuffer,9,nFieldWidth*nFieldHeight);
+    _memset(pBackBuffer,9,nFieldWidth*nFieldHeight);
 
     for(int y=0;y<nFieldHeight-1;y++)
     {
-        memset(pBackBuffer+nFieldWidth*y+1,0,10);
+        _memset(pBackBuffer+nFieldWidth*y+1,0,10);
     }
     updateBuffer();
 }
@@ -314,14 +340,14 @@ bool isLineComplete(int line)
 void redraw()
 {
     int multi=0;
-    memcpy(pBackBuffer,pBuffer,nFieldHeight*nFieldWidth);
+    _memcpy(pBackBuffer,pBuffer,nFieldHeight*nFieldWidth);
 
     for(int py=0;py<nFieldHeight-1;++py)
     {
         if(isLineComplete(py))
         {
             multi+=25;
-            score+=multi;
+            score+=25;
             DropLine(py);
         }
     }
@@ -342,7 +368,7 @@ void initSDL()
 
     window=SDL_CreateWindow(NULL,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,0);
     screenSurface = SDL_GetWindowSurface( window );
-    shuffle();
+    // shuffle();
     InitPlayField();
 }
 
@@ -357,7 +383,7 @@ extern void _start()
     {
         ProcessEventsSDL();
         redraw();
-        SDL_Delay(40);
+        SDL_Delay(20);
         if(!(i&15))
         {
             if(FallDown())

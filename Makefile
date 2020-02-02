@@ -19,7 +19,7 @@ LDFLAGS+=-nostartfiles
 LDFLAGS+=-Wl,--spare-dynamic-tags=7
 LDFLAGS+=-Wl,-z,max-page-size=1
 
-CFLAGS=-Os -s
+CFLAGS=-Os -s -Wall -Wextra -Wpedantic
 CFLAGS+= -fno-plt
 CFLAGS+= -fno-stack-protector -fno-stack-check -fno-stack-limit
 CFLAGS+= -fno-unwind-tables -fno-asynchronous-unwind-tables
@@ -46,26 +46,21 @@ STRIP+=-R .shstrtab
 STRIP+=-R .gnu.version_r
 STRIP+=-R .note.ABI-tag
 STRIP+=-R .note.gnu.gold-version
-STRIP+=-S 
-
+STRIP+=-S
 main.o: $(SRC)/tetris.c
-	$(CC) -c -o $@ $< $(CFLAGS) -march=nano
+	$(CC) -c -o $@ $< $(CFLAGS) -march=nocona
 	wc -c $@
 
 main.elf: main.o
-	$(CC) $(CFLAGS) $(LDFLAGS) $< -o $@
+	 $(CC) $(CFLAGS) $(LDFLAGS)  $< -o $@ #-Wl,--verbose
 
 main.nover: main.elf
-	objcopy -R .gnu.version -R .gnu.version_r $<
 	./noelfver $< > $@
-
+	
 main.stripped: main.nover
-	strip $< $(STRIP)
-	# readelf -as $<
-	sed -i 's/_edata/\x00\x00\x00\x00\x00\x00/g' $<;
-	sed -i 's/__bss_start/\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00/g' $<;
-	sed -i 's/_end/\x00\x00\x00\x00/g' $<;
-	sed -i 's/GLIBC_2\.2\.5/\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00/g' $<;
+	# strip $< $(STRIP)
+	objcopy $(STRIP) $<
+	readelf -as $<
 	sstrip -z $<
 	mv $< $@
 	wc -c $@
@@ -80,11 +75,11 @@ vondehi.elf: vondehi/vondehi.asm
 t2k: vondehi.elf main.lzma
 	cat $^ > $@
 	chmod +x t2k
-	rm main.lzma main.stripped main.elf main.o
+	rm main.lzma main.o
 	wc -c t2k
 
 all: t2k
 
 clean:
-	-rm t2k
+	-rm t2k main*
 	-rm vondehi
