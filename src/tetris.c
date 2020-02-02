@@ -16,7 +16,7 @@
 #define SCREEN_HEIGHT 960
 #define sample_rate 44100
 #define buffersize 1024
-#define SIZE 8
+#define FONTSIZE 8
 
 //tetris variables
 static char pBuffer[nFieldHeight*nFieldWidth]={0};
@@ -123,14 +123,16 @@ void audio_callback(void *unused, Uint8 *byte_stream, int byte_stream_length)
 {
     // static float wave;   
     static float hertz[VOICES];
-    static int vol[VOICES];
     static int song_clock=0;
     static int noteCnt;
-    static char previous[VOICES];
-    static char notes[VOICES];
     static int counter[VOICES];
     static int temp;
     short *stream=((short*)byte_stream);
+    static short vol[VOICES];
+    static char previous[VOICES];
+    static char notes[VOICES];
+    
+    
     
     // generate three voices and mix them
     for (int i = 0; i < byte_stream_length>>1; ++i)
@@ -162,7 +164,7 @@ void audio_callback(void *unused, Uint8 *byte_stream, int byte_stream_length)
             counter[j]=(counter[j]>=temp)?0:counter[j];
             temp>>=1;
             if(vol[j]>0)
-            stream[i]+=(((++counter[j]<=temp)?1:-1))*vol[j];
+                stream[i]+=(((++counter[j]<=temp)?1:-1))*vol[j];
         }
         ++song_clock;
     }
@@ -254,7 +256,7 @@ static void drawcharacter(int number, int posX,int posY)
                 int i=y*3+x;
                 if(16384 >> (i) & characters[number])
                 {
-                    drawRect(x*SIZE+posX,y*SIZE+posY,SIZE,white);
+                    drawRect(x*FONTSIZE+posX,y*FONTSIZE+posY,FONTSIZE,white);
                 }
             }
 }
@@ -266,7 +268,7 @@ void drawScore()
     int i=0;
     while(buffer[i])
     {
-        drawcharacter(buffer[i]-41,SIZE+SIZE*4*i,SCREEN_HEIGHT-45);
+        drawcharacter(buffer[i]-41,FONTSIZE+FONTSIZE*4*i,SCREEN_HEIGHT-45);
         ++i;
     }
 }
@@ -281,7 +283,10 @@ void drawBufferSDL()
         for(int x=0;x<nFieldWidth;++x)
         {
             int i=nFieldWidth*y+x;
+
             drawRect(x*50+10,y*50+10,48,(int)(colors[(int)(pBackBuffer[i])]));
+            if(pBackBuffer[i]<9)
+                drawRect(x*50+13,y*50+13,42,(int)(0));
         }
     }
     SDL_UpdateWindowSurface(window);
@@ -366,7 +371,7 @@ void initSDL()
 
     window=SDL_CreateWindow(NULL,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,0);
     screenSurface = SDL_GetWindowSurface( window );
-    // shuffle();
+    shuffle();
     InitPlayField();
 }
 
