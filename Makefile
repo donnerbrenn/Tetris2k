@@ -30,7 +30,7 @@ CFLAGS+= -fno-pic -fno-PIC
 CFLAGS+= -no-pie -fno-PIE 
 CFLAGS+= -ffunction-sections -fdata-sections 
 CFLAGS+= -mno-fancy-math-387 -mno-ieee-fp 
-CFLAGS+= -std=gnu11 
+CFLAGS+= -std=gnu11 -march=nocona -malign-data=abi
 
 STRIP= -R .bss
 STRIP+=-R .gnu.hash
@@ -48,7 +48,7 @@ STRIP+=-R .note.ABI-tag
 STRIP+=-R .note.gnu.gold-version
 STRIP+=-S
 main.o: $(SRC)/tetris.c
-	$(CC) -c -o $@ $< $(CFLAGS) -march=nocona
+	$(CC) -c -o $@ $< $(CFLAGS) 
 	wc -c $@
 
 main.elf: main.o
@@ -58,7 +58,7 @@ main.nover: main.elf
 	./noelfver $< > $@
 	
 main.stripped: main.nover
-	# strip $< $(STRIP)
+	# strip $< $(STRIP) 
 	objcopy $(STRIP) $<
 	readelf -as $<
 	sstrip -z $<

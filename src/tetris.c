@@ -48,7 +48,6 @@ static void drawRect(int x, int y, int w, int col);
 static void _memcpy(void* dest, void* src, size_t numbytes);
 static void _memset(void* dest,char val,size_t numbytes);
 static void _exit() ;
-inline void quit();
 inline char Rotate(char px, char py, char r);
 inline bool DoesPieceFit(int nTetromino, int nRotation, int nPosX, int nPosY);
 inline void drawcharacter(int num, int posX,int posY);
@@ -124,17 +123,15 @@ void audio_callback(void *unused, Uint8 *byte_stream, int byte_stream_length)
 {
     // static float wave;   
     static float hertz[VOICES];
-    static float vol[VOICES];
+    static int vol[VOICES];
     static int song_clock=0;
     static int noteCnt;
     static char previous[VOICES];
     static char notes[VOICES];
     static int counter[VOICES];
     static int temp;
-    static int temp1;
     short *stream=((short*)byte_stream);
     
-
     // generate three voices and mix them
     for (int i = 0; i < byte_stream_length>>1; ++i)
     {
@@ -146,10 +143,10 @@ void audio_callback(void *unused, Uint8 *byte_stream, int byte_stream_length)
                 notes[channel]=cpatterns[channel][(noteCnt>>6)&7][noteCnt&63];
                 if(notes[channel]!=previous[channel]&&notes[channel]!=0)
                 {
-                    vol[channel]=2;
+                    vol[channel]=512;
                     previous[channel]=notes[channel];
                 }
-                vol[channel]*=.9f;
+                vol[channel]-=50;
                 
                 if(notes[channel])
                 {
@@ -164,7 +161,8 @@ void audio_callback(void *unused, Uint8 *byte_stream, int byte_stream_length)
             temp=sample_rate/hertz[j]; 
             counter[j]=(counter[j]>=temp)?0:counter[j];
             temp>>=1;
-            stream[i]+=(((++counter[j]<=temp)?1:-1)<<9)*vol[j];
+            if(vol[j]>0)
+            stream[i]+=(((++counter[j]<=temp)?1:-1))*vol[j];
         }
         ++song_clock;
     }
