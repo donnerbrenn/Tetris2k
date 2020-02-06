@@ -16,8 +16,21 @@ LDFLAGS+=-Wl,--gc-sections
 LDFLAGS+=-fuse-ld=gold
 LDFLAGS+=-nodefaultlibs -nostdlib
 LDFLAGS+=-nostartfiles 
-LDFLAGS+=-Wl,--spare-dynamic-tags=7
-LDFLAGS+=-Wl,-z,max-page-size=1
+LDFLAGS+=-Wl,--spare-dynamic-tags=9
+LDFLAGS+=-Wl,-z,max-page-size=9
+
+
+LLDFLAGS= $(LIBS) 
+LLDFLAGS+=--print-gc-sections
+LLDFLAGS+=--build-id=none
+LLDFLAGS+=-z norelro
+LLDFLAGS+=-z nocombreloc
+LLDFLAGS+=--gc-sections 
+LLDFLAGS+=-nodefaultlibs -nostdlib
+LLDFLAGS+=-nostartfiles -I/usr/include
+LLDFLAGS+=--spare-dynamic-tags=9
+LLDFLAGS+=-z max-page-size=9
+
 
 CFLAGS=-Os -s -Wall -Wextra -Wpedantic
 CFLAGS+= -fno-plt
@@ -53,13 +66,13 @@ main.o: $(SRC)/tetris.c
 
 main.elf: main.o
 	 $(CC) $(CFLAGS) $(LDFLAGS)  $< -o $@ #-Wl,--verbose
+	#  ld.gold $(LLDFLAGS) $< -o $@
 
 main.nover: main.elf
 	./noelfver $< > $@
 	
 main.stripped: main.nover
-	# strip $< $(STRIP) 
-	objcopy $(STRIP) $<
+	strip $< $(STRIP) 
 	readelf -as $<
 	sstrip -z $<
 	mv $< $@
@@ -75,7 +88,7 @@ vondehi.elf: vondehi/vondehi.asm
 t2k: vondehi.elf main.lzma
 	cat $^ > $@
 	chmod +x t2k
-	rm main.*
+	rm main.* vondehi.elf
 	wc -c t2k
 
 all: t2k

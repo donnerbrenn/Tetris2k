@@ -1,5 +1,4 @@
 #include "tetris.h"
-
 void _memset(void* dest,char val,size_t numbytes)
 {
     for(size_t i=0;i<numbytes;i++)
@@ -25,7 +24,6 @@ void drawRect(int x, int y, int w, int col)
 
 void _exit()
 {
-    // SDL_DestroyWindow(window);
     asm volatile(".intel_syntax noprefix");
     asm volatile("push 231"); //exit_group
     asm volatile("pop rax");
@@ -75,10 +73,10 @@ void audio_callback(void *unused, Uint8 *byte_stream, int byte_stream_length)
     static int noteCnt;
     static int counter[VOICES];
     static int temp;
-    short *stream=((short*)byte_stream);
     static short vol[VOICES];
     static char previous[VOICES];
     static char notes[VOICES];
+    short *stream=((short*)byte_stream);
     
     
     
@@ -110,7 +108,7 @@ void audio_callback(void *unused, Uint8 *byte_stream, int byte_stream_length)
         {
             temp=sample_rate/hertz[j]; 
             counter[j]=(counter[j]>=temp)?0:counter[j];
-            temp>>=1;
+            temp>>=j-(j>>1)+1;
             if(vol[j]>0)
                 stream[i]+=(((++counter[j]<=temp)?1:-1))*vol[j];
         }
@@ -234,7 +232,7 @@ void drawBufferSDL()
 
             drawRect(x*50+10,y*50+10,48,(int)(colors[(int)(pBackBuffer[i])]));
             if(pBackBuffer[i]<9)
-                drawRect(x*50+13,y*50+13,42,(int)(0));
+                drawRect(x*50+15,y*50+15,38,(int)(0));
         }
     }
     SDL_UpdateWindowSurface(window);
@@ -323,8 +321,7 @@ void initSDL()
     InitPlayField();
 }
 
-
-extern void _start()
+void _start()
 {
     asm volatile("sub $8, %rsp\n");
     static int i=0;
@@ -332,7 +329,7 @@ extern void _start()
 
     while(true)
     {
-        ProcessEventsSDL();
+        
         redraw();
         SDL_Delay(20);
         if(!(i&15))
@@ -346,5 +343,7 @@ extern void _start()
             }
         }
         ++i;
+        ProcessEventsSDL();
     }
+    __builtin_unreachable();
 }

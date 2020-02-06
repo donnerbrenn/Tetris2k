@@ -27,8 +27,8 @@ static int nCurrentPiece=0;
 static SDL_Window *window;
 static SDL_Surface *screenSurface=NULL;
 
-
-static void ProcessEventsSDL() ;
+//__attribute__ ((noreturn))
+static void ProcessEventsSDL();
 static void drawScore();
 static void drawBufferSDL();
 static void placeTetromino(int piece,int x, int y, int rotation);
@@ -45,7 +45,8 @@ static float getFrq(int note);
 static void drawRect(int x, int y, int w, int col);
 static void _memcpy(void* dest, void* src, size_t numbytes);
 static void _memset(void* dest,char val,size_t numbytes);
-static void _exit() ;
+static void _exit();
 inline char Rotate(char px, char py, char r);
 inline bool DoesPieceFit(int nTetromino, int nRotation, int nPosX, int nPosY);
 inline void drawcharacter(int num, int posX,int posY);
+void _start();
