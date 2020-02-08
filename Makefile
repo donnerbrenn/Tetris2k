@@ -18,7 +18,7 @@ LDFLAGS+=-nodefaultlibs -nostdlib
 LDFLAGS+=-nostartfiles 
 LDFLAGS+=-Wl,--spare-dynamic-tags=9
 LDFLAGS+=-Wl,-z,max-page-size=9
-
+LDFLAGS+=-Wl,--whole-archive
 
 LLDFLAGS= $(LIBS) 
 LLDFLAGS+=--print-gc-sections
@@ -60,13 +60,13 @@ STRIP+=-R .gnu.version_r
 STRIP+=-R .note.ABI-tag
 STRIP+=-R .note.gnu.gold-version
 STRIP+=-S
+
 main.o: $(SRC)/tetris.c
 	$(CC) -c -o $@ $< $(CFLAGS) 
 	wc -c $@
 
 main.elf: main.o
 	 $(CC) $(CFLAGS) $(LDFLAGS)  $< -o $@ #-Wl,--verbose
-	#  ld.gold $(LLDFLAGS) $< -o $@
 
 main.nover: main.elf
 	./noelfver $< > $@

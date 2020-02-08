@@ -22,17 +22,6 @@ void drawRect(int x, int y, int w, int col)
     SDL_FillRect(screenSurface,&rect,col);
 }
 
-void _exit()
-{
-    asm volatile(".intel_syntax noprefix");
-    asm volatile("push 231"); //exit_group
-    asm volatile("pop rax");
-    asm volatile("xor edi, edi");
-    asm volatile("syscall");
-    asm volatile(".att_syntax prefix");
-    __builtin_unreachable();
-}
-
 
 void shuffle()
 {
@@ -89,13 +78,13 @@ void audio_callback(void *unused, Uint8 *byte_stream, int byte_stream_length)
             for(int channel=0;channel<VOICES;++channel)
             {
                 notes[channel]=cpatterns[channel][(noteCnt>>6)&7][noteCnt&63];
-                if(notes[channel]!=previous[channel]&&notes[channel]!=0)
+                if(notes[channel]!=previous[channel]&&notes[channel])
                 {
-                    vol[channel]=512;
+                    vol[channel]=2048;
                     previous[channel]=notes[channel];
                 }
-                vol[channel]-=50;
-                
+                vol[channel]-=200;
+               
                 if(notes[channel])
                 {
                     hertz[channel]=getFrq(notes[channel]);
@@ -108,9 +97,11 @@ void audio_callback(void *unused, Uint8 *byte_stream, int byte_stream_length)
         {
             temp=sample_rate/hertz[j]; 
             counter[j]=(counter[j]>=temp)?0:counter[j];
-            temp>>=j-(j>>1)+1;
+            // temp>>=j-(j>>1)+1;
+            // temp*=vol[j]/512.0/4;
+            temp>>=3;
             if(vol[j]>0)
-                stream[i]+=(((++counter[j]<=temp)?1:-1))*vol[j];
+                stream[i]+=(((++counter[j]<=temp)?vol[j]:-vol[j]));
         }
         ++song_clock;
     }
@@ -170,7 +161,13 @@ void ProcessEventsSDL()
     {
         if (e.type==SDL_QUIT)
         {
-            _exit();
+            asm volatile(".intel_syntax noprefix");
+            asm volatile("push 231"); //exit_group
+            asm volatile("pop rax");
+            asm volatile("xor edi, edi");
+            asm volatile("syscall");
+            asm volatile(".att_syntax prefix");
+            __builtin_unreachable();
         }
         if(e.type==SDL_KEYDOWN)
         {
@@ -194,7 +191,7 @@ void ProcessEventsSDL()
     }
 }
 
-static void drawcharacter(int number, int posX,int posY)
+void drawcharacter(int number, int posX,int posY)
 {
         for(int y=0;y<5;++y)
             for(int x=0;x<3;++x)
@@ -290,7 +287,6 @@ void redraw()
 {
     int multi=0;
     _memcpy(pBackBuffer,pBuffer,nFieldHeight*nFieldWidth);
-
     for(int py=0;py<nFieldHeight-1;++py)
     {
         if(isLineComplete(py))
