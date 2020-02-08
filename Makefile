@@ -61,10 +61,8 @@ STRIP+=-R .note.ABI-tag
 STRIP+=-R .note.gnu.gold-version
 STRIP+=-S
 
-$(SRC)/shader.h: shader.frag
-	./shader_minifier.exe $< -o $@
 
-main.o: $(SRC)/tetris.c $(SRC)/shader.h
+main.o: $(SRC)/tetris.c
 	$(CC) -c -o $@ $< $(CFLAGS) 
 	wc -c $@
 
