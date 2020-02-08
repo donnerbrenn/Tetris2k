@@ -56,7 +56,6 @@ float getFrq(int note)
 
 void audio_callback(void *unused, Uint8 *byte_stream, int byte_stream_length)
 {
-    // static float wave;   
     static float hertz[VOICES];
     static int song_clock=0;
     static int noteCnt;
@@ -66,13 +65,12 @@ void audio_callback(void *unused, Uint8 *byte_stream, int byte_stream_length)
     static char previous[VOICES];
     static char notes[VOICES];
     short *stream=((short*)byte_stream);
-    
-    
+
     
     // generate three voices and mix them
     for (int i = 0; i < byte_stream_length>>1; ++i)
     {
-        stream[i]=0;
+        
         if((song_clock)-(song_clock/SPEED*SPEED)==0)
         {
             for(int channel=0;channel<VOICES;++channel)
@@ -92,7 +90,7 @@ void audio_callback(void *unused, Uint8 *byte_stream, int byte_stream_length)
             }
             noteCnt++;
         }
-        
+        stream[i]=0;
         for(int j=0;j<VOICES;++j)
         {
             temp=sample_rate/hertz[j]; 
@@ -108,9 +106,23 @@ void audio_callback(void *unused, Uint8 *byte_stream, int byte_stream_length)
 }
 
 char Rotate(char px, char py, char r)
-{
-    r&=3;
-    return (r==0)?(py<<2)+px:r==1?12+py-(px<<2):r==2?15-(py<<2)-px:3-py+(px<<2);
+{  
+    // r&=3;
+    char x;
+    while(r>0)
+    {
+        x=12+py-(px<<2);
+        px=x&3;
+        py=x>>2;
+        r--;        
+    }
+    return (py<<2)+px;
+
+
+    // return r==0?(py<<2)+px:
+    //        r==1?12+py-(px<<2):
+    //        r==2?15-(py<<2)-px:
+    //        3-py+(px<<2);
 
 }
 
@@ -193,15 +205,15 @@ void ProcessEventsSDL()
 
 void drawcharacter(int number, int posX,int posY)
 {
-        for(int y=0;y<5;++y)
-            for(int x=0;x<3;++x)
+    for(int y=0;y<5;++y)
+        for(int x=0;x<3;++x)
+        {
+            int i=y*3+x;
+            if(16384 >> (i) & characters[number])
             {
-                int i=y*3+x;
-                if(16384 >> (i) & characters[number])
-                {
-                    drawRect(x*FONTSIZE+posX,y*FONTSIZE+posY,FONTSIZE,white);
-                }
+                drawRect(x*FONTSIZE+posX,y*FONTSIZE+posY,FONTSIZE,white);
             }
+        }
 }
 
 void drawScore()
