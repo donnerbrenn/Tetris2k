@@ -5,11 +5,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include <GL/gl.h>
-#include <GL/glx.h>
-#include <GL/glu.h>
-#include <GL/glext.h>
-
 
 
 //defines
@@ -33,8 +28,6 @@ static int score=0;
 static int nCurrentPiece=0;
 static SDL_Window *window;
 static SDL_Surface *screenSurface=NULL;
-static GLint programID=0;
-static GLuint shaderID=0;
 
 //__attribute__ ((noreturn))
 static void ProcessEventsSDL();
