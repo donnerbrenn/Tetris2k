@@ -26,13 +26,9 @@ void drawRect(int x, int y, int w, int col)
 void shuffle()
 {
     int result=7;
-    while(result==7 || result==nCurrentPiece)
+    while(result==7||result==nCurrentPiece)
     {
         result=SDL_GetTicks();
-        for(int i=17;i>2;i-=4)
-        {
-            result ^= result << i;
-        }
         result&=7;
     }
     nCurrentPiece=result;
@@ -66,11 +62,9 @@ void audio_callback(void *unused, Uint8 *byte_stream, int byte_stream_length)
     static char notes[VOICES];
     short *stream=((short*)byte_stream);
 
-    
     // generate three voices and mix them
     for (int i = 0; i < byte_stream_length>>1; ++i)
-    {
-        
+    {   
         if((song_clock)-(song_clock/SPEED*SPEED)==0)
         {
             for(int channel=0;channel<VOICES;++channel)
@@ -93,37 +87,34 @@ void audio_callback(void *unused, Uint8 *byte_stream, int byte_stream_length)
         stream[i]=0;
         for(int j=0;j<VOICES;++j)
         {
-            temp=sample_rate/hertz[j]; 
-            counter[j]=(counter[j]>=temp)?0:counter[j];
-            // temp>>=j-(j>>1)+1;
-            // temp*=vol[j]/512.0/4;
-            temp>>=3;
             if(vol[j]>0)
+            {
+                temp=sample_rate/hertz[j]; 
+                counter[j]=(counter[j]>=temp)?0:counter[j];
+                // temp>>=j-(j>>1)+1;
+                // temp*=vol[j]/512.0/4;
+                temp>>=3;
                 stream[i]+=(((++counter[j]<=temp)?vol[j]:-vol[j]));
+            }
         }
         ++song_clock;
     }
 }
 
+
+
 char Rotate(char px, char py, char r)
 {  
     // r&=3;
     char x;
-    while(r>0)
+    while(r)
     {
         x=12+py-(px<<2);
         px=x&3;
         py=x>>2;
-        r--;        
+        --r;
     }
     return (py<<2)+px;
-
-
-    // return r==0?(py<<2)+px:
-    //        r==1?12+py-(px<<2):
-    //        r==2?15-(py<<2)-px:
-    //        3-py+(px<<2);
-
 }
 
 bool DoesPieceFit(int nTetromino, int nRotation, int nPosX, int nPosY)
@@ -203,13 +194,13 @@ void ProcessEventsSDL()
     }
 }
 
-void drawcharacter(int number, int posX,int posY)
+void drawcharacter(int num, int posX,int posY)
 {
     for(int y=0;y<5;++y)
         for(int x=0;x<3;++x)
         {
             int i=y*3+x;
-            if(16384 >> (i) & characters[number])
+            if(16384 >> (i) & characters[num])
             {
                 drawRect(x*FONTSIZE+posX,y*FONTSIZE+posY,FONTSIZE,white);
             }
@@ -231,6 +222,7 @@ void drawScore()
 void drawBufferSDL()
 {
     SDL_FillRect(screenSurface,NULL,0x12121212);
+    // drawRect(0,0,nFieldHeight,0x12121212);
      drawScore();
 
     for(int y=0;y<nFieldHeight;++y)
@@ -240,7 +232,7 @@ void drawBufferSDL()
             int i=nFieldWidth*y+x;
 
             drawRect(x*50+10,y*50+10,48,(int)(colors[(int)(pBackBuffer[i])]));
-            if(pBackBuffer[i]<9)
+            if(pBackBuffer[i]!=9)
                 drawRect(x*50+15,y*50+15,38,(int)(0));
         }
     }
@@ -314,6 +306,7 @@ void redraw()
 
 void initSDL()
 {
+    // SDL_Init(SDL_INIT_EVERYTHING);
     SDL_AudioSpec want;           
     want.freq = sample_rate;
     want.format = AUDIO_S16SYS;
@@ -334,13 +327,11 @@ void _start()
     asm volatile("sub $8, %rsp\n");
     static int i=0;
     initSDL();
-
     while(true)
     {
-        
         redraw();
-        SDL_Delay(20);
-        if(!(i&15))
+        SDL_Delay(15);
+        if((i&15)==0)
         {
             if(FallDown())
             {
