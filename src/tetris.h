@@ -9,7 +9,6 @@
 
 //defines
 // #define DEBUG
-#define F_PI 3.14159265359f
 #define nFieldWidth 12
 #define nFieldHeight 18
 #define SCREEN_WIDTH 620
@@ -28,8 +27,18 @@ static int score=0;
 static int nCurrentPiece=0;
 static SDL_Window *window;
 static SDL_Surface *screenSurface=NULL;
+static short *stream;
+static float hertz[VOICES];
+static int song_clock=0;
+static int noteCnt;
+static int counter[VOICES];
+static int temp;
+static short vol[VOICES];
+static int previous[VOICES];
+static int notes[VOICES];
 
 //__attribute__ ((noreturn))
+static void itoa(int val, char* buffer);
 static void ProcessEventsSDL();
 static void drawScore();
 static void drawBufferSDL();

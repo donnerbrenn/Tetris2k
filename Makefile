@@ -4,7 +4,7 @@ BIN=bin
 OBJ=obj
 SRC=src
 
-CC=gcc-8
+CC=cc-8
 
 LIBS=-lSDL2
 LDFLAGS= $(LIBS) 
@@ -16,8 +16,7 @@ LDFLAGS+=-Wl,--gc-sections
 LDFLAGS+=-fuse-ld=gold
 LDFLAGS+=-nodefaultlibs -nostdlib
 LDFLAGS+=-nostartfiles 
-LDFLAGS+=-Wl,--spare-dynamic-tags=9
-LDFLAGS+=-Wl,-z,max-page-size=9
+LDFLAGS+=-Wl,--spare-dynamic-tags=7
 LDFLAGS+=-Wl,--whole-archive
 
 LLDFLAGS= $(LIBS) 
@@ -27,10 +26,7 @@ LLDFLAGS+=-z norelro
 LLDFLAGS+=-z nocombreloc
 LLDFLAGS+=--gc-sections 
 LLDFLAGS+=-nodefaultlibs -nostdlib
-LLDFLAGS+=-nostartfiles -I/usr/include
-LLDFLAGS+=--spare-dynamic-tags=9
-LLDFLAGS+=-z max-page-size=9
-
+LLDFLAGS+=-nostartfiles
 
 CFLAGS=-Os -s -Wall -Wextra -Wpedantic
 CFLAGS+= -fno-plt
@@ -67,7 +63,7 @@ main.o: $(SRC)/tetris.c
 	wc -c $@
 
 main.elf: main.o
-	 $(CC) $(CFLAGS) $(LDFLAGS)  $< -o $@ #-Wl,--verbose
+	 $(CC) $(CFLAGS) $(LDFLAGS)  $< -o $@ -Wl,--verbose
 
 main.nover: main.elf
 	./noelfver $< > $@

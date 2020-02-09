@@ -52,15 +52,8 @@ float getFrq(int note)
 
 void audio_callback(void *unused, Uint8 *byte_stream, int byte_stream_length)
 {
-    static float hertz[VOICES];
-    static int song_clock=0;
-    static int noteCnt;
-    static int counter[VOICES];
-    static int temp;
-    static short vol[VOICES];
-    static char previous[VOICES];
-    static char notes[VOICES];
-    short *stream=((short*)byte_stream);
+
+    stream=((short*)byte_stream);
 
     // generate three voices and mix them
     for (int i = 0; i < byte_stream_length>>1; ++i)
@@ -69,7 +62,7 @@ void audio_callback(void *unused, Uint8 *byte_stream, int byte_stream_length)
         {
             for(int channel=0;channel<VOICES;++channel)
             {
-                notes[channel]=cpatterns[channel][(noteCnt>>6)&7][noteCnt&63];
+                notes[channel]=cpatterns[channel][order[(noteCnt>>6)&7]][noteCnt&63];
                 if(notes[channel]!=previous[channel]&&notes[channel])
                 {
                     vol[channel]=2048;
@@ -100,8 +93,6 @@ void audio_callback(void *unused, Uint8 *byte_stream, int byte_stream_length)
         ++song_clock;
     }
 }
-
-
 
 char Rotate(char px, char py, char r)
 {  
@@ -200,21 +191,31 @@ void drawcharacter(int num, int posX,int posY)
         for(int x=0;x<3;++x)
         {
             int i=y*3+x;
-            if(16384 >> (i) & characters[num])
+            if(16384 >> (i) & characters2[num])
             {
                 drawRect(x*FONTSIZE+posX,y*FONTSIZE+posY,FONTSIZE,white);
             }
         }
 }
 
+void itoa(int val, char* buffer)
+{
+     int i=0;
+     do     /* generate digits in reverse order */
+     {   
+        buffer[i++] = (val%10)+1;   /* get next digit */
+     } while ((val /= 10) > 0);     /* delete it */
+}
+
 void drawScore()
 {
-    static char buffer[15];
-    SDL_itoa(score,buffer,10);
+    static char buffer[15]={0};
+    itoa(score,buffer);
     int i=0;
     while(buffer[i])
     {
-        drawcharacter(buffer[i]-41,FONTSIZE+FONTSIZE*4*i,SCREEN_HEIGHT-45);
+        drawcharacter(buffer[i],SCREEN_WIDTH-30-FONTSIZE-((FONTSIZE<<2)*i),SCREEN_HEIGHT-45);
+        // drawcharacter(buffer[i]-41,FONTSIZE+((FONTSIZE<<2)*i),SCREEN_HEIGHT-45);
         ++i;
     }
 }
@@ -222,7 +223,7 @@ void drawScore()
 void drawBufferSDL()
 {
     SDL_FillRect(screenSurface,NULL,0x12121212);
-    // drawRect(0,0,nFieldHeight,0x12121212);
+    // drawRect(0,0,SCREEN_HEIGHT,0x12121212);
      drawScore();
 
     for(int y=0;y<nFieldHeight;++y)
@@ -232,8 +233,8 @@ void drawBufferSDL()
             int i=nFieldWidth*y+x;
 
             drawRect(x*50+10,y*50+10,48,(int)(colors[(int)(pBackBuffer[i])]));
-            if(pBackBuffer[i]!=9)
-                drawRect(x*50+15,y*50+15,38,(int)(0));
+            // if(pBackBuffer[i]!=9)
+            //     drawRect(x*50+15,y*50+15,38,(int)(0));
         }
     }
     SDL_UpdateWindowSurface(window);
@@ -256,7 +257,7 @@ void placeTetromino(int piece,int x, int y, int rotation)
 
 void DropLine(int line)
 {
-    for(line=(line+1)*nFieldWidth;line>12;--line)
+    for(line=(++line)*nFieldWidth;line>12;--line)
     {
         pBackBuffer[line]=pBackBuffer[line-nFieldWidth];
     }
@@ -267,7 +268,6 @@ void DropLine(int line)
 void InitPlayField()
 {
     _memset(pBackBuffer,9,nFieldWidth*nFieldHeight);
-
     for(int y=0;y<nFieldHeight-1;y++)
     {
         _memset(pBackBuffer+nFieldWidth*y+1,0,10);
@@ -345,4 +345,5 @@ void _start()
         ProcessEventsSDL();
     }
     __builtin_unreachable();
+
 }
