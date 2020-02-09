@@ -28,14 +28,16 @@ static int nCurrentPiece=0;
 static SDL_Window *window;
 static SDL_Surface *screenSurface=NULL;
 static short *stream;
-static float hertz[VOICES];
+
 static int song_clock=0;
 static int noteCnt;
 static int counter[VOICES];
-static int temp;
-static short vol[VOICES];
 static int previous[VOICES];
 static int notes[VOICES];
+
+static short vol[VOICES];
+static float hertz[VOICES];
+static int temp;
 
 //__attribute__ ((noreturn))
 static void itoa(int val, char* buffer);

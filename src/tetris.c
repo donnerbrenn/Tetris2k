@@ -203,20 +203,18 @@ void itoa(int val, char* buffer)
      int i=0;
      do     /* generate digits in reverse order */
      {   
-        buffer[i++] = (val%10)+1;   /* get next digit */
+        buffer[(i++)] = (val%10)+1;   /* get next digit */
      } while ((val /= 10) > 0);     /* delete it */
 }
 
 void drawScore()
 {
-    static char buffer[15]={0};
-    itoa(score,buffer);
+    static char buffer[15];
+    SDL_itoa(score,buffer,10);
     int i=0;
     while(buffer[i])
     {
-        drawcharacter(buffer[i],SCREEN_WIDTH-30-FONTSIZE-((FONTSIZE<<2)*i),SCREEN_HEIGHT-45);
-        // drawcharacter(buffer[i]-41,FONTSIZE+((FONTSIZE<<2)*i),SCREEN_HEIGHT-45);
-        ++i;
+        drawcharacter(buffer[i++]-'0'+1,((FONTSIZE<<2)*i),SCREEN_HEIGHT-45);
     }
 }
 
