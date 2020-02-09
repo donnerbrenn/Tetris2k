@@ -18,10 +18,10 @@
 #define FONTSIZE 8
 
 //tetris variables
-static char pBuffer[nFieldHeight*nFieldWidth]={0};
-static char pBackBuffer[nFieldWidth*nFieldHeight]={0};
-static char nCurrentRotation=0;
-static char nCurrentX = (nFieldWidth>>1)-2;
+static char pBuffer[nFieldHeight*nFieldWidth];
+static char pBackBuffer[nFieldWidth*nFieldHeight];
+static char nCurrentRotation;
+static char nCurrentX;
 static char nCurrentY=0;
 static int score=0;
 static int nCurrentPiece=0;

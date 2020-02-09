@@ -19,17 +19,8 @@ LDFLAGS+=-nostartfiles
 LDFLAGS+=-Wl,--spare-dynamic-tags=7
 LDFLAGS+=-Wl,--whole-archive
 
-LLDFLAGS= $(LIBS) 
-LLDFLAGS+=--print-gc-sections
-LLDFLAGS+=--build-id=none
-LLDFLAGS+=-z norelro
-LLDFLAGS+=-z nocombreloc
-LLDFLAGS+=--gc-sections 
-LLDFLAGS+=-nodefaultlibs -nostdlib
-LLDFLAGS+=-nostartfiles
-
 CFLAGS=-Os -s -Wall -Wextra -Wpedantic
-CFLAGS+= -fno-plt
+CFLAGS+= -fno-plt 
 CFLAGS+= -fno-stack-protector -fno-stack-check -fno-stack-limit
 CFLAGS+= -fno-unwind-tables -fno-asynchronous-unwind-tables
 CFLAGS+= -fno-exceptions
@@ -39,7 +30,7 @@ CFLAGS+= -fno-pic -fno-PIC
 CFLAGS+= -no-pie -fno-PIE 
 CFLAGS+= -ffunction-sections -fdata-sections 
 CFLAGS+= -mno-fancy-math-387 -mno-ieee-fp 
-CFLAGS+= -std=gnu11 -march=nocona -malign-data=abi
+CFLAGS+= -std=gnu11 -march=nocona -malign-data=cacheline
 
 STRIP= -R .bss
 STRIP+=-R .gnu.hash
@@ -47,16 +38,12 @@ STRIP+=-R .note
 STRIP+=-R .comment
 STRIP+=-R .eh_frame
 STRIP+=-R .eh_frame_hdr
-STRIP+=-R .note.gnu.build-id
 STRIP+=-R .got
 STRIP+=-R .got.plt
 STRIP+=-R .gnu.version
 STRIP+=-R .shstrtab
 STRIP+=-R .gnu.version_r
-STRIP+=-R .note.ABI-tag
-STRIP+=-R .note.gnu.gold-version
-STRIP+=-S
-
+STRIP+=-R .data
 
 main.o: $(SRC)/tetris.c
 	$(CC) -c -o $@ $< $(CFLAGS) 
@@ -85,7 +72,7 @@ vondehi.elf: vondehi/vondehi.asm
 t2k: vondehi.elf main.lzma
 	cat $^ > $@
 	chmod +x t2k
-	rm main.* vondehi.elf
+	-rm main.* vondehi.elf
 	wc -c t2k
 
 all: t2k

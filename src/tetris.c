@@ -28,8 +28,7 @@ void shuffle()
     int result=7;
     while(result==7||result==nCurrentPiece)
     {
-        result=SDL_GetTicks();
-        result&=7;
+        result=SDL_GetTicks()&7;
     }
     nCurrentPiece=result;
 }
@@ -231,8 +230,9 @@ void drawBufferSDL()
             int i=nFieldWidth*y+x;
 
             drawRect(x*50+10,y*50+10,48,(int)(colors[(int)(pBackBuffer[i])]));
+
             // if(pBackBuffer[i]!=9)
-            //     drawRect(x*50+15,y*50+15,38,(int)(0));
+                // drawRect(x*50+15,y*50+15,38,(int)(0));
         }
     }
     SDL_UpdateWindowSurface(window);
@@ -265,6 +265,7 @@ void DropLine(int line)
 
 void InitPlayField()
 {
+    nCurrentX=(nFieldWidth>>2)+1;
     _memset(pBackBuffer,9,nFieldWidth*nFieldHeight);
     for(int y=0;y<nFieldHeight-1;y++)
     {
