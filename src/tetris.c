@@ -84,7 +84,7 @@ void audio_callback(void *unused, Uint8 *byte_stream, int byte_stream_length)
                 counter[j]=(counter[j]>=freq)?0:counter[j];
                 // temp>>=j-(j>>1)+1;
                 // temp*=vol[j]/512.0/4;
-                freq>>=3;
+                freq>>=2;
                 stream[i]+=(((++counter[j]<=freq)?vol[j]:-vol[j]));
             }
         }
@@ -288,7 +288,7 @@ void updateGame()
         if(isLineComplete(py))
         {
             multi+=25;
-            score+=25;
+            score+=multi;
             DropLine(py);
         }
     }

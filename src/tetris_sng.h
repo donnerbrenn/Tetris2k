@@ -2,7 +2,7 @@
 #define PATTERN_H
 #define LENGTH 4
 #define VOICES 3
-#define SPEED 5000
+#define SPEED 10850
 #define PATTERNLENGTH 64
 
 const char order[]={0,1,0,1,2,3,0,1};

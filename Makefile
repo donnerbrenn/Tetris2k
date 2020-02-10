@@ -45,6 +45,7 @@ STRIP+=-R .gnu.version
 STRIP+=-R .shstrtab
 STRIP+=-R .gnu.version_r
 STRIP+=-R .data
+STRIP+=-R .note.gnu.gold-version
 
 main.o: $(SRC)/tetris.c
 	$(CC) -c -o $@ $< $(CFLAGS) 
@@ -57,7 +58,7 @@ main.nover: main.elf
 	./noelfver $< > $@
 	
 main.stripped: main.nover
-	objcopy $< $(STRIP) -R .note.gnu.gold-version
+	objcopy $< $(STRIP) 
 	readelf -as $<
 	sstrip -z $<
 	mv $< $@

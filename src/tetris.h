@@ -13,8 +13,8 @@
 #define nFieldHeight 18
 #define SCREEN_WIDTH 620
 #define SCREEN_HEIGHT 960
-#define sample_rate 44100
-#define buffersize 128
+#define sample_rate 96000
+#define buffersize 4096
 #define FONTSIZE 8
 
 //tetris variables
