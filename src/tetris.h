@@ -14,7 +14,7 @@
 #define SCREEN_WIDTH 620
 #define SCREEN_HEIGHT 960
 #define sample_rate 44100
-#define buffersize 1024
+#define buffersize 128
 #define FONTSIZE 8
 
 //tetris variables

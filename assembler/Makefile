@@ -1,10 +1,14 @@
-default: all
-
-BIN=bin
-OBJ=obj
-SRC=src
-
-CC=cc-8
+STRIP= -R .bss
+STRIP+=-R .note
+STRIP+=-R .comment
+STRIP+=-R .eh_frame
+STRIP+=-R .eh_frame_hdr
+STRIP+=-R .got
+STRIP+=-R .got.plt
+STRIP+=-R .gnu.hash
+STRIP+=-R .gnu
+STRIP+=-R .shstrtab
+STRIP+=-R .data
 
 LIBS=-lSDL2
 LDFLAGS= $(LIBS) 
@@ -32,52 +36,40 @@ CFLAGS+= -ffunction-sections -fdata-sections
 CFLAGS+= -mno-fancy-math-387 -mno-ieee-fp 
 CFLAGS+= -std=gnu11 -march=nocona -malign-data=cacheline
 
-STRIP= -R .bss
-STRIP+=-R .gnu.hash
-STRIP+=-R .note
-STRIP+=-R .note.GNU-stack
-STRIP+=-R .comment
-STRIP+=-R .eh_frame
-STRIP+=-R .eh_frame_hdr
-STRIP+=-R .got
-STRIP+=-R .got.plt
-STRIP+=-R .gnu.version
-STRIP+=-R .shstrtab
-STRIP+=-R .gnu.version_r
-STRIP+=-R .data
+GCC=gcc-8
 
-main.o: $(SRC)/tetris.c
-	$(CC) -c -o $@ $< $(CFLAGS) 
-	wc -c $@
-
-main.elf: main.o
-	 $(CC) $(CFLAGS) $(LDFLAGS)  $< -o $@ -Wl,--verbose
-
-main.nover: main.elf
+t2k.noelfver: t2k.elf
 	./noelfver $< > $@
-	
-main.stripped: main.nover
-	strip $< $(STRIP) 
+
+t2k.stripped: t2k.noelfver
+	strip $< $(STRIP)
 	readelf -as $<
 	sstrip -z $<
 	mv $< $@
 	wc -c $@
 
-main.lzma: main.stripped
+
+
+t2k.elf: assembler.S
+	$(GCC) -c -o $@.o $< $(CFLAGS)
+	$(GCC) $(CFLAGS) $(LDFLAGS)  $@.o -o $@ -Wl,--verbose
+	wc -c $@
+
+t2k.packed: t2k.stripped
 	python3 opt_lzma.py $< -o $@
 
-vondehi.elf: vondehi/vondehi.asm
-	-rm $@
-	nasm -fbin  -DNO_CHEATING -DNO_UBUNTU_COMPAT -o"$@" "$<"
-
-t2k: vondehi.elf main.lzma
+t2k.vndh: vondehi.elf t2k.packed
 	cat $^ > $@
-	chmod +x t2k
-	#-rm main.* vondehi.elf
-	wc -c t2k
+	chmod +x $@
+
+t2k: t2k.vndh
+	mv $< $@
+	wc -c $@
+
 
 all: t2k
 
-clean:
-	-rm t2k main*
-	-rm vondehi
+clean: 
+	-rm t2k*
+
+default: all
