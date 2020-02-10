@@ -10,3 +10,5 @@ smol.map
 main.elf.xz
 main.elf.lzma
 shelldropper.sh
+assembler
+assembler.S

@@ -22,11 +22,11 @@ static char pBuffer[nFieldHeight*nFieldWidth];
 static char pBackBuffer[nFieldWidth*nFieldHeight];
 static char nCurrentRotation;
 static char nCurrentX;
-static char nCurrentY=0;
-static int score=0;
-static int nCurrentPiece=0;
+static char nCurrentY;
+static int score;
+static int nCurrentPiece;
 static SDL_Window *window;
-static SDL_Surface *screenSurface=NULL;
+static SDL_Surface *screenSurface;
 static short *stream;
 
 static int song_clock=0;
@@ -37,17 +37,17 @@ static int notes[VOICES];
 
 static short vol[VOICES];
 static float hertz[VOICES];
-static int temp;
+static int freq;
+static unsigned int runtime=0;
 
 //__attribute__ ((noreturn))
-static void itoa(int val, char* buffer);
 static void ProcessEventsSDL();
 static void drawScore();
-static void drawBufferSDL();
+static void updateDisplay();
 static void placeTetromino(int piece,int x, int y, int rotation);
 static void DropLine(int line);
-static void InitPlayField();
-static void redraw();
+static void initGame();
+static void updateGame();
 static void drawcharacter(int num, int posX,int posY);
 static void audio_callback(void *unused, uint8_t *byte_stream, int byte_stream_length);
 static void updateBuffer();
@@ -57,6 +57,7 @@ static bool FallDown();
 static bool isLineComplete(int line);
 static float getFrq(int note);
 static void drawRect(int x, int y, int w, int col);
+
 static void _memcpy(void* dest, void* src, size_t numbytes);
 static void _memset(void* dest,char val,size_t numbytes);
 inline char Rotate(char px, char py, char r);

@@ -4,7 +4,7 @@ BIN=bin
 OBJ=obj
 SRC=src
 
-CC=cc-8
+CC=gcc-8
 
 LIBS=-lSDL2
 LDFLAGS= $(LIBS) 
@@ -57,7 +57,7 @@ main.nover: main.elf
 	./noelfver $< > $@
 	
 main.stripped: main.nover
-	strip $< $(STRIP) 
+	objcopy $< $(STRIP) -R .note.gnu.gold-version
 	readelf -as $<
 	sstrip -z $<
 	mv $< $@
@@ -73,7 +73,7 @@ vondehi.elf: vondehi/vondehi.asm
 t2k: vondehi.elf main.lzma
 	cat $^ > $@
 	chmod +x t2k
-	#-rm main.* vondehi.elf
+	-rm main.* vondehi.elf
 	wc -c t2k
 
 all: t2k
