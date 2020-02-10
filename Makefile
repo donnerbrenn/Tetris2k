@@ -80,4 +80,3 @@ all: t2k
 
 clean:
 	-rm t2k main*
-	-rm vondehi
