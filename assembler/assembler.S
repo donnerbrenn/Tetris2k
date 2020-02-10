@@ -523,67 +523,67 @@ _start:
 buffer.37481:
 	.zero	15
 	.section	.bss.i.37543,"aw",@nobits
-	.align 4
+	.align 1
 	.type	i.37543, @object
 	.size	i.37543, 4
 i.37543:
 	.zero	4
 	.section	.bss.hertz,"aw",@nobits
-	.align 4
+	.align 1
 	.type	hertz, @object
 	.size	hertz, 12
 hertz:
 	.zero	12
 	.section	.bss.vol,"aw",@nobits
-	.align 2
+	.align 1
 	.type	vol, @object
 	.size	vol, 6
 vol:
 	.zero	6
 	.section	.bss.previous,"aw",@nobits
-	.align 4
+	.align 1
 	.type	previous, @object
 	.size	previous, 12
 previous:
 	.zero	12
 	.section	.bss.counter,"aw",@nobits
-	.align 4
+	.align 1
 	.type	counter, @object
 	.size	counter, 12
 counter:
 	.zero	12
 	.section	.bss.noteCnt,"aw",@nobits
-	.align 4
+	.align 1
 	.type	noteCnt, @object
 	.size	noteCnt, 4
 noteCnt:
 	.zero	4
 	.section	.bss.song_clock,"aw",@nobits
-	.align 4
+	.align 1
 	.type	song_clock, @object
 	.size	song_clock, 4
 song_clock:
 	.zero	4
 	.section	.bss.screenSurface,"aw",@nobits
-	.align 8
+	.align 1
 	.type	screenSurface, @object
 	.size	screenSurface, 8
 screenSurface:
 	.zero	8
 	.section	.bss.window,"aw",@nobits
-	.align 8
+	.align 1
 	.type	window, @object
 	.size	window, 8
 window:
 	.zero	8
 	.section	.bss.nCurrentPiece,"aw",@nobits
-	.align 4
+	.align 1
 	.type	nCurrentPiece, @object
 	.size	nCurrentPiece, 4
 nCurrentPiece:
 	.zero	4
 	.section	.bss.score,"aw",@nobits
-	.align 4
+	.align 1
 	.type	score, @object
 	.size	score, 4
 score:
@@ -604,20 +604,20 @@ nCurrentX:
 nCurrentRotation:
 	.zero	1
 	.section	.bss.pBackBuffer,"aw",@nobits
-	.align 64
+	.align 1
 	.type	pBackBuffer, @object
 	.size	pBackBuffer, 216
 pBackBuffer:
 	.zero	216
 	.section	.bss.pBuffer,"aw",@nobits
-	.align 64
+	.align 1
 	.type	pBuffer, @object
 	.size	pBuffer, 216
 pBuffer:
 	.zero	216
 	.globl	cpatterns
 	.section	.text.cpatterns,"a"
-	.align 8
+	.align 1
 	.type	cpatterns, @object
 	.size	cpatterns, 256
 cpatterns:
@@ -1164,7 +1164,7 @@ order:
 	.ascii	"\001"
 	.globl	characters2
 	.section	.text.characters2,"a"
-	.align 16
+	.align 1
 	.type	characters2, @object
 	.size	characters2, 22
 characters2:
@@ -1181,7 +1181,7 @@ characters2:
 	.value	31695
 	.globl	characters
 	.section	.text.characters,"a"
-	.align 2
+	.align 1
 	.type	characters, @object
 	.size	characters, 14
 characters:
@@ -1194,7 +1194,7 @@ characters:
 	.value	17952
 	.globl	colors
 	.section	.text.colors,"a"
-	.align 32
+	.align 1
 	.type	colors, @object
 	.size	colors, 40
 colors:
@@ -1209,13 +1209,13 @@ colors:
 	.long	16777215
 	.long	8421504
 	.section	.text.cst4,"aM",@progbits,4
-	.align 4
+	.align 1
 .LC0:
 	.long	1099091988
-	.align 4
+	.align 1
 .LC1:
 	.long	1065852003
-	.align 4
+	.align 1
 .LC2:
 	.long	1194083328
 	.ident	"GCC: (GNU) 9.2.0"
