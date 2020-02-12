@@ -1,4 +1,5 @@
 
+#define SDL_DISABLE_IMMINTRIN_H 1
 #include <SDL2/SDL.h>
 #include "symbols.h"
 #include "tetris_sng.h"

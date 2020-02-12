@@ -153,12 +153,7 @@ void ProcessEventsSDL()
     {
         if (e.type==SDL_QUIT)
         {
-            asm volatile(".intel_syntax noprefix");
-            asm volatile("push 231"); //exit_group
-            asm volatile("pop rax");
-            asm volatile("xor edi, edi");
-            asm volatile("syscall");
-            asm volatile(".att_syntax prefix");
+            asm volatile(".intel_syntax noprefix;push 231;pop rax;xor edi, edi;syscall;.att_syntax prefix");
             __builtin_unreachable();
         }
         if(e.type==SDL_KEYDOWN)
