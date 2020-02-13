@@ -78,7 +78,7 @@ t2k.elf: src/t2k.o
 t2k.stripped: t2k.elf
 	objcopy $(STRIP) $<
 	./noelfver $< > $@
-	# readelf -S $@
+	# readelf -a  $@
 	sstrip -z $@
 	wc -c $@
 
@@ -86,13 +86,12 @@ t2k.lzma: t2k.stripped
 	python3 opt_lzma.py $< -o $@
 
 t2k.smol: src/t2k.o #not implemented - hopefully i can find a solution for the crashing smol-binary
-	# python3 smol/src/smol.py -d -lSDL2 src/tetris.o "t2k.smol.syms.asm"
-	# nasm -f elf64 -g -F dwarf -DUSE_INTERP -DUSE_DNLOAD_LOADER -I "smol/rt/" -o "src/t2k.smol.stub.o" "t2k.smol.syms.asm"
-	# ld -m elf_x86_64 -nostartfiles --oformat=binary -T smol/ld/link.ld -Map=main.smol.map --cref -o "t2k.smol" src/t2k.smol.stub.o
-	# mv t2k.smol $@.noelfver
+	python3 smol/src/smol.py  -lSDL2 "src/t2k.o" "t2k.smol.syms.asm"
+	nasm -I smol/rt/ -f elf64 -DALIGN_STACK -DUSE_INTERP  t2k.smol.syms.asm -o stub.t2k.start.o
+	cc -Wl,-Map=t2k.map -m64 -T smol/ld/link.ld -Wl,--oformat=binary -m64 -nostartfiles -nostdlib src/t2k.o stub.t2k.start.o -o $@
 
 
-t2k: vondehi/vondehi.elf t2k.lzma 
+t2k: vondehi/vondehi.elf t2k.lzma #t2k.smol
 	cat $^ > $@
 	chmod +x $@
 	rm t2k.*

@@ -63,10 +63,10 @@ void audio_callback(void *unused, Uint8 *byte_stream, int byte_stream_length)
                 notes[channel]=cpatterns[channel][order[(noteCnt>>6)&7]][noteCnt&63];
                 if(notes[channel]!=previous[channel]&&notes[channel])
                 {
-                    vol[channel]=2048;
+                    vol[channel]=1024;
                     previous[channel]=notes[channel];
                 }
-                vol[channel]-=200;
+                vol[channel]-=100;
                
                 if(notes[channel])
                 {
@@ -82,8 +82,8 @@ void audio_callback(void *unused, Uint8 *byte_stream, int byte_stream_length)
             {
                 freq=sample_rate/hertz[j]; 
                 counter[j]=(counter[j]>=freq)?0:counter[j];
-                // temp>>=j-(j>>1)+1;
-                // temp*=vol[j]/512.0/4;
+                // freq>>=j-(j>>1)+1;
+                // freq*=vol[j]/512.0/16;
                 freq>>=2;
                 stream[i]+=(((++counter[j]<=freq)?vol[j]:-vol[j]));
             }
@@ -304,12 +304,17 @@ void initSDL()
     SDL_PauseAudio(0);
     
     window=SDL_CreateWindow(NULL,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,0);
-    screenSurface = SDL_GetWindowSurface( window );
+    screenSurface = SDL_GetWindowSurface(window);
 }
+
+// void _start()
+// {
+//     asm("call main");
+// }
 
 void _start()
 {
-    asm volatile("sub $8, %rsp\n");
+    asm ("sub $8, %rsp\n");
     initGame();
     initSDL();
     while(true)

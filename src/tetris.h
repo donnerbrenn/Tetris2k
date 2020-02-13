@@ -47,7 +47,7 @@ static void drawScore();
 static void updateDisplay();
 static void placeTetromino(int piece,int x, int y, int rotation);
 static void DropLine(int line);
-static void initGame();
+inline void initGame();
 static void updateGame();
 static void drawcharacter(int num, int posX,int posY);
 static void audio_callback(void *unused, uint8_t *byte_stream, int byte_stream_length);
@@ -58,9 +58,9 @@ static bool FallDown();
 static bool isLineComplete(int line);
 static float getFrq(int note);
 static void drawRect(int x, int y, int w, int col);
-
 static void _memcpy(void* dest, void* src, size_t numbytes);
 static void _memset(void* dest,char val,size_t numbytes);
+
 inline char Rotate(char px, char py, char r);
 inline bool DoesPieceFit(int nTetromino, int nRotation, int nPosX, int nPosY);
 void _start();

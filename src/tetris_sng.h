@@ -1,13 +1,13 @@
 #ifndef PATTERN_H
 #define PATTERN_H
-#define LENGTH 4
+#define PATTERNCOUNT 4
 #define VOICES 3
 #define SPEED 10850
 #define PATTERNLENGTH 64
 
 const char order[]={0,1,0,1,2,3,0,1};
 
-const char cpatterns[VOICES][LENGTH][PATTERNLENGTH]=
+const char cpatterns[VOICES][PATTERNCOUNT][PATTERNLENGTH]=
 {
     {
         {62,0 ,0 ,0 ,57,0 ,58,0 ,60,0 ,62,60,58,0 ,57,0 ,55,0 ,0 ,0 ,55,0 ,58,0 ,62,0 ,0 ,0 ,60,0 ,58,0 ,57,0 ,0 ,0 ,57,0 ,58,0 ,60,0 ,0 ,0 ,62,0 ,0 ,0 ,58,0 ,0 ,0 ,55,0 ,0 ,0 ,55,0 ,0 ,0 ,0 ,0 ,0 ,0 },
