@@ -31,8 +31,7 @@ LDFLAGS+=-no-pie -fno-pic
 LDFLAGS+=-Wl,--whole-archive
 LDFLAGS+=-Wl,--print-gc-sections
 LDFLAGS+=-Wl,--spare-dynamic-tags=6
-# LDFLAGS+=-Wl,-flto
-
+LDFLAGS+=-Wl,-flto
 
 STRIP=-R .gnu.hash
 STRIP+=-R .comment
@@ -53,7 +52,8 @@ STRIP+=-R .fini
 STRIP+=-R .hash
 STRIP+=-R .init_array 
 STRIP+=-R .fini_array 
-# STRIP+=-R .rela.got
+# STRIP+=-R .note.GNU-stack
+
 
 
 
@@ -68,21 +68,21 @@ vondehi/vondehi.elf: vondehi/vondehi.asm
 	nasm -fbin  -DNO_CHEATING -DNO_UBUNTU_COMPAT -o"$@" "$<"
 
 
-%.o: %.cpp
+%.o: %.S
 	$(CC) $(CFLAGS) -c $< -o $@
 
 t2k.elf: src/t2k.o
 	$(CC) $(CFLAGS) $(LDFLAGS) $< -o $@
 
 
-t2k.stripped: t2k.elf
+%.stripped: %.elf
 	objcopy $(STRIP) $<
 	./noelfver $< > $@
 	# readelf -a  $@
 	sstrip -z $@
 	wc -c $@
 
-t2k.lzma: t2k.stripped
+%.lzma: %.stripped
 	python3 opt_lzma.py $< -o $@
 
 t2k.smol: src/t2k.o #not implemented - hopefully i can find a solution for the crashing smol-binary

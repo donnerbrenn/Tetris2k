@@ -1440,5 +1440,3 @@ colors:
 	.align 4
 .LC2:
 	.long	1203470336
-	.ident	"GCC: (GNU) 8.3.0"
-	.section	.note.GNU-stack,"",@progbits
