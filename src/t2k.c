@@ -35,7 +35,7 @@ void shuffle()
 
 void updateBuffer()
 {
-    _memcpy(pBuffer,pBackBuffer,nFieldHeight*nFieldWidth); 
+    _memcpy(pBuffer,pBackBuffer,FIELDHEIGHT*FIELDWIDTH); 
 }
 
 float getFrq(int note)
@@ -80,12 +80,12 @@ void audio_callback(void *unused, Uint8 *byte_stream, int byte_stream_length)
         {
             if(vol[j]>0)
             {
-                freq=sample_rate/hertz[j]; 
+                freq=SAMPLERATE/hertz[j]; 
                 counter[j]=(counter[j]>=freq)?0:counter[j];
                 // freq>>=j-(j>>1)+1;
                 // freq*=vol[j]/512.0/16;
                 freq>>=2;
-                stream[i]+=(((++counter[j]<=freq)?vol[j]:-vol[j]));
+                stream[i]+=(++counter[j]<=freq)?vol[j]:-vol[j];
             }
         }
         ++song_clock;
@@ -115,8 +115,8 @@ bool DoesPieceFit(int nTetromino, int nRotation, int nPosX, int nPosY)
             //Get index into piece
             short pi = (Rotate((px),(py),(nRotation)));
             //Get index into field
-            short fi = (nPosY+py)*nFieldWidth+(nPosX+px);
-            if(nPosX + py >=0 && nPosY + py <nFieldHeight && characters[nTetromino]&(1 << pi) && pBuffer[fi]!=0)
+            short fi = (nPosY+py)*FIELDWIDTH+(nPosX+px);
+            if(nPosX + py >=0 && nPosY + py <FIELDHEIGHT && characters[nTetromino]&(1 << pi) && pBuffer[fi]!=0)
             {
                 if(characters[nTetromino]&(1 << pi) && pBuffer[fi]!=0)
                 {
@@ -140,7 +140,7 @@ bool FallDown()
         shuffle();
         nCurrentRotation=0;
         nCurrentY= 0;
-        nCurrentX = (nFieldWidth>>1)-2;
+        nCurrentX = (FIELDWIDTH>>1)-2;
         updateBuffer();
         return (!DoesPieceFit(nCurrentPiece,nCurrentRotation,nCurrentX,nCurrentY));
     }
@@ -191,14 +191,14 @@ void drawcharacter(int num, int posX,int posY)
         }
 }
 
-void drawScore()
+void drawScore(int value, int x)
 {
     static char buffer[15];
-    SDL_itoa(score,buffer,10);
+    SDL_itoa(value,buffer,10);
     int i=0;
     while(buffer[i])
     {
-        drawcharacter(buffer[i++]-'0'+1,((FONTSIZE<<2)*i),SCREEN_HEIGHT-45);
+        drawcharacter(buffer[i++]-'0'+1,((FONTSIZE<<2)*i)+x,SCREEN_HEIGHT-45);
     }
 }
 
@@ -206,13 +206,14 @@ void updateDisplay()
 {
     SDL_FillRect(screenSurface,NULL,0x12121212);
     // drawRect(0,0,SCREEN_HEIGHT,0x12121212);
-     drawScore();
+     drawScore(score,10);
+     drawScore(hiscore,400);
 
-    for(int y=0;y<nFieldHeight;++y)
+    for(int y=0;y<FIELDHEIGHT;++y)
     {
-        for(int x=0;x<nFieldWidth;++x)
+        for(int x=0;x<FIELDWIDTH;++x)
         {
-            int i=nFieldWidth*y+x;
+            int i=FIELDWIDTH*y+x;
 
             drawRect(x*50+10,y*50+10,48,(int)(colors[(int)(pBackBuffer[i])]));
 
@@ -231,7 +232,7 @@ void placeTetromino(int piece,int x, int y, int rotation)
         {
             if((1 << (Rotate((px),(py),(rotation)))) & characters[piece])
             {
-                int i=(y+py)*nFieldWidth+(x+px);
+                int i=(y+py)*FIELDWIDTH+(x+px);
                 pBackBuffer[i]=(piece+1);
             }
         }
@@ -240,9 +241,9 @@ void placeTetromino(int piece,int x, int y, int rotation)
 
 void DropLine(int line)
 {
-    for(line=(++line)*nFieldWidth;line>12;--line)
+    for(line=(++line)*FIELDWIDTH;line>12;--line)
     {
-        pBackBuffer[line]=pBackBuffer[line-nFieldWidth];
+        pBackBuffer[line]=pBackBuffer[line-FIELDWIDTH];
     }
     _memset(pBackBuffer+1,0,9);
     updateBuffer();
@@ -253,20 +254,20 @@ void initGame()
     score=0;
     // runtime=0;
     shuffle();
-    nCurrentX=(nFieldWidth>>2)+1;
-    _memset(pBackBuffer,9,nFieldWidth*nFieldHeight);
-    for(int y=0;y<nFieldHeight-1;y++)
+    nCurrentX=(FIELDWIDTH>>2)+1;
+    _memset(pBackBuffer,9,FIELDWIDTH*FIELDHEIGHT);
+    for(int y=0;y<FIELDHEIGHT-1;y++)
     {
-        _memset(pBackBuffer+nFieldWidth*y+1,0,10);
+        _memset(pBackBuffer+FIELDWIDTH*y+1,0,10);
     }
     updateBuffer();
 }
 
 bool isLineComplete(int line)
 {
-    for(int px=0;px<nFieldWidth;++px)
+    for(int px=0;px<FIELDWIDTH;++px)
     {
-        if(!pBackBuffer[line*nFieldWidth+px])
+        if(!pBackBuffer[line*FIELDWIDTH+px])
         {
             return false;
         }
@@ -277,8 +278,8 @@ bool isLineComplete(int line)
 void updateGame()
 {
     int multi=0;
-    _memcpy(pBackBuffer,pBuffer,nFieldHeight*nFieldWidth);
-    for(int py=0;py<nFieldHeight-1;++py)
+    _memcpy(pBackBuffer,pBuffer,FIELDHEIGHT*FIELDWIDTH);
+    for(int py=0;py<FIELDHEIGHT-1;++py)
     {
         if(isLineComplete(py))
         {
@@ -287,6 +288,7 @@ void updateGame()
             DropLine(py);
         }
     }
+    hiscore=score>hiscore?score:hiscore;
     placeTetromino(nCurrentPiece,nCurrentX,nCurrentY,nCurrentRotation);
     SDL_Delay(15);
 }
@@ -295,10 +297,10 @@ void initSDL()
 {
     // SDL_Init(SDL_INIT_EVERYTHING);
     SDL_AudioSpec want;           
-    want.freq = sample_rate;
+    want.freq = SAMPLERATE;
     want.format = AUDIO_S16SYS;
     want.channels=1;
-    want.samples = buffersize;
+    want.samples = BUFFERSIZE;
     want.callback = audio_callback;    
     SDL_OpenAudio((&want), NULL);
     SDL_PauseAudio(0);

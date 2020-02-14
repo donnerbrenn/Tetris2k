@@ -1,7 +1,7 @@
 CC = cc-8
 
-CFLAGS = -Os -s -march=nocona
-CFLAGS+= -fno-plt
+CFLAGS = -Os -s -march=nocona  -fverbose-asm
+CFLAGS+= -fno-plt #-fdump-tree-all
 CFLAGS+= -fno-stack-protector -fno-stack-check
 CFLAGS+= -fno-unwind-tables -fno-asynchronous-unwind-tables -fno-exceptions
 CFLAGS+= -funsafe-math-optimizations -ffast-math
@@ -94,6 +94,7 @@ t2k.smol: src/t2k.o #not working - hopefully i can find a solution for the crash
 	python3 smol/src/smol.py  -lSDL2 "src/t2k.o" "t2k.smol.syms.asm"
 	nasm -I smol/rt/ -f elf64 -DALIGN_STACK -DUSE_INTERP  t2k.smol.syms.asm -o stub.t2k.start.o
 	cc -Wl,-Map=t2k.map -m64 -T smol/ld/link.ld -Wl,--oformat=binary -m64 -nostartfiles -nostdlib src/t2k.o stub.t2k.start.o -o $@
+	wc -c $@
 
 
 t2k: vondehi/vondehi.elf t2k.lzma #t2k.smol

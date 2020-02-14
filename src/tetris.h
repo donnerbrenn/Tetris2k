@@ -10,21 +10,22 @@
 
 //defines
 // #define DEBUG
-#define nFieldWidth 12
-#define nFieldHeight 18
+#define FIELDWIDTH 12
+#define FIELDHEIGHT 18
 #define SCREEN_WIDTH 620
 #define SCREEN_HEIGHT 960
-#define sample_rate 96000
-#define buffersize 4096
+#define SAMPLERATE 96000
+#define BUFFERSIZE 4096
 #define FONTSIZE 8
 
 //tetris variables
-static char pBuffer[nFieldHeight*nFieldWidth];
-static char pBackBuffer[nFieldWidth*nFieldHeight];
+static char pBuffer[FIELDHEIGHT*FIELDWIDTH];
+static char pBackBuffer[FIELDWIDTH*FIELDHEIGHT];
 static char nCurrentRotation;
 static char nCurrentX;
 static char nCurrentY;
 static int score;
+static int hiscore;
 static int nCurrentPiece;
 static SDL_Window *window;
 static SDL_Surface *screenSurface;
@@ -43,7 +44,7 @@ static unsigned int runtime=0;
 
 //__attribute__ ((noreturn))
 static void ProcessEventsSDL();
-static void drawScore();
+static void drawScore(int value, int x);
 static void updateDisplay();
 static void placeTetromino(int piece,int x, int y, int rotation);
 static void DropLine(int line);
