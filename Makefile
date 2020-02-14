@@ -1,6 +1,6 @@
 CC = cc-8
 
-CFLAGS = -Os -s -march=nocona 
+CFLAGS = -Os -s -march=nocona
 CFLAGS+= -fno-plt
 CFLAGS+= -fno-stack-protector -fno-stack-check
 CFLAGS+= -fno-unwind-tables -fno-asynchronous-unwind-tables -fno-exceptions
@@ -31,7 +31,7 @@ LDFLAGS+=-no-pie -fno-pic
 LDFLAGS+=-Wl,--whole-archive
 LDFLAGS+=-Wl,--print-gc-sections
 LDFLAGS+=-Wl,--spare-dynamic-tags=6
-LDFLAGS+=-Wl,-flto
+LDFLAGS+=-Wl,-flto 
 
 STRIP=-R .gnu.hash
 STRIP+=-R .comment
@@ -52,7 +52,8 @@ STRIP+=-R .fini
 STRIP+=-R .hash
 STRIP+=-R .init_array 
 STRIP+=-R .fini_array 
-# STRIP+=-R .note.GNU-stack
+
+
 
 
 
@@ -68,8 +69,12 @@ vondehi/vondehi.elf: vondehi/vondehi.asm
 	nasm -fbin  -DNO_CHEATING -DNO_UBUNTU_COMPAT -o"$@" "$<"
 
 
-%.o: %.S
-	$(CC) $(CFLAGS) -c $< -o $@
+%.o: %.c
+	$(CC) $(CFLAGS) -S $< -o $@.S
+	grep -v 'GCC:\|note.GNU-stack' $@.S > $@.S.S
+	mv $@.S.S $@.S
+	$(CC) $(CFLAGS) -c $@.S -o $@
+
 
 t2k.elf: src/t2k.o
 	$(CC) $(CFLAGS) $(LDFLAGS) $< -o $@
@@ -78,14 +83,14 @@ t2k.elf: src/t2k.o
 %.stripped: %.elf
 	objcopy $(STRIP) $<
 	./noelfver $< > $@
-	# readelf -a  $@
+	readelf -a  $@
 	sstrip -z $@
 	wc -c $@
 
 %.lzma: %.stripped
 	python3 opt_lzma.py $< -o $@
 
-t2k.smol: src/t2k.o #not implemented - hopefully i can find a solution for the crashing smol-binary
+t2k.smol: src/t2k.o #not working - hopefully i can find a solution for the crashing smol-binary
 	python3 smol/src/smol.py  -lSDL2 "src/t2k.o" "t2k.smol.syms.asm"
 	nasm -I smol/rt/ -f elf64 -DALIGN_STACK -DUSE_INTERP  t2k.smol.syms.asm -o stub.t2k.start.o
 	cc -Wl,-Map=t2k.map -m64 -T smol/ld/link.ld -Wl,--oformat=binary -m64 -nostartfiles -nostdlib src/t2k.o stub.t2k.start.o -o $@
