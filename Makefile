@@ -58,6 +58,7 @@ all: t2k
 
 vondehi.elf: vondehi/vondehi.asm
 	nasm -fbin  -DNO_CHEATING -DNO_UBUNTU_COMPAT -o"$@" "$<"
+	wc -c $@
 
 %.o: %.c
 	$(CC) $(CFLAGS) -S $< -o $@.S

@@ -153,6 +153,7 @@ void ProcessEventsSDL()
     {
         if (e.type==SDL_QUIT)
         {
+            SDL_DestroyWindow(window);
             asm volatile(".intel_syntax noprefix;push 231;pop rax;xor edi, edi;syscall;.att_syntax prefix");
             __builtin_unreachable();
         }
@@ -295,7 +296,7 @@ void updateGame()
 
 void initSDL()
 {
-    // SDL_Init(SDL_INIT_EVERYTHING);
+    SDL_Init(SDL_INIT_EVERYTHING);
     SDL_AudioSpec want;           
     want.freq = SAMPLERATE;
     want.format = AUDIO_S16SYS;
