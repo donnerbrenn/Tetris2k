@@ -90,6 +90,7 @@ t2k: vondehi.elf t2k.lzma #t2k.smol
 	chmod +x $@
 	rm t2k.*
 	rm src/t2k.o
+	rm vondehi.elf
 	wc -c $@
 
 clean:
