@@ -53,28 +53,17 @@ STRIP+=-R .hash
 STRIP+=-R .init_array 
 STRIP+=-R .fini_array 
 
-
-
-
-
-
-
 all: 
 all: t2k
 
-debug: LFLAGS += -ggdb
-debug: cmix
-
-vondehi/vondehi.elf: vondehi/vondehi.asm
+vondehi.elf: vondehi/vondehi.asm
 	nasm -fbin  -DNO_CHEATING -DNO_UBUNTU_COMPAT -o"$@" "$<"
-
 
 %.o: %.c
 	$(CC) $(CFLAGS) -S $< -o $@.S
 	grep -v 'GCC:\|note.GNU-stack' $@.S > $@.S.S
 	mv $@.S.S $@.S
 	$(CC) $(CFLAGS) -c $@.S -o $@
-
 
 t2k.elf: src/t2k.o
 	$(CC) $(CFLAGS) $(LDFLAGS) $< -o $@
@@ -96,8 +85,7 @@ t2k.smol: src/t2k.o #not working - hopefully i can find a solution for the crash
 	cc -Wl,-Map=t2k.map -m64 -T smol/ld/link.ld -Wl,--oformat=binary -m64 -nostartfiles -nostdlib src/t2k.o stub.t2k.start.o -o $@
 	wc -c $@
 
-
-t2k: vondehi/vondehi.elf t2k.lzma #t2k.smol
+t2k: vondehi.elf t2k.lzma #t2k.smol
 	cat $^ > $@
 	chmod +x $@
 	rm t2k.*
