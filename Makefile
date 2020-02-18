@@ -31,7 +31,7 @@ LDFLAGS+=-no-pie -fno-pic
 LDFLAGS+=-Wl,--whole-archive
 LDFLAGS+=-Wl,--print-gc-sections
 LDFLAGS+=-Wl,--spare-dynamic-tags=6
-LDFLAGS+=-Wl,-flto 
+LDFLAGS+=-Wl,-flto -T linker.lsd
 
 STRIP=-R .gnu.hash
 STRIP+=-R .comment

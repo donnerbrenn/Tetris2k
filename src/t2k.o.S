@@ -68,12 +68,12 @@ audio_callback:
 # src/t2k.c:57:     for (int i = 0; i < byte_stream_length>>1; ++i)
 	movl	%edx, %ecx	# byte_stream_length, byte_stream_length
 	sarl	%ecx	# byte_stream_length
-	movl	song_clock(%rip), %r11d	# song_clock, song_clock_lsm.59
-	movl	noteCnt(%rip), %r9d	# noteCnt, noteCnt_lsm.57
+	movl	song_clock(%rip), %r11d	# song_clock, song_clock_lsm.58
+	movl	noteCnt(%rip), %r9d	# noteCnt, noteCnt_lsm.56
 # src/t2k.c:57:     for (int i = 0; i < byte_stream_length>>1; ++i)
-	xorl	%edi, %edi	# ivtmp.92
-	xorl	%r8d, %r8d	# song_clock_lsm.60
-	xorl	%r10d, %r10d	# noteCnt_lsm.58
+	xorl	%edi, %edi	# ivtmp.91
+	xorl	%r8d, %r8d	# song_clock_lsm.59
+	xorl	%r10d, %r10d	# noteCnt_lsm.57
 # src/t2k.c:59:         if((song_clock)-(song_clock/SPEED*SPEED)==0)
 	movl	$10850, %ebx	#, tmp194
 # src/t2k.c:46:         freq*=1.05946f;
@@ -83,7 +83,7 @@ audio_callback:
 .L2:
 	leal	(%r11,%rdi), %eax	#, _84
 # src/t2k.c:57:     for (int i = 0; i < byte_stream_length>>1; ++i)
-	cmpl	%edi, %ecx	# ivtmp.92, _36
+	cmpl	%edi, %ecx	# ivtmp.91, _36
 	jle	.L34	#,
 # src/t2k.c:59:         if((song_clock)-(song_clock/SPEED*SPEED)==0)
 	cltd
@@ -92,34 +92,34 @@ audio_callback:
 	testl	%edx, %edx	# tmp142
 	jne	.L3	#,
 # src/t2k.c:63:                 notes[channel]=cpatterns[channel][order[(noteCnt>>6)&7]][noteCnt&63];
-	movl	%r9d, %eax	# noteCnt_lsm.57, tmp146
+	movl	%r9d, %eax	# noteCnt_lsm.56, tmp146
 	sarl	$6, %eax	#, tmp146
 # src/t2k.c:63:                 notes[channel]=cpatterns[channel][order[(noteCnt>>6)&7]][noteCnt&63];
 	andl	$7, %eax	#, tmp148
 	movsbq	order(%rax), %rax	# order, tmp149
 	salq	$6, %rax	#, tmp150
-	movl	%r9d, %edx	# noteCnt_lsm.57, tmp152
+	movl	%r9d, %edx	# noteCnt_lsm.56, tmp152
 	andl	$63, %edx	#, tmp152
 	leaq	cpatterns(%rax,%rdx), %r10	#, _76
 # src/t2k.c:63:                 notes[channel]=cpatterns[channel][order[(noteCnt>>6)&7]][noteCnt&63];
-	xorl	%eax, %eax	# ivtmp.81
+	xorl	%eax, %eax	# ivtmp.80
 .L8:
 # src/t2k.c:63:                 notes[channel]=cpatterns[channel][order[(noteCnt>>6)&7]][noteCnt&63];
-	movq	%rax, %rdx	# ivtmp.81, tmp154
+	movq	%rax, %rdx	# ivtmp.80, tmp154
 	salq	$8, %rdx	#, tmp154
 	movsbl	(%r10,%rdx), %edx	# MEM[base: _76, index: _74, offset: 0B], _10
 # src/t2k.c:64:                 if(notes[channel]!=previous[channel]&&notes[channel])
-	cmpl	%edx, previous(,%rax,4)	# _10, MEM[symbol: previous, index: ivtmp.81_96, step: 4, offset: 0B]
+	cmpl	%edx, previous(,%rax,4)	# _10, MEM[symbol: previous, index: ivtmp.80_96, step: 4, offset: 0B]
 	je	.L4	#,
 	testl	%edx, %edx	# _10
 	je	.L4	#,
 # src/t2k.c:66:                     vol[channel]=1024;
-	movw	$1024, vol(%rax,%rax)	#, MEM[symbol: vol, index: ivtmp.81_96, step: 2, offset: 0B]
+	movw	$1024, vol(%rax,%rax)	#, MEM[symbol: vol, index: ivtmp.80_96, step: 2, offset: 0B]
 # src/t2k.c:67:                     previous[channel]=notes[channel];
-	movl	%edx, previous(,%rax,4)	# _10, MEM[symbol: previous, index: ivtmp.81_96, step: 4, offset: 0B]
+	movl	%edx, previous(,%rax,4)	# _10, MEM[symbol: previous, index: ivtmp.80_96, step: 4, offset: 0B]
 .L4:
 # src/t2k.c:69:                 vol[channel]-=100;
-	subw	$100, vol(%rax,%rax)	#, MEM[symbol: vol, index: ivtmp.81_96, step: 2, offset: 0B]
+	subw	$100, vol(%rax,%rax)	#, MEM[symbol: vol, index: ivtmp.80_96, step: 2, offset: 0B]
 # src/t2k.c:71:                 if(notes[channel])
 	testl	%edx, %edx	# _10
 	je	.L6	#,
@@ -138,32 +138,32 @@ audio_callback:
 	jmp	.L5	#
 .L35:
 # src/t2k.c:73:                     hertz[channel]=getFrq(notes[channel]);
-	movss	%xmm0, hertz(,%rax,4)	# freq, MEM[symbol: hertz, index: ivtmp.81_96, step: 4, offset: 0B]
+	movss	%xmm0, hertz(,%rax,4)	# freq, MEM[symbol: hertz, index: ivtmp.80_96, step: 4, offset: 0B]
 .L6:
-	incq	%rax	# ivtmp.81
+	incq	%rax	# ivtmp.80
 # src/t2k.c:61:             for(int channel=0;channel<VOICES;++channel)
-	cmpq	$3, %rax	#, ivtmp.81
+	cmpq	$3, %rax	#, ivtmp.80
 	jne	.L8	#,
 # src/t2k.c:76:             noteCnt++;
-	incl	%r9d	# noteCnt_lsm.57
-	movb	$1, %r10b	#, noteCnt_lsm.58
+	incl	%r9d	# noteCnt_lsm.56
+	movb	$1, %r10b	#, noteCnt_lsm.57
 .L3:
 # src/t2k.c:78:         stream[i]=0;
-	movw	$0, (%rsi,%rdi,2)	#, MEM[base: byte_stream_50(D), index: ivtmp.92_61, step: 2, offset: 0B]
-	xorl	%eax, %eax	# ivtmp.62
+	movw	$0, (%rsi,%rdi,2)	#, MEM[base: byte_stream_50(D), index: ivtmp.91_61, step: 2, offset: 0B]
+	xorl	%eax, %eax	# ivtmp.61
 .L12:
 # src/t2k.c:81:             if(vol[j]>0)
-	movswl	vol(%rax,%rax), %edx	# MEM[symbol: vol, index: ivtmp.62_98, step: 2, offset: 0B],
+	movswl	vol(%rax,%rax), %edx	# MEM[symbol: vol, index: ivtmp.61_98, step: 2, offset: 0B],
 # src/t2k.c:81:             if(vol[j]>0)
 	testw	%dx, %dx	# _22
 	jle	.L9	#,
 # src/t2k.c:83:                 freq=SAMPLERATE/hertz[j]; 
 	movaps	%xmm2, %xmm0	# tmp199, tmp172
-	divss	hertz(,%rax,4), %xmm0	# MEM[symbol: hertz, index: ivtmp.62_98, step: 4, offset: 0B], tmp172
+	divss	hertz(,%rax,4), %xmm0	# MEM[symbol: hertz, index: ivtmp.61_98, step: 4, offset: 0B], tmp172
 # src/t2k.c:83:                 freq=SAMPLERATE/hertz[j]; 
 	cvttss2si	%xmm0, %ebp	# tmp172, _25
 # src/t2k.c:84:                 counter[j]=(counter[j]>=freq)?0:counter[j];
-	movl	counter(,%rax,4), %r8d	# MEM[symbol: counter, index: ivtmp.62_98, step: 4, offset: 0B], _26
+	movl	counter(,%rax,4), %r8d	# MEM[symbol: counter, index: ivtmp.61_98, step: 4, offset: 0B], _26
 # src/t2k.c:84:                 counter[j]=(counter[j]>=freq)?0:counter[j];
 	cmpl	%r8d, %ebp	# _26, _25
 	jg	.L10	#,
@@ -172,7 +172,7 @@ audio_callback:
 # src/t2k.c:88:                 stream[i]+=(++counter[j]<=freq)?vol[j]:-vol[j];
 	incl	%r8d	# _28
 # src/t2k.c:88:                 stream[i]+=(++counter[j]<=freq)?vol[j]:-vol[j];
-	movl	%r8d, counter(,%rax,4)	# _28, MEM[symbol: counter, index: ivtmp.62_98, step: 4, offset: 0B]
+	movl	%r8d, counter(,%rax,4)	# _28, MEM[symbol: counter, index: ivtmp.61_98, step: 4, offset: 0B]
 # src/t2k.c:87:                 freq>>=2;
 	sarl	$2, %ebp	#, tmp176
 # src/t2k.c:88:                 stream[i]+=(++counter[j]<=freq)?vol[j]:-vol[j];
@@ -182,27 +182,27 @@ audio_callback:
 	negl	%edx	# iftmp.17_41
 .L11:
 # src/t2k.c:88:                 stream[i]+=(++counter[j]<=freq)?vol[j]:-vol[j];
-	addw	%dx, (%rsi,%rdi,2)	# iftmp.17_41, MEM[base: byte_stream_50(D), index: ivtmp.92_61, step: 2, offset: 0B]
+	addw	%dx, (%rsi,%rdi,2)	# iftmp.17_41, MEM[base: byte_stream_50(D), index: ivtmp.91_61, step: 2, offset: 0B]
 .L9:
-	incq	%rax	# ivtmp.62
+	incq	%rax	# ivtmp.61
 # src/t2k.c:79:         for(int j=0;j<VOICES;++j)
-	cmpq	$3, %rax	#, ivtmp.62
+	cmpq	$3, %rax	#, ivtmp.61
 	jne	.L12	#,
-	incq	%rdi	# ivtmp.92
-	movb	$1, %r8b	#, song_clock_lsm.60
+	incq	%rdi	# ivtmp.91
+	movb	$1, %r8b	#, song_clock_lsm.59
 	jmp	.L2	#
 .L34:
 	testl	%ecx, %ecx	# _36
 	movl	$0, %edx	#, tmp178
 	cmovs	%edx, %ecx	# _36,, tmp178, tmp177
-	addl	%r11d, %ecx	# song_clock_lsm.59, song_clock_lsm.59
-	testb	%r10b, %r10b	# noteCnt_lsm.58
+	addl	%r11d, %ecx	# song_clock_lsm.58, song_clock_lsm.58
+	testb	%r10b, %r10b	# noteCnt_lsm.57
 	je	.L14	#,
-	movl	%r9d, noteCnt(%rip)	# noteCnt_lsm.57, noteCnt
+	movl	%r9d, noteCnt(%rip)	# noteCnt_lsm.56, noteCnt
 .L14:
-	testb	%r8b, %r8b	# song_clock_lsm.60
+	testb	%r8b, %r8b	# song_clock_lsm.59
 	je	.L1	#,
-	movl	%ecx, song_clock(%rip)	# song_clock_lsm.59, song_clock
+	movl	%ecx, song_clock(%rip)	# song_clock_lsm.58, song_clock
 .L1:
 # src/t2k.c:93: }
 	popq	%rbx	#
@@ -245,7 +245,7 @@ drawScore:
 	movl	$10, %edx	#,
 	movl	$buffer.10904, %esi	#,
 	call	*SDL_itoa@GOTPCREL(%rip)	#
-	movl	$buffer.10904, %r13d	#, ivtmp.117
+	movl	$buffer.10904, %r13d	#, ivtmp.116
 # src/t2k.c:20:     SDL_Rect rect=(SDL_Rect){x,y,w,w};
 	movabsq	$34359738376, %r14	#, tmp122
 .L43:
@@ -256,8 +256,8 @@ drawScore:
 	je	.L54	#,
 # src/t2k.c:202:         drawcharacter(buffer[i++]-'0'+1,((FONTSIZE<<2)*i)+x,SCREEN_HEIGHT-45);
 	subl	$47, %eax	#, _4
-	xorl	%r15d, %r15d	# ivtmp.113
-	movl	$915, %r12d	#, ivtmp.111
+	xorl	%r15d, %r15d	# ivtmp.112
+	movl	$915, %r12d	#, ivtmp.110
 # src/t2k.c:188:             if(16384 >> (i) & characters2[num])
 	cltq
 	movswl	characters2(%rax,%rax), %eax	# characters2, tmp116
@@ -276,7 +276,7 @@ drawScore:
 # src/t2k.c:20:     SDL_Rect rect=(SDL_Rect){x,y,w,w};
 	leal	(%rbx,%rbp,8), %eax	#, tmp119
 	movl	%eax, 16(%rsp)	# tmp119, rect.x
-	movl	%r12d, 20(%rsp)	# ivtmp.111, rect.y
+	movl	%r12d, 20(%rsp)	# ivtmp.110, rect.y
 	movq	%r14, 24(%rsp)	# tmp122, MEM[(int *)&rect + 8B]
 # src/t2k.c:21:     SDL_FillRect(screenSurface,&rect,col);
 	movl	$16777215, %edx	#,
@@ -289,13 +289,13 @@ drawScore:
 # src/t2k.c:185:         for(int x=0;x<3;++x)
 	cmpl	$3, %ebp	#, x
 	jne	.L46	#,
-	addl	$8, %r12d	#, ivtmp.111
-	addl	$3, %r15d	#, ivtmp.113
+	addl	$8, %r12d	#, ivtmp.110
+	addl	$3, %r15d	#, ivtmp.112
 # src/t2k.c:184:     for(int y=0;y<5;++y)
-	cmpl	$955, %r12d	#, ivtmp.111
+	cmpl	$955, %r12d	#, ivtmp.110
 	jne	.L44	#,
-	incq	%r13	# ivtmp.117
-	addl	$32, %ebx	#, ivtmp.118
+	incq	%r13	# ivtmp.116
+	addl	$32, %ebx	#, ivtmp.117
 	jmp	.L43	#
 .L54:
 # src/t2k.c:204: }
@@ -367,7 +367,7 @@ DoesPieceFit:
 # src/t2k.c:119:             if(nPosX + py >=0 && nPosY + py <FIELDHEIGHT && characters[nTetromino]&(1 << pi) && pBuffer[fi]!=0)
 	movslq	%edi, %rbx	# nTetromino, nTetromino
 .L63:
-	movl	%ecx, %r10d	# nPosY, ivtmp.143
+	movl	%ecx, %r10d	# nPosY, ivtmp.142
 # src/t2k.c:113:         for(int py=0;py<4;++py)
 	xorl	%r9d, %r9d	# py
 # src/t2k.c:119:             if(nPosX + py >=0 && nPosY + py <FIELDHEIGHT && characters[nTetromino]&(1 << pi) && pBuffer[fi]!=0)
@@ -377,7 +377,7 @@ DoesPieceFit:
 	movl	%r9d, %eax	# py, tmp146
 	addl	%ebp, %eax	# nPosX, tmp146
 	js	.L64	#,
-	cmpl	$17, %r10d	#, ivtmp.143
+	cmpl	$17, %r10d	#, ivtmp.142
 	jg	.L64	#,
 # src/t2k.c:116:             short pi = (Rotate((px),(py),(nRotation)));
 	movl	%r11d, %edx	# nRotation,
@@ -390,7 +390,7 @@ DoesPieceFit:
 	btl	%eax, %edx	# _7, tmp130
 	jnc	.L64	#,
 # src/t2k.c:119:             if(nPosX + py >=0 && nPosY + py <FIELDHEIGHT && characters[nTetromino]&(1 << pi) && pBuffer[fi]!=0)
-	imull	$12, %r10d, %eax	#, ivtmp.143, tmp135
+	imull	$12, %r10d, %eax	#, ivtmp.142, tmp135
 	addl	%r12d, %eax	# tmp143, tmp137
 	movswq	%ax, %rax	# tmp137, tmp139
 # src/t2k.c:119:             if(nPosX + py >=0 && nPosY + py <FIELDHEIGHT && characters[nTetromino]&(1 << pi) && pBuffer[fi]!=0)
@@ -399,7 +399,7 @@ DoesPieceFit:
 .L64:
 # src/t2k.c:113:         for(int py=0;py<4;++py)
 	incl	%r9d	# py
-	incl	%r10d	# ivtmp.143
+	incl	%r10d	# ivtmp.142
 # src/t2k.c:113:         for(int py=0;py<4;++py)
 	cmpl	$4, %r9d	#, py
 	jne	.L66	#,
@@ -443,21 +443,21 @@ initGame:
 # src/t2k.c:4:     for(size_t i=0;i<numbytes;i++)
 	cmpq	$216, %rax	#, i
 	jne	.L78	#,
-	xorl	%eax, %eax	# ivtmp.167
+	xorl	%eax, %eax	# ivtmp.166
 .L80:
 # src/t2k.c:4:     for(size_t i=0;i<numbytes;i++)
 	xorl	%edx, %edx	# i
 .L79:
 # src/t2k.c:6:         ((char*)dest)[i]=val;
-	movb	$0, pBackBuffer+1(%rax,%rdx)	#, MEM[symbol: pBackBuffer, base: ivtmp.167_30, index: i_36, offset: 1B]
+	movb	$0, pBackBuffer+1(%rax,%rdx)	#, MEM[symbol: pBackBuffer, base: ivtmp.166_30, index: i_36, offset: 1B]
 # src/t2k.c:4:     for(size_t i=0;i<numbytes;i++)
 	incq	%rdx	# i
 # src/t2k.c:4:     for(size_t i=0;i<numbytes;i++)
 	cmpq	$10, %rdx	#, i
 	jne	.L79	#,
-	addq	$12, %rax	#, ivtmp.167
+	addq	$12, %rax	#, ivtmp.166
 # src/t2k.c:260:     for(int y=0;y<FIELDHEIGHT-1;y++)
-	cmpq	$204, %rax	#, ivtmp.167
+	cmpq	$204, %rax	#, ivtmp.166
 	jne	.L80	#,
 # src/t2k.c:264:     updateBuffer();
 	xorl	%eax, %eax	#
@@ -486,9 +486,6 @@ _start:
 #NO_APP
 	xorl	%eax, %eax	#
 	call	initGame	#
-# src/t2k.c:299:     SDL_Init(SDL_INIT_EVERYTHING);
-	movl	$62001, %edi	#,
-	call	*SDL_Init@GOTPCREL(%rip)	#
 # src/t2k.c:301:     want.freq = SAMPLERATE;
 	movl	$96000, 8(%rsp)	#, want.freq
 # src/t2k.c:302:     want.format = AUDIO_S16SYS;
@@ -501,7 +498,7 @@ _start:
 	movq	$audio_callback, 24(%rsp)	#, want.callback
 # src/t2k.c:306:     SDL_OpenAudio((&want), NULL);
 	xorl	%esi, %esi	#
-	leaq	8(%rsp), %rdi	#, tmp252
+	leaq	8(%rsp), %rdi	#, tmp251
 	call	*SDL_OpenAudio@GOTPCREL(%rip)	#
 # src/t2k.c:307:     SDL_PauseAudio(0);
 	xorl	%edi, %edi	#
@@ -522,47 +519,47 @@ _start:
 # src/t2k.c:310:     screenSurface = SDL_GetWindowSurface(window);
 	movq	%rax, screenSurface(%rip)	# _20, screenSurface
 # src/t2k.c:20:     SDL_Rect rect=(SDL_Rect){x,y,w,w};
-	movabsq	$206158430256, %rbp	#, tmp249
+	movabsq	$206158430256, %rbp	#, tmp248
 .L109:
 # src/t2k.c:12: 	for(size_t i=0;i<numbytes;i++)
 	xorl	%eax, %eax	# i
 .L86:
 # src/t2k.c:14:         ((char*)dest)[i]=((char*)src)[i];
-	movb	pBuffer(%rax), %dl	# MEM[symbol: pBuffer, index: i_248, offset: 0B], MEM[symbol: pBuffer, index: i_248, offset: 0B]
-	movb	%dl, pBackBuffer(%rax)	# MEM[symbol: pBuffer, index: i_248, offset: 0B], MEM[symbol: pBackBuffer, index: i_248, offset: 0B]
+	movb	pBuffer(%rax), %dl	# MEM[symbol: pBuffer, index: i_245, offset: 0B], MEM[symbol: pBuffer, index: i_245, offset: 0B]
+	movb	%dl, pBackBuffer(%rax)	# MEM[symbol: pBuffer, index: i_245, offset: 0B], MEM[symbol: pBackBuffer, index: i_245, offset: 0B]
 # src/t2k.c:12: 	for(size_t i=0;i<numbytes;i++)
 	incq	%rax	# i
 # src/t2k.c:12: 	for(size_t i=0;i<numbytes;i++)
 	cmpq	$216, %rax	#, i
 	jne	.L86	#,
-	xorl	%ecx, %ecx	# ivtmp.238
+	xorl	%ecx, %ecx	# ivtmp.237
 # src/t2k.c:281:     int multi=0;
 	xorl	%esi, %esi	# multi
 .L87:
 # src/t2k.c:12: 	for(size_t i=0;i<numbytes;i++)
-	xorl	%eax, %eax	# ivtmp.226
+	xorl	%eax, %eax	# ivtmp.225
 .L89:
 # src/t2k.c:271:         if(!pBackBuffer[line*FIELDWIDTH+px])
-	cmpb	$0, pBackBuffer(%rcx,%rax)	#, MEM[symbol: pBackBuffer, base: ivtmp.238_79, index: ivtmp.226_251, offset: 0B]
+	cmpb	$0, pBackBuffer(%rcx,%rax)	#, MEM[symbol: pBackBuffer, base: ivtmp.237_79, index: ivtmp.225_248, offset: 0B]
 	je	.L88	#,
-	incq	%rax	# ivtmp.226
+	incq	%rax	# ivtmp.225
 # src/t2k.c:269:     for(int px=0;px<FIELDWIDTH;++px)
-	cmpq	$12, %rax	#, ivtmp.226
+	cmpq	$12, %rax	#, ivtmp.225
 	jne	.L89	#,
 # src/t2k.c:287:             multi+=25;
 	addl	$25, %esi	#, multi
 # src/t2k.c:288:             score+=multi;
 	addl	%esi, score(%rip)	# multi, score
-	leaq	12(%rcx), %rax	#, ivtmp.212
+	leaq	12(%rcx), %rax	#, ivtmp.211
 .L110:
 # src/t2k.c:245:     for(line=(++line)*FIELDWIDTH;line>12;--line)
-	cmpl	$12, %eax	#, ivtmp.212
+	cmpl	$12, %eax	#, ivtmp.211
 	je	.L123	#,
 # src/t2k.c:247:         pBackBuffer[line]=pBackBuffer[line-FIELDWIDTH];
-	movb	pBackBuffer-12(%rax), %dl	# MEM[symbol: pBackBuffer, index: ivtmp.212_3, offset: -12B], _71
+	movb	pBackBuffer-12(%rax), %dl	# MEM[symbol: pBackBuffer, index: ivtmp.211_3, offset: -12B], _71
 # src/t2k.c:247:         pBackBuffer[line]=pBackBuffer[line-FIELDWIDTH];
-	movb	%dl, pBackBuffer(%rax)	# _71, MEM[symbol: pBackBuffer, index: ivtmp.212_3, offset: 0B]
-	decq	%rax	# ivtmp.212
+	movb	%dl, pBackBuffer(%rax)	# _71, MEM[symbol: pBackBuffer, index: ivtmp.211_3, offset: 0B]
+	decq	%rax	# ivtmp.211
 	jmp	.L110	#
 .L123:
 # src/t2k.c:6:         ((char*)dest)[i]=val;
@@ -572,16 +569,16 @@ _start:
 	xorl	%eax, %eax	#
 	call	updateBuffer	#
 .L88:
-	addq	$12, %rcx	#, ivtmp.238
+	addq	$12, %rcx	#, ivtmp.237
 # src/t2k.c:283:     for(int py=0;py<FIELDHEIGHT-1;++py)
-	cmpq	$204, %rcx	#, ivtmp.238
+	cmpq	$204, %rcx	#, ivtmp.237
 	jne	.L87	#,
 # src/t2k.c:292:     hiscore=score>hiscore?score:hiscore;
 	movl	score(%rip), %eax	# score, score
 	cmpl	%eax, hiscore(%rip)	# score, hiscore
-	cmovge	hiscore(%rip), %eax	# hiscore,, tmp202
+	cmovge	hiscore(%rip), %eax	# hiscore,, tmp201
 # src/t2k.c:292:     hiscore=score>hiscore?score:hiscore;
-	movl	%eax, hiscore(%rip)	# tmp202, hiscore
+	movl	%eax, hiscore(%rip)	# tmp201, hiscore
 # src/t2k.c:293:     placeTetromino(nCurrentPiece,nCurrentX,nCurrentY,nCurrentRotation);
 	movsbl	nCurrentRotation(%rip), %r11d	# nCurrentRotation, _49
 	movslq	nCurrentPiece(%rip), %rdx	# nCurrentPiece,
@@ -589,13 +586,13 @@ _start:
 # src/t2k.c:234:             if((1 << (Rotate((px),(py),(rotation)))) & characters[piece])
 	movswl	characters(%rdx,%rdx), %ebx	# characters, _77
 	movsbl	nCurrentY(%rip), %ecx	# nCurrentY, nCurrentY
-	imull	$12, %ecx, %ecx	#, nCurrentY, tmp207
+	imull	$12, %ecx, %ecx	#, nCurrentY, tmp206
 	movsbl	nCurrentX(%rip), %edx	# nCurrentX, nCurrentX
-	addl	%edx, %ecx	# nCurrentX, ivtmp.206
+	addl	%edx, %ecx	# nCurrentX, ivtmp.205
 # src/t2k.c:230:     for(int py=0;py<4;++py)
 	xorl	%r9d, %r9d	# py
 # src/t2k.c:237:                 pBackBuffer[i]=(piece+1);
-	leal	1(%rax), %r10d	#, tmp247
+	leal	1(%rax), %r10d	#, tmp246
 .L93:
 # src/t2k.c:232:         for(int px=0;px<4;++px)
 	xorl	%r8d, %r8d	# px
@@ -609,10 +606,10 @@ _start:
 	btl	%eax, %ebx	# _86, _77
 	jnc	.L94	#,
 # src/t2k.c:237:                 pBackBuffer[i]=(piece+1);
-	leal	(%r8,%rcx), %eax	#, tmp213
+	leal	(%r8,%rcx), %eax	#, tmp212
 	cltq
 # src/t2k.c:237:                 pBackBuffer[i]=(piece+1);
-	movb	%r10b, pBackBuffer(%rax)	# tmp247, pBackBuffer
+	movb	%r10b, pBackBuffer(%rax)	# tmp246, pBackBuffer
 .L94:
 # src/t2k.c:232:         for(int px=0;px<4;++px)
 	incl	%r8d	# px
@@ -621,7 +618,7 @@ _start:
 	jne	.L95	#,
 # src/t2k.c:230:     for(int py=0;py<4;++py)
 	incl	%r9d	# py
-	addl	$12, %ecx	#, ivtmp.206
+	addl	$12, %ecx	#, ivtmp.205
 # src/t2k.c:230:     for(int py=0;py<4;++py)
 	cmpl	$4, %r9d	#, py
 	jne	.L93	#,
@@ -641,33 +638,33 @@ _start:
 	movl	$400, %esi	#,
 	movl	hiscore(%rip), %edi	# hiscore,
 	call	drawScore	#
-	movl	$pBackBuffer, %r14d	#, ivtmp.190
-	movl	$10, %r12d	#, ivtmp.191
+	movl	$pBackBuffer, %r14d	#, ivtmp.189
+	movl	$10, %r12d	#, ivtmp.190
 .L97:
 # src/t2k.c:219:             drawRect(x*50+10,y*50+10,48,(int)(colors[(int)(pBackBuffer[i])]));
-	movq	%r14, %r13	# ivtmp.190, ivtmp.181
-	movl	$10, %ebx	#, ivtmp.182
+	movq	%r14, %r13	# ivtmp.189, ivtmp.180
+	movl	$10, %ebx	#, ivtmp.181
 .L98:
 # src/t2k.c:219:             drawRect(x*50+10,y*50+10,48,(int)(colors[(int)(pBackBuffer[i])]));
 	movsbq	0(%r13), %rax	# MEM[base: _122, offset: 0B], MEM[base: _122, offset: 0B]
 	movl	colors(,%rax,4), %edx	# colors, _30
 # src/t2k.c:20:     SDL_Rect rect=(SDL_Rect){x,y,w,w};
-	movl	%ebx, 8(%rsp)	# ivtmp.182, rect.x
-	movl	%r12d, 12(%rsp)	# ivtmp.191, rect.y
-	movq	%rbp, 16(%rsp)	# tmp249, MEM[(int *)&rect + 8B]
+	movl	%ebx, 8(%rsp)	# ivtmp.181, rect.x
+	movl	%r12d, 12(%rsp)	# ivtmp.190, rect.y
+	movq	%rbp, 16(%rsp)	# tmp248, MEM[(int *)&rect + 8B]
 # src/t2k.c:21:     SDL_FillRect(screenSurface,&rect,col);
-	leaq	8(%rsp), %rsi	#, tmp253
+	leaq	8(%rsp), %rsi	#, tmp252
 	movq	screenSurface(%rip), %rdi	# screenSurface,
 	call	*SDL_FillRect@GOTPCREL(%rip)	#
-	incq	%r13	# ivtmp.181
-	addl	$50, %ebx	#, ivtmp.182
+	incq	%r13	# ivtmp.180
+	addl	$50, %ebx	#, ivtmp.181
 # src/t2k.c:215:         for(int x=0;x<FIELDWIDTH;++x)
-	cmpl	$610, %ebx	#, ivtmp.182
+	cmpl	$610, %ebx	#, ivtmp.181
 	jne	.L98	#,
-	addq	$12, %r14	#, ivtmp.190
-	addl	$50, %r12d	#, ivtmp.191
+	addq	$12, %r14	#, ivtmp.189
+	addl	$50, %r12d	#, ivtmp.190
 # src/t2k.c:213:     for(int y=0;y<FIELDHEIGHT;++y)
-	cmpl	$910, %r12d	#, ivtmp.191
+	cmpl	$910, %r12d	#, ivtmp.190
 	jne	.L97	#,
 # src/t2k.c:225:     SDL_UpdateWindowSurface(window);
 	movq	window(%rip), %rdi	# window,
@@ -678,7 +675,7 @@ _start:
 # src/t2k.c:133:     if(DoesPieceFit(nCurrentPiece,nCurrentRotation,nCurrentX,nCurrentY+1))
 	movsbl	nCurrentY(%rip), %ecx	# nCurrentY,
 	movl	%ecx, %ebx	#,
-	incl	%ecx	# tmp224
+	incl	%ecx	# tmp223
 	movsbl	nCurrentX(%rip), %edx	# nCurrentX, nCurrentX
 	movsbl	nCurrentRotation(%rip), %esi	# nCurrentRotation, nCurrentRotation
 	movl	nCurrentPiece(%rip), %edi	# nCurrentPiece,
@@ -687,8 +684,8 @@ _start:
 	testb	%al, %al	# _109
 	je	.L102	#,
 # src/t2k.c:135:         ++nCurrentY;
-	incl	%ebx	# tmp227
-	movb	%bl, nCurrentY(%rip)	# tmp227, nCurrentY
+	incl	%ebx	# tmp226
+	movb	%bl, nCurrentY(%rip)	# tmp226, nCurrentY
 	jmp	.L101	#
 .L102:
 # src/t2k.c:140:         shuffle();
@@ -722,19 +719,16 @@ _start:
 	incl	runtime(%rip)	# runtime
 .L104:
 # src/t2k.c:152:     while(SDL_PollEvent(&e))
-	leaq	8(%rsp), %rdi	#, tmp254
+	leaq	8(%rsp), %rdi	#, tmp253
 	call	*SDL_PollEvent@GOTPCREL(%rip)	#
 # src/t2k.c:152:     while(SDL_PollEvent(&e))
-	testl	%eax, %eax	# _155
+	testl	%eax, %eax	# _154
 	je	.L109	#,
 # src/t2k.c:154:         if (e.type==SDL_QUIT)
 	movl	8(%rsp), %eax	# e.type, _123
 # src/t2k.c:154:         if (e.type==SDL_QUIT)
 	cmpl	$256, %eax	#, _123
 	jne	.L105	#,
-# src/t2k.c:156:             SDL_DestroyWindow(window);
-	movq	window(%rip), %rdi	# window,
-	call	*SDL_DestroyWindow@GOTPCREL(%rip)	#
 # src/t2k.c:157:             asm volatile(".intel_syntax noprefix;push 231;pop rax;xor edi, edi;syscall;.att_syntax prefix");
 #APP
 # 157 "src/t2k.c" 1
@@ -749,26 +743,26 @@ _start:
 	movl	28(%rsp), %eax	# e.key.keysym.sym, e.key.keysym.sym
 # src/t2k.c:163:             char newRot=nCurrentRotation+(key=='w');
 	cmpb	$119, %al	#, e.key.keysym.sym
-	sete	%r13b	#, tmp230
+	sete	%r13b	#, tmp229
 # src/t2k.c:163:             char newRot=nCurrentRotation+(key=='w');
 	addb	nCurrentRotation(%rip), %r13b	# nCurrentRotation, newRot
 # src/t2k.c:164:             char newX=(nCurrentX)+(key=='d')-(key=='a');
 	cmpb	$100, %al	#, e.key.keysym.sym
-	sete	%bl	#, tmp233
+	sete	%bl	#, tmp232
 # src/t2k.c:164:             char newX=(nCurrentX)+(key=='d')-(key=='a');
-	addb	nCurrentX(%rip), %bl	# nCurrentX, tmp234
+	addb	nCurrentX(%rip), %bl	# nCurrentX, tmp233
 # src/t2k.c:164:             char newX=(nCurrentX)+(key=='d')-(key=='a');
 	cmpb	$97, %al	#, e.key.keysym.sym
-	sete	%dl	#, tmp237
+	sete	%dl	#, tmp236
 # src/t2k.c:164:             char newX=(nCurrentX)+(key=='d')-(key=='a');
-	subl	%edx, %ebx	# tmp237, newX
+	subl	%edx, %ebx	# tmp236, newX
 # src/t2k.c:165:             char newY=(nCurrentY)+(key=='s');
-	movb	nCurrentY(%rip), %r14b	# nCurrentY, nCurrentY.52_144
+	movb	nCurrentY(%rip), %r14b	# nCurrentY, nCurrentY.51_143
 # src/t2k.c:165:             char newY=(nCurrentY)+(key=='s');
 	cmpb	$115, %al	#, e.key.keysym.sym
-	sete	%r12b	#, tmp239
+	sete	%r12b	#, tmp238
 # src/t2k.c:165:             char newY=(nCurrentY)+(key=='s');
-	addl	%r14d, %r12d	# nCurrentY.52_144, newY
+	addl	%r14d, %r12d	# nCurrentY.51_143, newY
 # src/t2k.c:167:             if(DoesPieceFit(nCurrentPiece,newRot,newX,newY))
 	movsbl	%r12b, %ecx	# newY, newY
 	movsbl	%bl, %edx	# newX, newX
@@ -776,10 +770,10 @@ _start:
 	movl	nCurrentPiece(%rip), %edi	# nCurrentPiece,
 	call	DoesPieceFit	#
 # src/t2k.c:167:             if(DoesPieceFit(nCurrentPiece,newRot,newX,newY))
-	testb	%al, %al	# _152
+	testb	%al, %al	# _151
 	je	.L104	#,
 # src/t2k.c:169:                 if(newY!=nCurrentY)
-	cmpb	%r12b, %r14b	# newY, nCurrentY.52_144
+	cmpb	%r12b, %r14b	# newY, nCurrentY.51_143
 	je	.L107	#,
 # src/t2k.c:171:                     score++;
 	incl	score(%rip)	# score
