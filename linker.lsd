@@ -3,16 +3,17 @@ ENTRY(_start)
 SEARCH_DIR("/usr/x86_64-pc-linux-gnu/lib64"); SEARCH_DIR("/usr/lib"); SEARCH_DIR("/usr/local/lib"); SEARCH_DIR("/usr/x86_64-pc-linux-gnu/lib");
 SECTIONS
 {
-  /DISCARD/ : {*(.data*) *(.bss)}
+  /DISCARD/ : {
+                  *(.data*) *(.bss) 
+                  *(.gnu.warning, .note.*)  *(.gnu_debuglink) 
+                  *(.comment) *(.gnu.attributes) *(.eh_frame*)
+                  *(.gcc_except*) *(.gnu_extab*) *(.exception*)
+                } 
   /* Read-only sections, merged into text segment: */
   PROVIDE (__executable_start = SEGMENT_START("text-segment", 0x010000)); . = SEGMENT_START("text-segment", 0x010000) + SIZEOF_HEADERS;
   .text           :
   {
-    *(.text.startup .text.startup.*)
-    *(.text.hot .text.hot.*)
-    *(.text .stub .text.* .gnu.linkonce.t.*)
-    *(.text.exit .text.exit.*)
-    *(.text.unlikely .text.*_unlikely .text.unlikely.*)
+    *(.text*) *(.stub*)
   }
   .rodata         : { *(.rodata .rodata.*) }
 
