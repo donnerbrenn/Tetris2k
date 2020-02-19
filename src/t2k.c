@@ -32,7 +32,6 @@ void shuffle()
     nCurrentPiece=result;
 }
 
-
 void updateBuffer()
 {
     _memcpy(pBuffer,pBackBuffer,FIELDHEIGHT*FIELDWIDTH); 
@@ -113,15 +112,12 @@ bool DoesPieceFit(int nTetromino, int nRotation, int nPosX, int nPosY)
         for(int py=0;py<4;++py)
         {
             //Get index into piece
-            short pi = (Rotate((px),(py),(nRotation)));
+            int pi = (Rotate((px),(py),(nRotation)));
             //Get index into field
-            short fi = (nPosY+py)*FIELDWIDTH+(nPosX+px);
-            if(nPosX + py >=0 && nPosY + py <FIELDHEIGHT && characters[nTetromino]&(1 << pi) && pBuffer[fi]!=0)
+            int fi = (nPosY+py)*FIELDWIDTH+(nPosX+px);
+            if(characters[nTetromino]&(1 << pi) && pBuffer[fi])
             {
-                if(characters[nTetromino]&(1 << pi) && pBuffer[fi]!=0)
-                {
-                    return(false);
-                }
+                return(false);
             }
         }
     }
@@ -137,10 +133,7 @@ bool FallDown()
     }
     else
     {
-        shuffle();
-        nCurrentRotation=0;
-        nCurrentY= 0;
-        nCurrentX = (FIELDWIDTH>>1)-2;
+        initStone();
         updateBuffer();
         return (!DoesPieceFit(nCurrentPiece,nCurrentRotation,nCurrentX,nCurrentY));
     }
@@ -215,11 +208,10 @@ void updateDisplay()
         for(int x=0;x<FIELDWIDTH;++x)
         {
             int i=FIELDWIDTH*y+x;
-
             drawRect(x*50+10,y*50+10,48,(int)(colors[(int)(pBackBuffer[i])]));
 
             // if(pBackBuffer[i]!=9)
-                // drawRect(x*50+15,y*50+15,38,(int)(0));
+            //     drawRect(x*50+15,y*50+15,38,(int)(0));
         }
     }
     SDL_UpdateWindowSurface(window);
@@ -250,17 +242,24 @@ void DropLine(int line)
     updateBuffer();
 }
 
+void initStone()
+{
+        shuffle();
+        nCurrentRotation=0;
+        nCurrentY= 0;
+        nCurrentX = (FIELDWIDTH>>2)+1;
+        runtime=0;
+}
+
 void initGame()
 {
     score=0;
-    // runtime=0;
-    shuffle();
-    nCurrentX=(FIELDWIDTH>>2)+1;
     _memset(pBackBuffer,9,FIELDWIDTH*FIELDHEIGHT);
     for(int y=0;y<FIELDHEIGHT-1;y++)
     {
         _memset(pBackBuffer+FIELDWIDTH*y+1,0,10);
     }
+    initStone();
     updateBuffer();
 }
 

@@ -62,6 +62,8 @@ static void drawRect(int x, int y, int w, int col);
 static void _memcpy(void* dest, void* src, size_t numbytes);
 static void _memset(void* dest,char val,size_t numbytes);
 
+
+inline void initStone();
 inline char Rotate(char px, char py, char r);
 inline bool DoesPieceFit(int nTetromino, int nRotation, int nPosX, int nPosY);
 void _start();

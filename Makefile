@@ -94,6 +94,13 @@ t2k: vondehi.elf t2k.lzma #t2k.smol
 	rm vondehi.elf
 	wc -c $@
 
+t2k.cmix: t2k.stripped
+	cmix -c $< $@.cm
+	cat cmix/cmixdropper.sh $@.cm > $@
+	rm $@.cm
+	chmod +x $@
+	wc -c $@
+
 clean:
 	-rm -f t2k*
 	-rm vondehi/vondehi.elf
