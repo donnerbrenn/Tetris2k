@@ -30,7 +30,7 @@ LDFLAGS+=-Wl,--hash-style=sysv
 LDFLAGS+=-no-pie -fno-pic
 LDFLAGS+=-Wl,--whole-archive
 LDFLAGS+=-Wl,--print-gc-sections
-LDFLAGS+=-Wl,--spare-dynamic-tags=6
+LDFLAGS+=-Wl,--spare-dynamic-tags=4
 LDFLAGS+=-Wl,-flto -T linker.lsd
 
 STRIP=-R .gnu.hash
