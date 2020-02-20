@@ -8,12 +8,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-
-
-//defines
-// #define DEBUG
-
-
 #define FIELDWIDTH 12
 #define FIELDHEIGHT 18
 #define SCREEN_WIDTH 620
