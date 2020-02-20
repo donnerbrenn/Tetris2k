@@ -31,27 +31,12 @@ LDFLAGS+=-no-pie -fno-pic
 LDFLAGS+=-Wl,--whole-archive
 LDFLAGS+=-Wl,--print-gc-sections
 LDFLAGS+=-Wl,--spare-dynamic-tags=4
-LDFLAGS+=-Wl,-flto -T linker.lsd
+LDFLAGS+=-Wl,-flto -T linker.ld
 
-STRIP=-R .gnu.hash
-STRIP+=-R .comment
-STRIP+=-R .note.GNU-stack
-STRIP+=-R .data
-STRIP+=-R .note.gnu.gold-version
-STRIP+=-R .note
-STRIP+=-R .note.ABI-tag
-STRIP+=-R .shstrtab
-STRIP+=-R .eh_frame
-STRIP+=-R .eh_frame_hdr
 STRIP+=-R .got
 STRIP+=-R .got.plt
 STRIP+=-R .bss
-STRIP+=-R .shstrtab  
-STRIP+=-R .init
-STRIP+=-R .fini
 STRIP+=-R .hash
-STRIP+=-R .init_array 
-STRIP+=-R .fini_array 
 
 all: 
 all: t2k
@@ -102,5 +87,5 @@ t2k.cmix: t2k.stripped
 	wc -c $@
 
 clean:
-	-rm -f t2k*
+	-rm -f t2k* src/t2k.o*
 	-rm vondehi/vondehi.elf

@@ -17,7 +17,7 @@ void _memcpy(void* dest, void* src, size_t numbytes)
 
 void drawRect(int x, int y, int w, int col)
 {
-    SDL_Rect rect=(SDL_Rect){x,y,w,w};
+    rect=(SDL_Rect){x,y,w,w};
     SDL_FillRect(screenSurface,&rect,col);
 }
 
@@ -37,6 +37,7 @@ void updateBuffer()
     _memcpy(pBuffer,pBackBuffer,FIELDHEIGHT*FIELDWIDTH); 
 }
 
+#ifdef FULL
 float getFrq(int note)
 {
     float freq=16.3516f;
@@ -91,6 +92,34 @@ void audio_callback(void *unused, Uint8 *byte_stream, int byte_stream_length)
     }
 }
 
+void drawScore(int value, int x)
+{
+    static char buffer[15];
+    SDL_itoa(value,buffer,10);
+    int i=0;
+    while(buffer[i])
+    {
+        drawcharacter(buffer[i++]-'0'+1,((FONTSIZE<<2)*i)+x,SCREEN_HEIGHT-45);
+    }
+}
+
+
+void drawcharacter(int num, int posX,int posY)
+{
+    for(int y=0;y<5;++y)
+        for(int x=0;x<3;++x)
+        {
+            int i=y*3+x;
+            if(16384 >> (i) & characters2[num])
+            {
+                drawRect(x*FONTSIZE+posX,y*FONTSIZE+posY,FONTSIZE,white);
+            }
+        }
+}
+
+
+#endif
+
 char Rotate(char px, char py, char r)
 {  
     // r&=3;
@@ -134,7 +163,6 @@ bool FallDown()
     else
     {
         initStone();
-        updateBuffer();
         return (!DoesPieceFit(nCurrentPiece,nCurrentRotation,nCurrentX,nCurrentY));
     }
 }
@@ -147,10 +175,10 @@ void ProcessEventsSDL()
         if (e.type==SDL_QUIT)
         {
             // SDL_DestroyWindow(window);
-            asm volatile(".intel_syntax noprefix;push 231;pop rax;xor edi, edi;syscall;.att_syntax prefix");
+            asm volatile("push $231;pop %rax;xorl %edi,%edi;syscall");
             __builtin_unreachable();
         }
-        if(e.type==SDL_KEYDOWN)
+        if(e.type==SDL_KEYDOWN&&handlekeys)
         {
             char key=(e.key.keysym.sym);
             char newRot=nCurrentRotation+(key=='w');
@@ -159,10 +187,12 @@ void ProcessEventsSDL()
             
             if(DoesPieceFit(nCurrentPiece,newRot,newX,newY))
             {
+                #ifdef FULL
                 if(newY!=nCurrentY)
                 {
                     score++;
                 }
+                #endif
                 nCurrentRotation=newRot;
                 nCurrentX=newX;
                 nCurrentY=newY;
@@ -170,38 +200,17 @@ void ProcessEventsSDL()
         }
 
     }
-}
-
-void drawcharacter(int num, int posX,int posY)
-{
-    for(int y=0;y<5;++y)
-        for(int x=0;x<3;++x)
-        {
-            int i=y*3+x;
-            if(16384 >> (i) & characters2[num])
-            {
-                drawRect(x*FONTSIZE+posX,y*FONTSIZE+posY,FONTSIZE,white);
-            }
-        }
-}
-
-void drawScore(int value, int x)
-{
-    static char buffer[15];
-    SDL_itoa(value,buffer,10);
-    int i=0;
-    while(buffer[i])
-    {
-        drawcharacter(buffer[i++]-'0'+1,((FONTSIZE<<2)*i)+x,SCREEN_HEIGHT-45);
-    }
+    handlekeys=true;
 }
 
 void updateDisplay()
 {
     SDL_FillRect(screenSurface,NULL,0x12121212);
     // drawRect(0,0,SCREEN_HEIGHT,0x12121212);
+    #ifdef FULL
      drawScore(score,10);
      drawScore(hiscore,400);
+     #endif
 
     for(int y=0;y<FIELDHEIGHT;++y)
     {
@@ -239,7 +248,7 @@ void DropLine(int line)
         pBackBuffer[line]=pBackBuffer[line-FIELDWIDTH];
     }
     _memset(pBackBuffer+1,0,9);
-    updateBuffer();
+    initStone();
 }
 
 void initStone()
@@ -249,18 +258,20 @@ void initStone()
         nCurrentY= 0;
         nCurrentX = (FIELDWIDTH>>2)+1;
         runtime=0;
+        updateBuffer();
 }
 
 void initGame()
 {
+    #ifdef FULL
     score=0;
+    #endif
     _memset(pBackBuffer,9,FIELDWIDTH*FIELDHEIGHT);
     for(int y=0;y<FIELDHEIGHT-1;y++)
     {
         _memset(pBackBuffer+FIELDWIDTH*y+1,0,10);
     }
     initStone();
-    updateBuffer();
 }
 
 bool isLineComplete(int line)
@@ -272,31 +283,40 @@ bool isLineComplete(int line)
             return false;
         }
     }
+
     return true;
 }
 
 void updateGame()
 {
+    #ifdef FULL
     int multi=0;
+    #endif
     _memcpy(pBackBuffer,pBuffer,FIELDHEIGHT*FIELDWIDTH);
     for(int py=0;py<FIELDHEIGHT-1;++py)
     {
         if(isLineComplete(py))
         {
+            #ifdef FULL
             multi+=25;
             score+=multi;
+            #endif
             DropLine(py);
         }
     }
+    #ifdef FULL
     hiscore=score>hiscore?score:hiscore;
+    #endif
     placeTetromino(nCurrentPiece,nCurrentX,nCurrentY,nCurrentRotation);
     SDL_Delay(15);
 }
 
 void initSDL()
 {
-    // SDL_Init(SDL_INIT_EVERYTHING);
-    SDL_AudioSpec want;           
+    #ifndef FULL
+     SDL_Init(SDL_INIT_EVERYTHING);              
+    #else
+    SDL_AudioSpec want; 
     want.freq = SAMPLERATE;
     want.format = AUDIO_S16SYS;
     want.channels=1;
@@ -304,19 +324,16 @@ void initSDL()
     want.callback = audio_callback;    
     SDL_OpenAudio((&want), NULL);
     SDL_PauseAudio(0);
-    
+    #endif
+
     window=SDL_CreateWindow(NULL,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,0);
     screenSurface = SDL_GetWindowSurface(window);
 }
 
-// void _start()
-// {
-//     asm("call main");
-// }
-
 void _start()
 {
-    asm ("sub $8, %rsp\n");
+    asm volatile("sub $8, %rsp");
+    handlekeys=true;
     initGame();
     initSDL();
     while(true)
@@ -329,11 +346,11 @@ void _start()
             {
                 initGame();
                 SDL_Delay(2000);
+                handlekeys=false;
             }
         }
         runtime++;
         ProcessEventsSDL();
     }
-    __builtin_unreachable();
-
+     __builtin_unreachable();
 }

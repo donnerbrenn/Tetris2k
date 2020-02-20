@@ -3,19 +3,21 @@ ENTRY(_start)
 SEARCH_DIR("/usr/x86_64-pc-linux-gnu/lib64"); SEARCH_DIR("/usr/lib"); SEARCH_DIR("/usr/local/lib"); SEARCH_DIR("/usr/x86_64-pc-linux-gnu/lib");
 SECTIONS
 {
+
   /DISCARD/ : {
-                  *(.data*) *(.bss) 
+                  *(.data*) *(.bss)
                   *(.gnu.warning, .note.*)  *(.gnu_debuglink) 
                   *(.comment) *(.gnu.attributes) *(.eh_frame*)
                   *(.gcc_except*) *(.gnu_extab*) *(.exception*)
                 } 
   /* Read-only sections, merged into text segment: */
-  PROVIDE (__executable_start = SEGMENT_START("text-segment", 0x010000)); . = SEGMENT_START("text-segment", 0x010000) + SIZEOF_HEADERS;
+  PROVIDE (__executable_start = SEGMENT_START("text-segment", 0x010000)); . = SEGMENT_START("text-segment", 0x010000) + SIZEOF_HEADERS;/* . = ALIGN(10000) + (. & (10000-1));*/
   .text           :
   {
     *(.text*) *(.stub*)
   }
   .rodata         : { *(.rodata .rodata.*) }
+
 
   /* Adjust the address for the data segment.  We want to adjust up to
      the same address within the page on the next page up.  */
@@ -37,7 +39,13 @@ SECTIONS
       pad the .data section.  */
    . = ALIGN(. != 0 ? 64 /1 : 0);
    *(.dynamic)
+   
   }
-}
+
   _end = .; PROVIDE (end = .);
   . = DATA_SEGMENT_END (.);
+
+
+
+
+}
