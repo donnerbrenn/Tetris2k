@@ -39,8 +39,10 @@ SECTIONS
       pad the .data section.  */
    . = ALIGN(. != 0 ? 64 /1 : 0);
    *(.dynamic)
-   
+  
   }
+
+
 
   _end = .; PROVIDE (end = .);
   . = DATA_SEGMENT_END (.);

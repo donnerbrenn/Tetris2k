@@ -1,15 +1,15 @@
-#include "tetris.h"
-void _memset(void* dest,char val,size_t numbytes)
+#include "t2k.h"
+void _memset(void* dest,char val,int numbytes)
 {
-    for(size_t i=0;i<numbytes;i++)
+    for(int i=0;i<numbytes;i++)
     {
         ((char*)dest)[i]=val;
     }
 }
 
-void _memcpy(void* dest, void* src, size_t numbytes) 
+void _memcpy(void* dest, void* src, int numbytes) 
 {
-	for(size_t i=0;i<numbytes;i++)
+	for(int i=0;i<numbytes;i++)
     {
         ((char*)dest)[i]=((char*)src)[i];
     }
@@ -41,54 +41,47 @@ void updateBuffer()
 float getFrq(int note)
 {
     float freq=16.3516f;
-    for(int i=1;i<note;++i)
+    while(--note)
     {
         freq*=1.05946f;
     }
     return freq;
 }
 
+
 void audio_callback(void *unused, Uint8 *byte_stream, int byte_stream_length)
 {
-
     stream=((short*)byte_stream);
-
-    // generate three voices and mix them
     for (int i = 0; i < byte_stream_length>>1; ++i)
-    {   
-        if((song_clock)-(song_clock/SPEED*SPEED)==0)
-        {
-            for(int channel=0;channel<VOICES;++channel)
-            {
-                notes[channel]=cpatterns[channel][order[(noteCnt>>6)&7]][noteCnt&63];
-                if(notes[channel]!=previous[channel]&&notes[channel])
-                {
-                    vol[channel]=1024;
-                    previous[channel]=notes[channel];
-                }
-                vol[channel]-=100;
-               
-                if(notes[channel])
-                {
-                    hertz[channel]=getFrq(notes[channel]);
-                }
-            }
-            noteCnt++;
-        }
+    {
+        pos=song_clock/(SAMPLERATE/SPEED);
+        current_pattern=(pos>>6)&7;
+        current_note=pos&63;
         stream[i]=0;
-        for(int j=0;j<VOICES;++j)
+
+        for(int j=0;j<VOICES;j++)
         {
+            note=cpatterns[j][order[current_pattern]][current_note];
+            if((previous[j]!=note)&&(note!=0))
+            {
+                hertz[j]=getFrq(note);
+                previous[j]=note;
+                vol[j]=8192;
+            }
+            if((song_clock&7)==0)
+            {
+                vol[j]--;
+            }
             if(vol[j]>0)
             {
-                freq=SAMPLERATE/hertz[j]; 
+                freq=SAMPLERATE/hertz[j];
                 counter[j]=(counter[j]>=freq)?0:counter[j];
-                // freq>>=j-(j>>1)+1;
-                // freq*=vol[j]/512.0/16;
                 freq>>=2;
-                stream[i]+=(++counter[j]<=freq)?vol[j]:-vol[j];
+                stream[i]+=(counter[j]<=freq)?vol[j]:-vol[j];
+                counter[j]++;
             }
         }
-        ++song_clock;
+        song_clock++;
     }
 }
 
@@ -96,10 +89,9 @@ void drawScore(int value, int x)
 {
     static char buffer[15];
     SDL_itoa(value,buffer,10);
-    int i=0;
-    while(buffer[i])
+    for(int i=0;buffer[i];i++)
     {
-        drawcharacter(buffer[i++]-'0'+1,((FONTSIZE<<2)*i)+x,SCREEN_HEIGHT-45);
+        drawcharacter((buffer[i]-48),((FONTSIZE<<2)*i)+x,SCREEN_HEIGHT-45);
     }
 }
 
@@ -116,8 +108,6 @@ void drawcharacter(int num, int posX,int posY)
             }
         }
 }
-
-
 #endif
 
 char Rotate(char px, char py, char r)
@@ -176,6 +166,11 @@ void ProcessEventsSDL()
         {
             // SDL_DestroyWindow(window);
             asm volatile("push $231;pop %rax;xorl %edi,%edi;syscall");
+            //   asm ( \
+            // "movl $1,%eax\n" \
+            // "xor %ebx,%ebx\n" \
+            // "int $128\n" \
+            // );
             __builtin_unreachable();
         }
         if(e.type==SDL_KEYDOWN&&handlekeys)
@@ -209,7 +204,7 @@ void updateDisplay()
     // drawRect(0,0,SCREEN_HEIGHT,0x12121212);
     #ifdef FULL
      drawScore(score,10);
-     drawScore(hiscore,400);
+    //  drawScore(hiscore,400);
      #endif
 
     for(int y=0;y<FIELDHEIGHT;++y)
@@ -305,7 +300,7 @@ void updateGame()
         }
     }
     #ifdef FULL
-    hiscore=score>hiscore?score:hiscore;
+    // hiscore=score>hiscore?score:hiscore;
     #endif
     placeTetromino(nCurrentPiece,nCurrentX,nCurrentY,nCurrentRotation);
     SDL_Delay(15);
@@ -313,9 +308,7 @@ void updateGame()
 
 void initSDL()
 {
-    #ifndef FULL
-     SDL_Init(SDL_INIT_EVERYTHING);              
-    #else
+    #ifdef FULL
     SDL_AudioSpec want; 
     want.freq = SAMPLERATE;
     want.format = AUDIO_S16SYS;
@@ -323,7 +316,9 @@ void initSDL()
     want.samples = BUFFERSIZE;
     want.callback = audio_callback;    
     SDL_OpenAudio((&want), NULL);
-    SDL_PauseAudio(0);
+    SDL_PauseAudio(0);             
+    #else
+    SDL_Init(SDL_INIT_EVERYTHING);  
     #endif
 
     window=SDL_CreateWindow(NULL,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,0);

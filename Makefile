@@ -11,7 +11,8 @@ CFLAGS+= -fmerge-all-constants
 CFLAGS+= -fno-PIC -fno-PIE
 CFLAGS+= -std=gnu11
 CFLAGS+= -malign-data=cacheline
-CFLAGS+= -mno-fancy-math-387 -mno-ieee-fp 
+CFLAGS+= -mno-fancy-math-387 -mno-ieee-fp
+
 # CFLAGS+=-flto
 
 LIBS=-lSDL2
@@ -52,12 +53,12 @@ vondehi.elf: vondehi/vondehi.asm
 	$(CC) $(CFLAGS) -c $@.S -o $@
 
 t2k.elf: src/t2k.o
-	$(CC) $(CFLAGS) $(LDFLAGS) $< -o $@
+	$(CC) -Wl,-Map=src/t2k.map $(CFLAGS) $(LDFLAGS) $< -o $@
 
 
 %.stripped: %.elf
-	objcopy $(STRIP) $<
 	./noelfver $< > $@
+	objcopy $(STRIP) $@
 	readelf -a  $@
 	sstrip -z $@
 	wc -c $@
@@ -74,10 +75,10 @@ t2k.smol: src/t2k.o #not working - hopefully i can find a solution for the crash
 t2k: vondehi.elf t2k.lzma #t2k.smol
 	cat $^ > $@
 	chmod +x $@
-	rm t2k.*
+	# rm t2k.*
 	rm src/t2k.o
-	rm vondehi.elf
-	wc -c $@
+	rm $^
+	wc -c $@ 
 
 t2k.cmix: t2k.stripped
 	cmix -c $< $@.cm

@@ -6,7 +6,7 @@
 #include "tetris_sng.h"
 #endif
 #include <stdbool.h>
-#include <stdint.h>
+
 
 #define FIELDWIDTH 12
 #define FIELDHEIGHT 18
@@ -23,8 +23,7 @@ static char nCurrentRotation;
 static char nCurrentX;
 static char nCurrentY;
 #ifdef FULL
-static int score;
-static int hiscore;
+static unsigned int score;
 #endif
 static int nCurrentPiece;
 static SDL_Window *window;
@@ -33,21 +32,21 @@ static SDL_Rect rect;
 static unsigned int runtime=0;
 bool handlekeys;
 
-
 #ifdef FULL
-static int noteCnt;
+static int pos;
+static int current_pattern;
+static int current_note;
 static short *stream;
-static int song_clock=0;
+
+static float hertz[VOICES];
+static short vol[VOICES];
+static int song_clock;
 static int counter[VOICES];
 static int previous[VOICES];
-static int notes[VOICES];
-static short vol[VOICES];
-static float hertz[VOICES];
+static int note;
 static int freq;
-#endif
 
 
-#ifdef FULL
 static void audio_callback(void *unused, uint8_t *byte_stream, int byte_stream_length);
 static float getFrq(int note);
 static void drawcharacter(int num, int posX,int posY);
@@ -66,8 +65,8 @@ static void initSDL();
 static bool FallDown();
 static bool isLineComplete(int line);
 static void drawRect(int x, int y, int w, int col);
-static void _memcpy(void* dest, void* src, size_t numbytes);
-static void _memset(void* dest,char val,size_t numbytes);
+static void _memcpy(void* dest, void* src, int numbytes);
+static void _memset(void* dest,char val,int numbytes);
 
 inline void initStone();
 inline char Rotate(char px, char py, char r);
