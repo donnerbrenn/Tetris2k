@@ -4,17 +4,11 @@ SEARCH_DIR("/usr/x86_64-pc-linux-gnu/lib64"); SEARCH_DIR("/usr/lib"); SEARCH_DIR
 SECTIONS
 {
 
-  /DISCARD/ : {
-                  *(.data*) *(.bss)
-                  *(.gnu.warning, .note.*)  *(.gnu_debuglink) 
-                  *(.comment) *(.gnu.attributes) *(.eh_frame*)
-                  *(.gcc_except*) *(.gnu_extab*) *(.exception*)
-                } 
   /* Read-only sections, merged into text segment: */
   PROVIDE (__executable_start = SEGMENT_START("text-segment", 0x010000)); . = SEGMENT_START("text-segment", 0x010000) + SIZEOF_HEADERS;/* . = ALIGN(10000) + (. & (10000-1));*/
   .text           :
   {
-    *(.text*) *(.stub*)
+    *(.text*) *(.stub*) 
   }
   .rodata         : { *(.rodata .rodata.*) }
 

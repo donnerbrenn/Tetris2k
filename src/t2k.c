@@ -40,7 +40,7 @@ void updateBuffer()
 #ifdef FULL
 float getFrq(int note)
 {
-    float freq=16.3516f;
+    float freq=32.7032;
     while(--note)
     {
         freq*=1.05946f;

@@ -1,0 +1,178 @@
+
+Allocating common symbols
+Common symbol       size              file
+
+handlekeys          0x1               src/t2k.o
+
+Discarded input sections
+
+ .text          0x0000000000000000        0x0 src/t2k.o
+ .data          0x0000000000000000        0x0 src/t2k.o
+ .bss           0x0000000000000000        0x0 src/t2k.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+LOAD /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+LOAD src/t2k.o
+                [!provide]                        PROVIDE (__executable_start = SEGMENT_START ("text-segment", 0x10000))
+                0x0000000000010120                . = (SEGMENT_START ("text-segment", 0x10000) + SIZEOF_HEADERS)
+
+.text           0x0000000000010120      0x65f
+ *(.text*)
+ .text.audio_callback
+                0x0000000000010120      0x13d src/t2k.o
+ .text.initStone
+                0x000000000001025d       0x57 src/t2k.o
+ .text.initGame
+                0x00000000000102b4       0x49 src/t2k.o
+ .text.Rotate   0x00000000000102fd       0x21 src/t2k.o
+                0x00000000000102fd                Rotate
+ .text.DoesPieceFit
+                0x000000000001031e       0x5a src/t2k.o
+                0x000000000001031e                DoesPieceFit
+ .text._start   0x0000000000010378      0x407 src/t2k.o
+                0x0000000000010378                _start
+ *(.stub*)
+
+.plt            0x0000000000010780        0x0
+ .plt           0x0000000000010780        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+
+.iplt           0x000000000001077f        0x0
+ .iplt          0x000000000001077f        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+
+.plt.got        0x0000000000010780        0x0
+ .plt.got       0x0000000000010780        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+
+.rodata         0x0000000000010780      0x374
+ *(.rodata .rodata.*)
+ .rodata.cpatterns
+                0x0000000000010780      0x300 src/t2k.o
+                0x0000000000010780                cpatterns
+ .rodata.order  0x0000000000010a80        0x8 src/t2k.o
+                0x0000000000010a80                order
+ *fill*         0x0000000000010a88        0x8 
+ .rodata.characters2
+                0x0000000000010a90       0x14 src/t2k.o
+                0x0000000000010a90                characters2
+ .rodata.characters
+                0x0000000000010aa4        0xe src/t2k.o
+                0x0000000000010aa4                characters
+ *fill*         0x0000000000010ab2        0xe 
+ .rodata.colors
+                0x0000000000010ac0       0x28 src/t2k.o
+                0x0000000000010ac0                colors
+ .rodata.cst4   0x0000000000010ae8        0xc src/t2k.o
+
+.interp         0x0000000000010af4       0x1c
+ .interp        0x0000000000010af4       0x1c /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+
+.got            0x0000000000010b10       0x50
+ .got           0x0000000000010b10       0x50 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+
+.got.plt        0x0000000000010b60       0x18
+ .got.plt       0x0000000000010b60       0x18 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+                0x0000000000010b60                _GLOBAL_OFFSET_TABLE_
+
+.data.rel.ro    0x0000000000010b78        0x0
+ .data.rel.ro   0x0000000000010b78        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+
+.igot.plt       0x0000000000010b78        0x0
+ .igot.plt      0x0000000000010b78        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+
+.gnu.version_d  0x0000000000010b78        0x0
+ .gnu.version_d
+                0x0000000000010b78        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+
+.gnu.version    0x0000000000010b78        0x0
+ .gnu.version   0x0000000000010b78        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+
+.gnu.version_r  0x0000000000010b78        0x0
+ .gnu.version_r
+                0x0000000000010b78        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+
+.dynsym         0x0000000000010b78      0x108
+ .dynsym        0x0000000000010b78      0x108 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+
+.dynstr         0x0000000000010c80       0xa8
+ .dynstr        0x0000000000010c80       0xa8 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+
+.hash           0x0000000000010d28       0x40
+ .hash          0x0000000000010d28       0x40 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+
+.rela.plt       0x0000000000010d68        0x0
+ .rela.plt      0x0000000000010d68        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+
+.rela.got       0x0000000000010d68       0xf0
+ .rela.got      0x0000000000010d68       0xf0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+
+.rela.bss       0x0000000000010e58        0x0
+ .rela.bss      0x0000000000010e58        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+
+.rela.data.rel.ro
+                0x0000000000010e58        0x0
+ .rela.data.rel.ro
+                0x0000000000010e58        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+
+.rela.iplt      0x0000000000010e58        0x0
+ .rela.iplt     0x0000000000010e58        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+
+.rela.text._start
+                0x0000000000010e58        0x0
+ .rela.text._start
+                0x0000000000010e58        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+                0x0000000000011000                . = DATA_SEGMENT_ALIGN (CONSTANT (MAXPAGESIZE), CONSTANT (COMMONPAGESIZE))
+
+.dynamic        0x0000000000011000       0xf0
+ *(.dynamic)
+ .dynamic       0x0000000000011000       0xf0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+                0x0000000000011000                _DYNAMIC
+                0x00000000000110f0                __bss_start = .
+
+.bss            0x0000000000011100      0x281
+ *(.dynbss)
+ .dynbss        0x0000000000011100        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+ *(.bss .bss.*)
+ .bss.buffer.36320
+                0x0000000000011100        0xf src/t2k.o
+ *fill*         0x000000000001110f        0x1 
+ .bss.previous  0x0000000000011110        0xc src/t2k.o
+ .bss.counter   0x000000000001111c        0xc src/t2k.o
+ .bss.song_clock
+                0x0000000000011128        0x4 src/t2k.o
+ .bss.vol       0x000000000001112c        0x6 src/t2k.o
+ *fill*         0x0000000000011132        0x2 
+ .bss.hertz     0x0000000000011134        0xc src/t2k.o
+ .bss.runtime   0x0000000000011140        0x4 src/t2k.o
+ *fill*         0x0000000000011144        0xc 
+ .bss.rect      0x0000000000011150       0x10 src/t2k.o
+ .bss.screenSurface
+                0x0000000000011160        0x8 src/t2k.o
+ .bss.window    0x0000000000011168        0x8 src/t2k.o
+ .bss.nCurrentPiece
+                0x0000000000011170        0x4 src/t2k.o
+ .bss.score     0x0000000000011174        0x4 src/t2k.o
+ .bss.nCurrentY
+                0x0000000000011178        0x1 src/t2k.o
+ .bss.nCurrentX
+                0x0000000000011179        0x1 src/t2k.o
+ .bss.nCurrentRotation
+                0x000000000001117a        0x1 src/t2k.o
+ *fill*         0x000000000001117b        0x5 
+ .bss.pBackBuffer
+                0x0000000000011180       0xd8 src/t2k.o
+ *fill*         0x0000000000011258       0x28 
+ .bss.pBuffer   0x0000000000011280       0xd8 src/t2k.o
+                0x0000000000011380                . = ALIGN ((. != 0x0)?0x40:0x0)
+ *fill*         0x0000000000011358       0x28 
+ *(.dynamic)
+ COMMON         0x0000000000011380        0x1 src/t2k.o
+                0x0000000000011380                handlekeys
+                0x0000000000011381                _end = .
+                [!provide]                        PROVIDE (end = .)
+                0x0000000000011381                . = DATA_SEGMENT_END (.)
+OUTPUT(t2k.elf elf64-x86-64)
