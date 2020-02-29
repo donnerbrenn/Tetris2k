@@ -17,8 +17,6 @@
 #define BUFFERSIZE 1024
 #define FONTSIZE 8
 
-
-
 //tetris variables
 static char pBuffer[FIELDHEIGHT*FIELDWIDTH];
 static char pBackBuffer[FIELDWIDTH*FIELDHEIGHT];
@@ -36,7 +34,6 @@ static unsigned int runtime=0;
 bool handlekeys;
 
 #ifdef FULL
-
 
 static int pos;
 static int current_pattern;

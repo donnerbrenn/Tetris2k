@@ -40,7 +40,7 @@ void updateBuffer()
 #ifdef FULL
 float getFrq(int note)
 {
-    float freq=32.7032;
+    float freq=61.7337f;
     while(--note)
     {
         freq*=1.05946f;
@@ -60,10 +60,10 @@ void audio_callback(void *unused, short *byte_stream, int byte_stream_length)
         for(int j=0;j<VOICES;j++)
         {
             note=cpatterns[j][order[current_pattern]][current_note];
-            if((previous[j]!=note)&&(note))
+            if((previous[j]!=pos)&&(note))
             {
                 hertz[j]=getFrq(note);
-                previous[j]=note;
+                previous[j]=pos;
                 vol[j]=8192;
             }
             if((song_clock&6)==0)

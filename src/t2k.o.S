@@ -64,75 +64,76 @@
 	.section	.text.audio_callback,"ax",@progbits
 	.type	audio_callback, @function
 audio_callback:
+	pushq	%r13	#
 	pushq	%r12	#
 	pushq	%rbp	#
 	pushq	%rbx	#
 # src/t2k.c:54:     for (int i = 0; i < byte_stream_length>>1; ++i)
 	movl	%edx, %edi	# byte_stream_length, byte_stream_length
 	sarl	%edi	# byte_stream_length
-	movl	song_clock(%rip), %r11d	# song_clock, song_clock_lsm.57
+	movl	song_clock(%rip), %ebx	# song_clock, song_clock_lsm.57
 # src/t2k.c:54:     for (int i = 0; i < byte_stream_length>>1; ++i)
 	xorl	%r8d, %r8d	# ivtmp.83
 	xorl	%eax, %eax	# song_clock_lsm.58
 # src/t2k.c:56:         pos=song_clock/(SAMPLERATE/SPEED);
-	movl	$4900, %ebx	#, tmp194
+	movl	$4900, %ebp	#, tmp193
 # src/t2k.c:46:         freq*=1.05946f;
-	movss	.LC1(%rip), %xmm1	#, tmp195
+	movss	.LC1(%rip), %xmm1	#, tmp194
 # src/t2k.c:75:                 freq=SAMPLERATE/hertz[j];
-	movss	.LC2(%rip), %xmm2	#, tmp197
+	movss	.LC2(%rip), %xmm2	#, tmp196
 .L2:
-	leal	(%r11,%r8), %ebp	#, _47
+	leal	(%rbx,%r8), %r11d	#, _47
 # src/t2k.c:54:     for (int i = 0; i < byte_stream_length>>1; ++i)
 	cmpl	%r8d, %edi	# ivtmp.83, _33
 	jle	.L25	#,
 # src/t2k.c:56:         pos=song_clock/(SAMPLERATE/SPEED);
-	movl	%ebp, %eax	# _47, tmp138
+	movl	%r11d, %eax	# _47, tmp137
 	cltd
-	idivl	%ebx	# tmp194
+	idivl	%ebp	# tmp193
 # src/t2k.c:59:         byte_stream[i]=0;
 	movw	$0, (%rsi,%r8,2)	#, MEM[base: byte_stream_48(D), index: ivtmp.83_55, step: 2, offset: 0B]
 # src/t2k.c:57:         current_pattern=(pos>>6)&7;
-	movl	%eax, %edx	# tmp138, tmp142
-	sarl	$6, %edx	#, tmp142
+	movl	%eax, %edx	# tmp137, tmp141
+	sarl	$6, %edx	#, tmp141
 # src/t2k.c:62:             note=cpatterns[j][order[current_pattern]][current_note];
-	andl	$7, %edx	#, tmp144
-	movsbq	order(%rdx), %rdx	# order, tmp145
-	salq	$6, %rdx	#, tmp146
-	andl	$63, %eax	#, tmp148
-	leaq	cpatterns(%rdx,%rax), %rax	#, _45
+	andl	$7, %edx	#, tmp143
+	movsbq	order(%rdx), %rdx	# order, tmp144
+	salq	$6, %rdx	#, tmp145
+	movl	%eax, %ecx	# tmp137, tmp147
+	andl	$63, %ecx	#, tmp147
+	leaq	cpatterns(%rdx,%rcx), %r12	#, _45
 	xorl	%ecx, %ecx	# ivtmp.71
 # src/t2k.c:69:             if((song_clock&6)==0)
-	andl	$6, %ebp	#, tmp160
+	andl	$6, %r11d	#, tmp159
 .L11:
 # src/t2k.c:62:             note=cpatterns[j][order[current_pattern]][current_note];
-	movq	%rcx, %rdx	# ivtmp.71, tmp150
-	salq	$8, %rdx	#, tmp150
-	movsbl	(%rax,%rdx), %edx	# MEM[base: _45, index: _50, offset: 0B], _12
-# src/t2k.c:63:             if((previous[j]!=note)&&(note))
-	cmpl	%edx, previous(,%rcx,4)	# _12, MEM[symbol: previous, index: ivtmp.71_79, step: 4, offset: 0B]
+	movq	%rcx, %rdx	# ivtmp.71, tmp149
+	salq	$8, %rdx	#, tmp149
+	movsbl	(%r12,%rdx), %edx	# MEM[base: _45, index: _50, offset: 0B], note
+# src/t2k.c:63:             if((previous[j]!=pos)&&(note))
+	cmpl	%eax, previous(,%rcx,4)	# tmp137, MEM[symbol: previous, index: ivtmp.71_79, step: 4, offset: 0B]
 	je	.L5	#,
-	testl	%edx, %edx	# _12
+	testl	%edx, %edx	# note
 	je	.L5	#,
-	movl	%edx, %r9d	# _12, note
-# src/t2k.c:43:     float freq=32.7032;
+# src/t2k.c:43:     float freq=61.7337f;
 	movss	.LC0(%rip), %xmm0	#, freq
 .L3:
 # src/t2k.c:44:     while(--note)
-	decl	%r9d	# note
+	decl	%edx	# note
 	je	.L26	#,
 # src/t2k.c:46:         freq*=1.05946f;
-	mulss	%xmm1, %xmm0	# tmp195, freq
+	mulss	%xmm1, %xmm0	# tmp194, freq
 	jmp	.L3	#
 .L26:
 # src/t2k.c:65:                 hertz[j]=getFrq(note);
 	movss	%xmm0, hertz(,%rcx,4)	# freq, MEM[symbol: hertz, index: ivtmp.71_79, step: 4, offset: 0B]
-# src/t2k.c:66:                 previous[j]=note;
-	movl	%edx, previous(,%rcx,4)	# _12, MEM[symbol: previous, index: ivtmp.71_79, step: 4, offset: 0B]
+# src/t2k.c:66:                 previous[j]=pos;
+	movl	%eax, previous(,%rcx,4)	# tmp137, MEM[symbol: previous, index: ivtmp.71_79, step: 4, offset: 0B]
 # src/t2k.c:67:                 vol[j]=8192;
 	movw	$8192, vol(%rcx,%rcx)	#, MEM[symbol: vol, index: ivtmp.71_79, step: 2, offset: 0B]
 .L5:
 # src/t2k.c:69:             if((song_clock&6)==0)
-	testl	%ebp, %ebp	# tmp160
+	testl	%r11d, %r11d	# tmp159
 	jne	.L7	#,
 # src/t2k.c:71:                 vol[j]--;
 	decw	vol(%rcx,%rcx)	# MEM[symbol: vol, index: ivtmp.71_79, step: 2, offset: 0B]
@@ -143,10 +144,10 @@ audio_callback:
 	testw	%r9w, %r9w	# _20
 	jle	.L8	#,
 # src/t2k.c:75:                 freq=SAMPLERATE/hertz[j];
-	movaps	%xmm2, %xmm0	# tmp197, tmp169
-	divss	hertz(,%rcx,4), %xmm0	# MEM[symbol: hertz, index: ivtmp.71_79, step: 4, offset: 0B], tmp169
+	movaps	%xmm2, %xmm0	# tmp196, tmp168
+	divss	hertz(,%rcx,4), %xmm0	# MEM[symbol: hertz, index: ivtmp.71_79, step: 4, offset: 0B], tmp168
 # src/t2k.c:75:                 freq=SAMPLERATE/hertz[j];
-	cvttss2si	%xmm0, %r10d	# tmp169, _23
+	cvttss2si	%xmm0, %r10d	# tmp168, _23
 # src/t2k.c:76:                 counter[j]=(counter[j]>=freq)?0:counter[j];
 	movl	counter(,%rcx,4), %edx	# MEM[symbol: counter, index: ivtmp.71_79, step: 4, offset: 0B], _24
 # src/t2k.c:76:                 counter[j]=(counter[j]>=freq)?0:counter[j];
@@ -155,21 +156,21 @@ audio_callback:
 	xorl	%edx, %edx	# _24
 .L9:
 # src/t2k.c:78:                 byte_stream[i]+=(counter[j]<=freq)?vol[j]:-vol[j];
-	movw	(%rsi,%r8,2), %r12w	# MEM[base: byte_stream_48(D), index: ivtmp.83_55, step: 2, offset: 0B], _27
+	movw	(%rsi,%r8,2), %r13w	# MEM[base: byte_stream_48(D), index: ivtmp.83_55, step: 2, offset: 0B], _27
 # src/t2k.c:77:                 freq>>=2;
-	sarl	$2, %r10d	#, tmp172
+	sarl	$2, %r10d	#, tmp171
 # src/t2k.c:78:                 byte_stream[i]+=(counter[j]<=freq)?vol[j]:-vol[j];
-	cmpl	%edx, %r10d	# _24, tmp172
+	cmpl	%edx, %r10d	# _24, tmp171
 	jge	.L10	#,
 # src/t2k.c:78:                 byte_stream[i]+=(counter[j]<=freq)?vol[j]:-vol[j];
 	negl	%r9d	# iftmp.21_37
 .L10:
 # src/t2k.c:78:                 byte_stream[i]+=(counter[j]<=freq)?vol[j]:-vol[j];
-	addl	%r12d, %r9d	# _27, tmp173
-	movw	%r9w, (%rsi,%r8,2)	# tmp173, MEM[base: byte_stream_48(D), index: ivtmp.83_55, step: 2, offset: 0B]
+	addl	%r13d, %r9d	# _27, tmp172
+	movw	%r9w, (%rsi,%r8,2)	# tmp172, MEM[base: byte_stream_48(D), index: ivtmp.83_55, step: 2, offset: 0B]
 # src/t2k.c:79:                 counter[j]++;
-	incl	%edx	# tmp175
-	movl	%edx, counter(,%rcx,4)	# tmp175, MEM[symbol: counter, index: ivtmp.71_79, step: 4, offset: 0B]
+	incl	%edx	# tmp174
+	movl	%edx, counter(,%rcx,4)	# tmp174, MEM[symbol: counter, index: ivtmp.71_79, step: 4, offset: 0B]
 .L8:
 	incq	%rcx	# ivtmp.71
 # src/t2k.c:60:         for(int j=0;j<VOICES;j++)
@@ -180,9 +181,9 @@ audio_callback:
 	jmp	.L2	#
 .L25:
 	testl	%edi, %edi	# _33
-	movl	$0, %edx	#, tmp177
-	cmovs	%edx, %edi	# _33,, tmp177, tmp176
-	addl	%r11d, %edi	# song_clock_lsm.57, song_clock_lsm.57
+	movl	$0, %edx	#, tmp176
+	cmovs	%edx, %edi	# _33,, tmp176, tmp175
+	addl	%ebx, %edi	# song_clock_lsm.57, song_clock_lsm.57
 	testb	%al, %al	# song_clock_lsm.58
 	je	.L1	#,
 	movl	%edi, song_clock(%rip)	# song_clock_lsm.57, song_clock
@@ -191,6 +192,7 @@ audio_callback:
 	popq	%rbx	#
 	popq	%rbp	#
 	popq	%r12	#
+	popq	%r13	#
 	ret	
 	.size	audio_callback, .-audio_callback
 	.section	.text.initStone,"ax",@progbits
@@ -815,64 +817,64 @@ pBuffer:
 	.type	cpatterns, @object
 	.size	cpatterns, 768
 cpatterns:
-	.byte	50
 	.byte	0
+	.byte	39
 	.byte	0
 	.byte	0
-	.byte	45
 	.byte	0
-	.byte	46
+	.byte	34
 	.byte	0
-	.byte	48
+	.byte	35
 	.byte	0
-	.byte	50
-	.byte	48
-	.byte	46
+	.byte	37
 	.byte	0
-	.byte	45
+	.byte	39
+	.byte	37
+	.byte	35
 	.byte	0
-	.byte	43
+	.byte	34
 	.byte	0
+	.byte	32
 	.byte	0
 	.byte	0
-	.byte	43
 	.byte	0
-	.byte	46
+	.byte	32
 	.byte	0
-	.byte	50
+	.byte	35
 	.byte	0
+	.byte	39
 	.byte	0
 	.byte	0
-	.byte	48
 	.byte	0
-	.byte	46
+	.byte	37
 	.byte	0
-	.byte	45
+	.byte	35
 	.byte	0
+	.byte	34
 	.byte	0
 	.byte	0
-	.byte	45
 	.byte	0
-	.byte	46
+	.byte	34
 	.byte	0
-	.byte	48
+	.byte	35
 	.byte	0
+	.byte	37
 	.byte	0
 	.byte	0
-	.byte	50
 	.byte	0
+	.byte	39
 	.byte	0
 	.byte	0
-	.byte	46
 	.byte	0
+	.byte	35
 	.byte	0
 	.byte	0
-	.byte	43
 	.byte	0
+	.byte	32
 	.byte	0
 	.byte	0
-	.byte	43
 	.byte	0
+	.byte	32
 	.byte	0
 	.byte	0
 	.byte	0
@@ -881,511 +883,62 @@ cpatterns:
 	.byte	0
 	.byte	0
 	.byte	0
-	.byte	48
 	.byte	0
+	.byte	37
 	.byte	0
 	.byte	0
-	.byte	51
 	.byte	0
-	.byte	55
+	.byte	40
 	.byte	0
-	.byte	0
-	.byte	0
-	.byte	53
-	.byte	0
-	.byte	51
-	.byte	0
-	.byte	50
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	46
-	.byte	0
-	.byte	50
-	.byte	0
-	.byte	51
-	.byte	50
-	.byte	48
-	.byte	0
-	.byte	46
-	.byte	0
-	.byte	45
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	45
-	.byte	0
-	.byte	46
-	.byte	0
-	.byte	48
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	50
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	46
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	43
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	43
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	50
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	46
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	48
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	45
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	46
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	43
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
+	.byte	44
 	.byte	0
 	.byte	0
 	.byte	0
 	.byte	42
 	.byte	0
+	.byte	40
 	.byte	0
+	.byte	39
 	.byte	0
 	.byte	0
 	.byte	0
 	.byte	0
 	.byte	0
-	.byte	45
+	.byte	35
 	.byte	0
+	.byte	39
 	.byte	0
+	.byte	40
+	.byte	39
+	.byte	37
 	.byte	0
+	.byte	35
 	.byte	0
+	.byte	34
 	.byte	0
 	.byte	0
 	.byte	0
-	.byte	50
+	.byte	34
 	.byte	0
+	.byte	35
 	.byte	0
+	.byte	37
 	.byte	0
 	.byte	0
 	.byte	0
+	.byte	39
 	.byte	0
 	.byte	0
-	.byte	46
 	.byte	0
+	.byte	35
 	.byte	0
 	.byte	0
 	.byte	0
+	.byte	32
 	.byte	0
 	.byte	0
 	.byte	0
-	.byte	48
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	45
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	46
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	50
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	55
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	54
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	14
-	.byte	0
-	.byte	26
-	.byte	0
-	.byte	14
-	.byte	0
-	.byte	26
-	.byte	0
-	.byte	14
-	.byte	0
-	.byte	26
-	.byte	0
-	.byte	14
-	.byte	0
-	.byte	26
-	.byte	0
-	.byte	19
-	.byte	0
-	.byte	31
-	.byte	0
-	.byte	19
-	.byte	0
-	.byte	31
-	.byte	0
-	.byte	19
-	.byte	0
-	.byte	31
-	.byte	0
-	.byte	19
-	.byte	0
-	.byte	31
-	.byte	0
-	.byte	18
-	.byte	0
-	.byte	30
-	.byte	0
-	.byte	18
-	.byte	0
-	.byte	30
-	.byte	0
-	.byte	14
-	.byte	0
-	.byte	26
-	.byte	0
-	.byte	14
-	.byte	0
-	.byte	26
-	.byte	0
-	.byte	19
-	.byte	0
-	.byte	31
-	.byte	0
-	.byte	19
-	.byte	0
-	.byte	31
-	.byte	0
-	.byte	19
-	.byte	0
-	.byte	21
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	22
-	.byte	0
-	.byte	24
-	.byte	0
-	.byte	12
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	12
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	12
-	.byte	0
-	.byte	19
-	.byte	0
-	.byte	12
-	.byte	0
-	.byte	22
-	.byte	0
-	.byte	22
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	22
-	.byte	0
-	.byte	22
-	.byte	0
-	.byte	17
-	.byte	0
-	.byte	17
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	21
-	.byte	0
-	.byte	33
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	33
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	26
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	30
-	.byte	0
-	.byte	19
-	.byte	0
-	.byte	26
-	.byte	0
-	.byte	19
-	.byte	0
-	.byte	26
-	.byte	0
-	.byte	19
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	31
-	.byte	0
-	.byte	38
-	.byte	0
-	.byte	31
-	.byte	0
-	.byte	38
-	.byte	0
-	.byte	31
-	.byte	0
-	.byte	38
-	.byte	0
-	.byte	31
-	.byte	0
-	.byte	38
-	.byte	0
-	.byte	30
-	.byte	0
-	.byte	38
-	.byte	0
-	.byte	30
-	.byte	0
-	.byte	38
-	.byte	0
-	.byte	30
-	.byte	0
-	.byte	38
-	.byte	0
-	.byte	30
-	.byte	0
-	.byte	38
-	.byte	0
-	.byte	31
-	.byte	0
-	.byte	38
-	.byte	0
-	.byte	31
-	.byte	0
-	.byte	38
-	.byte	0
-	.byte	31
-	.byte	0
-	.byte	38
-	.byte	0
-	.byte	31
-	.byte	0
-	.byte	38
-	.byte	0
-	.byte	30
-	.byte	0
-	.byte	38
-	.byte	0
-	.byte	30
-	.byte	0
-	.byte	38
-	.byte	0
-	.byte	30
-	.byte	0
-	.byte	38
-	.byte	0
-	.byte	30
-	.byte	0
-	.byte	38
-	.byte	0
-	.byte	31
-	.byte	0
-	.byte	38
-	.byte	0
-	.byte	31
-	.byte	0
-	.byte	38
-	.byte	0
-	.byte	31
-	.byte	0
-	.byte	38
-	.byte	0
-	.byte	31
-	.byte	0
-	.byte	38
-	.byte	0
-	.byte	30
-	.byte	0
-	.byte	38
-	.byte	0
-	.byte	30
-	.byte	0
-	.byte	38
-	.byte	0
-	.byte	30
-	.byte	0
-	.byte	38
-	.byte	0
-	.byte	30
-	.byte	0
-	.byte	38
-	.byte	0
-	.byte	31
-	.byte	0
-	.byte	38
-	.byte	0
-	.byte	31
-	.byte	0
-	.byte	38
-	.byte	0
-	.byte	31
-	.byte	0
-	.byte	38
-	.byte	0
-	.byte	31
-	.byte	0
-	.byte	38
-	.byte	0
-	.byte	30
-	.byte	0
-	.byte	38
-	.byte	0
-	.byte	30
-	.byte	0
-	.byte	38
-	.byte	0
-	.byte	30
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	38
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	45
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	42
-	.byte	0
-	.byte	43
-	.byte	0
-	.byte	45
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	43
-	.byte	0
-	.byte	42
-	.byte	0
-	.byte	38
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	38
-	.byte	0
-	.byte	43
-	.byte	0
-	.byte	46
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	45
-	.byte	0
-	.byte	43
-	.byte	0
-	.byte	42
-	.byte	0
-	.byte	38
-	.byte	0
-	.byte	42
-	.byte	0
-	.byte	43
-	.byte	0
-	.byte	45
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	46
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	43
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	38
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	38
-	.byte	0
-	.byte	0
+	.byte	32
 	.byte	0
 	.byte	0
 	.byte	0
@@ -1397,57 +950,75 @@ cpatterns:
 	.byte	0
 	.byte	0
 	.byte	0
-	.byte	43
 	.byte	0
-	.byte	46
 	.byte	0
-	.byte	46
-	.byte	46
-	.byte	45
 	.byte	0
-	.byte	43
 	.byte	0
-	.byte	41
+	.byte	35
 	.byte	0
 	.byte	0
 	.byte	0
 	.byte	0
 	.byte	0
-	.byte	38
 	.byte	0
-	.byte	41
 	.byte	0
-	.byte	43
-	.byte	41
+	.byte	37
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	34
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	35
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	32
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	31
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	34
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
 	.byte	39
 	.byte	0
-	.byte	38
-	.byte	0
-	.byte	42
-	.byte	0
-	.byte	38
-	.byte	0
-	.byte	42
-	.byte	0
-	.byte	43
-	.byte	0
-	.byte	45
-	.byte	0
-	.byte	42
-	.byte	0
-	.byte	46
-	.byte	0
-	.byte	42
-	.byte	0
-	.byte	43
-	.byte	0
-	.byte	38
-	.byte	0
-	.byte	38
 	.byte	0
 	.byte	0
 	.byte	0
-	.byte	38
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	35
 	.byte	0
 	.byte	0
 	.byte	0
@@ -1455,7 +1026,7 @@ cpatterns:
 	.byte	0
 	.byte	0
 	.byte	0
-	.byte	46
+	.byte	37
 	.byte	0
 	.byte	0
 	.byte	0
@@ -1463,7 +1034,7 @@ cpatterns:
 	.byte	0
 	.byte	0
 	.byte	0
-	.byte	43
+	.byte	34
 	.byte	0
 	.byte	0
 	.byte	0
@@ -1471,15 +1042,15 @@ cpatterns:
 	.byte	0
 	.byte	0
 	.byte	0
-	.byte	45
+	.byte	35
 	.byte	0
 	.byte	0
 	.byte	0
+	.byte	39
 	.byte	0
 	.byte	0
 	.byte	0
-	.byte	0
-	.byte	42
+	.byte	44
 	.byte	0
 	.byte	0
 	.byte	0
@@ -1495,7 +1066,6 @@ cpatterns:
 	.byte	0
 	.byte	0
 	.byte	0
-	.byte	38
 	.byte	0
 	.byte	0
 	.byte	0
@@ -1503,7 +1073,128 @@ cpatterns:
 	.byte	0
 	.byte	0
 	.byte	0
-	.byte	38
+	.byte	0
+	.byte	3
+	.byte	0
+	.byte	15
+	.byte	0
+	.byte	3
+	.byte	0
+	.byte	15
+	.byte	0
+	.byte	3
+	.byte	0
+	.byte	15
+	.byte	0
+	.byte	3
+	.byte	0
+	.byte	15
+	.byte	0
+	.byte	8
+	.byte	0
+	.byte	20
+	.byte	0
+	.byte	8
+	.byte	0
+	.byte	20
+	.byte	0
+	.byte	8
+	.byte	0
+	.byte	20
+	.byte	0
+	.byte	8
+	.byte	0
+	.byte	20
+	.byte	0
+	.byte	7
+	.byte	0
+	.byte	19
+	.byte	0
+	.byte	7
+	.byte	0
+	.byte	19
+	.byte	0
+	.byte	3
+	.byte	0
+	.byte	15
+	.byte	0
+	.byte	3
+	.byte	0
+	.byte	15
+	.byte	0
+	.byte	8
+	.byte	0
+	.byte	20
+	.byte	0
+	.byte	8
+	.byte	0
+	.byte	20
+	.byte	0
+	.byte	8
+	.byte	0
+	.byte	10
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	11
+	.byte	0
+	.byte	13
+	.byte	0
+	.byte	1
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	1
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	1
+	.byte	0
+	.byte	8
+	.byte	0
+	.byte	1
+	.byte	0
+	.byte	11
+	.byte	0
+	.byte	11
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	11
+	.byte	0
+	.byte	11
+	.byte	0
+	.byte	6
+	.byte	0
+	.byte	6
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	10
+	.byte	0
+	.byte	22
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	22
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	15
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	19
+	.byte	0
+	.byte	8
+	.byte	0
+	.byte	15
+	.byte	0
+	.byte	8
+	.byte	0
+	.byte	15
+	.byte	0
+	.byte	8
 	.byte	0
 	.byte	0
 	.byte	0
@@ -1511,7 +1202,191 @@ cpatterns:
 	.byte	0
 	.byte	0
 	.byte	0
-	.byte	42
+	.byte	20
+	.byte	0
+	.byte	27
+	.byte	0
+	.byte	20
+	.byte	0
+	.byte	27
+	.byte	0
+	.byte	20
+	.byte	0
+	.byte	27
+	.byte	0
+	.byte	20
+	.byte	0
+	.byte	27
+	.byte	0
+	.byte	19
+	.byte	0
+	.byte	27
+	.byte	0
+	.byte	19
+	.byte	0
+	.byte	27
+	.byte	0
+	.byte	19
+	.byte	0
+	.byte	27
+	.byte	0
+	.byte	19
+	.byte	0
+	.byte	27
+	.byte	0
+	.byte	20
+	.byte	0
+	.byte	27
+	.byte	0
+	.byte	20
+	.byte	0
+	.byte	27
+	.byte	0
+	.byte	20
+	.byte	0
+	.byte	27
+	.byte	0
+	.byte	20
+	.byte	0
+	.byte	27
+	.byte	0
+	.byte	19
+	.byte	0
+	.byte	27
+	.byte	0
+	.byte	19
+	.byte	0
+	.byte	27
+	.byte	0
+	.byte	19
+	.byte	0
+	.byte	27
+	.byte	0
+	.byte	19
+	.byte	0
+	.byte	27
+	.byte	0
+	.byte	20
+	.byte	0
+	.byte	27
+	.byte	0
+	.byte	20
+	.byte	0
+	.byte	27
+	.byte	0
+	.byte	20
+	.byte	0
+	.byte	27
+	.byte	0
+	.byte	20
+	.byte	0
+	.byte	27
+	.byte	0
+	.byte	19
+	.byte	0
+	.byte	27
+	.byte	0
+	.byte	19
+	.byte	0
+	.byte	27
+	.byte	0
+	.byte	19
+	.byte	0
+	.byte	27
+	.byte	0
+	.byte	19
+	.byte	0
+	.byte	27
+	.byte	0
+	.byte	20
+	.byte	0
+	.byte	27
+	.byte	0
+	.byte	20
+	.byte	0
+	.byte	27
+	.byte	0
+	.byte	20
+	.byte	0
+	.byte	27
+	.byte	0
+	.byte	20
+	.byte	0
+	.byte	27
+	.byte	0
+	.byte	19
+	.byte	0
+	.byte	27
+	.byte	0
+	.byte	19
+	.byte	0
+	.byte	27
+	.byte	0
+	.byte	19
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	27
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	34
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	31
+	.byte	0
+	.byte	32
+	.byte	0
+	.byte	34
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	32
+	.byte	0
+	.byte	31
+	.byte	0
+	.byte	27
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	27
+	.byte	0
+	.byte	32
+	.byte	0
+	.byte	35
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	34
+	.byte	0
+	.byte	32
+	.byte	0
+	.byte	31
+	.byte	0
+	.byte	27
+	.byte	0
+	.byte	31
+	.byte	0
+	.byte	32
+	.byte	0
+	.byte	34
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	35
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	32
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	27
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	27
 	.byte	0
 	.byte	0
 	.byte	0
@@ -1519,7 +1394,63 @@ cpatterns:
 	.byte	0
 	.byte	0
 	.byte	0
-	.byte	46
+	.byte	0
+	.byte	0
+	.byte	28
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	32
+	.byte	0
+	.byte	35
+	.byte	0
+	.byte	35
+	.byte	35
+	.byte	34
+	.byte	0
+	.byte	32
+	.byte	0
+	.byte	30
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	27
+	.byte	0
+	.byte	30
+	.byte	0
+	.byte	32
+	.byte	30
+	.byte	28
+	.byte	0
+	.byte	27
+	.byte	0
+	.byte	31
+	.byte	0
+	.byte	27
+	.byte	0
+	.byte	31
+	.byte	0
+	.byte	32
+	.byte	0
+	.byte	34
+	.byte	0
+	.byte	31
+	.byte	0
+	.byte	35
+	.byte	0
+	.byte	31
+	.byte	0
+	.byte	32
+	.byte	0
+	.byte	27
+	.byte	0
+	.byte	27
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	27
 	.byte	0
 	.byte	0
 	.byte	0
@@ -1527,7 +1458,7 @@ cpatterns:
 	.byte	0
 	.byte	0
 	.byte	0
-	.byte	43
+	.byte	35
 	.byte	0
 	.byte	0
 	.byte	0
@@ -1535,7 +1466,7 @@ cpatterns:
 	.byte	0
 	.byte	0
 	.byte	0
-	.byte	45
+	.byte	32
 	.byte	0
 	.byte	0
 	.byte	0
@@ -1543,7 +1474,7 @@ cpatterns:
 	.byte	0
 	.byte	0
 	.byte	0
-	.byte	42
+	.byte	34
 	.byte	0
 	.byte	0
 	.byte	0
@@ -1551,15 +1482,7 @@ cpatterns:
 	.byte	0
 	.byte	0
 	.byte	0
-	.byte	43
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	46
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	50
+	.byte	31
 	.byte	0
 	.byte	0
 	.byte	0
@@ -1567,8 +1490,87 @@ cpatterns:
 	.byte	0
 	.byte	0
 	.byte	0
-	.byte	48
+	.byte	32
 	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	27
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	27
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	31
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	35
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	32
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	34
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	31
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	32
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	35
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	39
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	0
+	.byte	37
 	.byte	0
 	.byte	0
 	.byte	0
@@ -1644,7 +1646,7 @@ colors:
 	.section	.rodata.cst4,"aM",@progbits,4
 	.align 4
 .LC0:
-	.long	1107480596
+	.long	1115090767
 	.align 4
 .LC1:
 	.long	1065852003
