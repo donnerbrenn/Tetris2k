@@ -49,26 +49,24 @@ float getFrq(int note)
 }
 
 
-void audio_callback(void *unused, Uint8 *byte_stream, int byte_stream_length)
+void audio_callback(void *unused, short *byte_stream, int byte_stream_length)
 {
-    stream=((short*)byte_stream);
     for (int i = 0; i < byte_stream_length>>1; ++i)
     {
         pos=song_clock/(SAMPLERATE/SPEED);
         current_pattern=(pos>>6)&7;
         current_note=pos&63;
-        stream[i]=0;
-
+        byte_stream[i]=0;
         for(int j=0;j<VOICES;j++)
         {
             note=cpatterns[j][order[current_pattern]][current_note];
-            if((previous[j]!=note)&&(note!=0))
+            if((previous[j]!=note)&&(note))
             {
                 hertz[j]=getFrq(note);
                 previous[j]=note;
                 vol[j]=8192;
             }
-            if((song_clock&7)==0)
+            if((song_clock&6)==0)
             {
                 vol[j]--;
             }
@@ -77,7 +75,7 @@ void audio_callback(void *unused, Uint8 *byte_stream, int byte_stream_length)
                 freq=SAMPLERATE/hertz[j];
                 counter[j]=(counter[j]>=freq)?0:counter[j];
                 freq>>=2;
-                stream[i]+=(counter[j]<=freq)?vol[j]:-vol[j];
+                byte_stream[i]+=(counter[j]<=freq)?vol[j]:-vol[j];
                 counter[j]++;
             }
         }
@@ -204,7 +202,9 @@ void updateDisplay()
     // drawRect(0,0,SCREEN_HEIGHT,0x12121212);
     #ifdef FULL
      drawScore(score,10);
-    //  drawScore(hiscore,400);
+    //  drawScore(previous[0], 100);
+    //  drawScore(previous[1], 300);
+    //  drawScore(previous[2], 500);
      #endif
 
     for(int y=0;y<FIELDHEIGHT;++y)

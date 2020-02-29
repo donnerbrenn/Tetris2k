@@ -72,7 +72,7 @@ t2k.smol: src/t2k.o #not working - hopefully i can find a solution for the crash
 	cc -Wl,-Map=t2k.map -m64 -T smol/ld/link.ld -Wl,--oformat=binary -m64 -nostartfiles -nostdlib src/t2k.o stub.t2k.start.o -o $@
 	wc -c $@
 
-t2k: vondehi.elf t2k.lzma #t2k.smol
+t2k: vondehi.elf t2k.lzma
 	cat $^ > $@
 	chmod +x $@
 	# rm t2k.*

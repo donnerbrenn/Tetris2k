@@ -1,5 +1,6 @@
 #define FULL
 
+
 #include <SDL2/SDL.h>
 #include "symbols.h"
 #ifdef FULL
@@ -13,8 +14,10 @@
 #define SCREEN_WIDTH 620
 #define SCREEN_HEIGHT 960
 #define SAMPLERATE 44100
-#define BUFFERSIZE 4096
+#define BUFFERSIZE 1024
 #define FONTSIZE 8
+
+
 
 //tetris variables
 static char pBuffer[FIELDHEIGHT*FIELDWIDTH];
@@ -33,6 +36,8 @@ static unsigned int runtime=0;
 bool handlekeys;
 
 #ifdef FULL
+
+
 static int pos;
 static int current_pattern;
 static int current_note;
@@ -45,9 +50,7 @@ static int counter[VOICES];
 static int previous[VOICES];
 static int note;
 static int freq;
-
-
-static void audio_callback(void *unused, uint8_t *byte_stream, int byte_stream_length);
+static void audio_callback(void *unused, short *byte_stream, int byte_stream_length);
 static float getFrq(int note);
 static void drawcharacter(int num, int posX,int posY);
 static void drawScore(int value, int x);
@@ -67,8 +70,9 @@ static bool isLineComplete(int line);
 static void drawRect(int x, int y, int w, int col);
 static void _memcpy(void* dest, void* src, int numbytes);
 static void _memset(void* dest,char val,int numbytes);
+static void initStone();
 
-inline void initStone();
 inline char Rotate(char px, char py, char r);
 inline bool DoesPieceFit(int nTetromino, int nRotation, int nPosX, int nPosY);
+
 void _start();
