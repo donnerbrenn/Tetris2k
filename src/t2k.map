@@ -18,7 +18,7 @@ LOAD src/t2k.o
                 0x0000000000010120                . = (SEGMENT_START ("text-segment", 0x10000) + SIZEOF_HEADERS)
                 0x000000000001018c                . = (ALIGN (0x64) + (. & 0x63))
 
-.text           0x000000000001018c      0x64e
+.text           0x000000000001018c      0x657
  *(.text*)
  .text.audio_callback
                 0x000000000001018c      0x141 src/t2k.o
@@ -31,17 +31,17 @@ LOAD src/t2k.o
  .text.DoesPieceFit
                 0x000000000001038e       0x5a src/t2k.o
                 0x000000000001038e                DoesPieceFit
- .text._start   0x00000000000103e8      0x3f2 src/t2k.o
+ .text._start   0x00000000000103e8      0x3fb src/t2k.o
                 0x00000000000103e8                _start
 
-.plt            0x00000000000107e0        0x0
- .plt           0x00000000000107e0        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+.plt            0x00000000000107f0        0x0
+ .plt           0x00000000000107f0        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
 
-.iplt           0x00000000000107da        0x0
- .iplt          0x00000000000107da        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+.iplt           0x00000000000107e3        0x0
+ .iplt          0x00000000000107e3        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
 
-.plt.got        0x00000000000107e0        0x0
- .plt.got       0x00000000000107e0        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+.plt.got        0x00000000000107e8        0x0
+ .plt.got       0x00000000000107e8        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
 
 .rodata         0x0000000000010800      0x374
  *(.rodata*)
@@ -124,22 +124,25 @@ LOAD src/t2k.o
 
 .bss            0x0000000000011100      0x258
  *(.bss*)
- .bss.buffer.36319
+ .bss.buffer.36320
                 0x0000000000011100        0xf src/t2k.o
  *fill*         0x000000000001110f        0x1 
- .bss.counter.36300
+ .bss.counter.36301
                 0x0000000000011110        0xc src/t2k.o
- .bss.vol.36298
+ .bss.vol.36299
                 0x000000000001111c        0x6 src/t2k.o
  *fill*         0x0000000000011122        0x2 
- .bss.hertz.36297
+ .bss.hertz.36298
                 0x0000000000011124        0xc src/t2k.o
- .bss.previous.36301
+ .bss.previous.36302
                 0x0000000000011130        0xc src/t2k.o
- .bss.song_clock.36299
+ .bss.song_clock.36300
                 0x000000000001113c        0x4 src/t2k.o
- .bss.runtime   0x0000000000011140        0x4 src/t2k.o
- *fill*         0x0000000000011144        0xc 
+ .bss.handlekeys
+                0x0000000000011140        0x1 src/t2k.o
+ *fill*         0x0000000000011141        0x3 
+ .bss.runtime   0x0000000000011144        0x4 src/t2k.o
+ *fill*         0x0000000000011148        0x8 
  .bss.rect      0x0000000000011150       0x10 src/t2k.o
  .bss.screenSurface
                 0x0000000000011160        0x8 src/t2k.o

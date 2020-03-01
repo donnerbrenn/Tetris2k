@@ -32,6 +32,7 @@ static SDL_Window *window;
 static SDL_Surface *screenSurface;
 static SDL_Rect rect;
 static unsigned int runtime=0;
+static bool handlekeys;
 
 
 

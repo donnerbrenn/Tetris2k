@@ -172,7 +172,7 @@ bool FallDown()
 void ProcessEventsSDL()
 {
     SDL_Event e;
-    bool handlekeys=true;
+    handlekeys=true;
     while(SDL_PollEvent(&e))
     {
         if (e.type==SDL_QUIT)
