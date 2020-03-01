@@ -79,7 +79,7 @@ const int32_t colors[10]={black,red,green,blue,cyan,yellow,purple,orange,white,g
 
 //letters c64 style - just numbers for our score
 const short characters[7]={O,L,J,I,Z,T,S};
-#ifdef FULL
+#ifdef SCORE
 const short characters2[10]={C0,C1,C2,C3,C4,C5,C6,C7,C8,C9};
 #endif
 #endif // SYMBOLS_H

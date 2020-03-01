@@ -5,43 +5,15 @@ SECTIONS
 {
 
   /* Read-only sections, merged into text segment: */
-  PROVIDE (__executable_start = SEGMENT_START("text-segment", 0x010000)); . = SEGMENT_START("text-segment", 0x010000) + SIZEOF_HEADERS;/* . = ALIGN(10000) + (. & (10000-1));*/
-  .text           :
-  {
-    *(.text*) *(.stub*) 
-  }
-  .rodata         : { *(.rodata .rodata.*) }
+  PROVIDE (__executable_start = SEGMENT_START("text-segment", 0x10000)); . = SEGMENT_START("text-segment", 0x10000) + SIZEOF_HEADERS; . = ALIGN(100) + (. & (100-1));
+  .text : { *(.text*)}
+  .rodata : { *(.rodata*) }
 
-
-  /* Adjust the address for the data segment.  We want to adjust up to
-     the same address within the page on the next page up.  */
   . = DATA_SEGMENT_ALIGN (CONSTANT (MAXPAGESIZE), CONSTANT (COMMONPAGESIZE));
-  /* Exception handling  */
 
-  .dynamic        : { *(.dynamic) }
+  .dynamic : { *(.dynamic*) }
+  .bss : { *(.bss*)
 
-  __bss_start = .;
-  .bss            :
-  {
-   *(.dynbss)
-   *(.bss .bss.*)
-
-   /* Align here to ensure that the .bss section occupies space up to
-      _end.  Align after .bss to ensure correct alignment even if the
-      .bss section disappears because there are no input sections.
-      FIXME: Why do we need it? When there is no .bss section, we do not
-      pad the .data section.  */
-   . = ALIGN(. != 0 ? 64 /1 : 0);
-   *(.dynamic)
-  
   }
-
-
-
-  _end = .; PROVIDE (end = .);
   . = DATA_SEGMENT_END (.);
-
-
-
-
 }

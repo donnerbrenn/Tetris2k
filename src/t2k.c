@@ -37,7 +37,7 @@ void updateBuffer()
     _memcpy(pBuffer,pBackBuffer,FIELDHEIGHT*FIELDWIDTH); 
 }
 
-#ifdef FULL
+#ifdef SYNTH
 float getFrq(int note)
 {
     float freq=61.7337f;
@@ -51,6 +51,17 @@ float getFrq(int note)
 
 void audio_callback(void *unused, short *byte_stream, int byte_stream_length)
 {
+    static short *stream;
+    static float hertz[VOICES];
+    static short vol[VOICES];
+    static int song_clock;
+    static int counter[VOICES];
+    static int previous[VOICES];
+    static int note;
+    static int freq;
+    static int pos;
+    static int current_pattern;
+    static int current_note;
     for (int i = 0; i < byte_stream_length>>1; ++i)
     {
         pos=song_clock/(SAMPLERATE/SPEED);
@@ -82,6 +93,9 @@ void audio_callback(void *unused, short *byte_stream, int byte_stream_length)
         song_clock++;
     }
 }
+#endif
+
+#ifdef SCORE
 
 void drawScore(int value, int x)
 {
@@ -158,6 +172,7 @@ bool FallDown()
 void ProcessEventsSDL()
 {
     SDL_Event e;
+    bool handlekeys=true;
     while(SDL_PollEvent(&e))
     {
         if (e.type==SDL_QUIT)
@@ -173,6 +188,7 @@ void ProcessEventsSDL()
         }
         if(e.type==SDL_KEYDOWN&&handlekeys)
         {
+            handlekeys=false;
             char key=(e.key.keysym.sym);
             char newRot=nCurrentRotation+(key=='w');
             char newX=(nCurrentX)+(key=='d')-(key=='a');
@@ -180,7 +196,7 @@ void ProcessEventsSDL()
             
             if(DoesPieceFit(nCurrentPiece,newRot,newX,newY))
             {
-                #ifdef FULL
+                #ifdef SCORE
                 if(newY!=nCurrentY)
                 {
                     score++;
@@ -193,18 +209,17 @@ void ProcessEventsSDL()
         }
 
     }
-    handlekeys=true;
 }
 
 void updateDisplay()
 {
     SDL_FillRect(screenSurface,NULL,0x12121212);
     // drawRect(0,0,SCREEN_HEIGHT,0x12121212);
-    #ifdef FULL
+    #ifdef SCORE
      drawScore(score,10);
-    //  drawScore(previous[0], 100);
-    //  drawScore(previous[1], 300);
-    //  drawScore(previous[2], 500);
+    //  drawScore(pos, 200);
+    //  drawScore(order[current_pattern], 400);
+    //  drawScore(current_note, 450);
      #endif
 
     for(int y=0;y<FIELDHEIGHT;++y)
@@ -258,7 +273,7 @@ void initStone()
 
 void initGame()
 {
-    #ifdef FULL
+    #ifdef SCORE
     score=0;
     #endif
     _memset(pBackBuffer,9,FIELDWIDTH*FIELDHEIGHT);
@@ -284,7 +299,7 @@ bool isLineComplete(int line)
 
 void updateGame()
 {
-    #ifdef FULL
+    #ifdef SCORE
     int multi=0;
     #endif
     _memcpy(pBackBuffer,pBuffer,FIELDHEIGHT*FIELDWIDTH);
@@ -292,23 +307,20 @@ void updateGame()
     {
         if(isLineComplete(py))
         {
-            #ifdef FULL
+            #ifdef SCORE
             multi+=25;
             score+=multi;
             #endif
             DropLine(py);
         }
     }
-    #ifdef FULL
-    // hiscore=score>hiscore?score:hiscore;
-    #endif
     placeTetromino(nCurrentPiece,nCurrentX,nCurrentY,nCurrentRotation);
     SDL_Delay(15);
 }
 
 void initSDL()
 {
-    #ifdef FULL
+    #ifdef SYNTH
     SDL_AudioSpec want; 
     want.freq = SAMPLERATE;
     want.format = AUDIO_S16SYS;
@@ -328,7 +340,6 @@ void initSDL()
 void _start()
 {
     asm volatile("sub $8, %rsp");
-    handlekeys=true;
     initGame();
     initSDL();
     while(true)
@@ -341,7 +352,6 @@ void _start()
             {
                 initGame();
                 SDL_Delay(2000);
-                handlekeys=false;
             }
         }
         runtime++;
