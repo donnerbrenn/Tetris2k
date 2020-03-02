@@ -49,10 +49,9 @@ float getFrq(int note)
 }
 
 
-void audio_callback(void *unused, short *byte_stream, int byte_stream_length)
+void audio_callback(void *unused, void *byte_stream, int byte_stream_length)
 {
-    static short *stream;
-    static float hertz[VOICES];
+    short *stream=(short*)byte_stream;
     static short vol[VOICES];
     static int song_clock;
     static int counter[VOICES];
@@ -62,12 +61,13 @@ void audio_callback(void *unused, short *byte_stream, int byte_stream_length)
     static int pos;
     static int current_pattern;
     static int current_note;
+    static int hertz[VOICES];
     for (int i = 0; i < byte_stream_length>>1; ++i)
     {
         pos=song_clock/(SAMPLERATE/SPEED);
         current_pattern=(pos>>6)&7;
         current_note=pos&63;
-        byte_stream[i]=0;
+        stream[i]=0;
         for(int j=0;j<VOICES;j++)
         {
             note=cpatterns[j][order[current_pattern]][current_note];
@@ -86,7 +86,7 @@ void audio_callback(void *unused, short *byte_stream, int byte_stream_length)
                 freq=SAMPLERATE/hertz[j];
                 counter[j]=(counter[j]>=freq)?0:counter[j];
                 freq>>=2;
-                byte_stream[i]+=(counter[j]<=freq)?vol[j]:-vol[j];
+                stream[i]+=(counter[j]<=freq)*vol[j];
                 counter[j]++;
             }
         }

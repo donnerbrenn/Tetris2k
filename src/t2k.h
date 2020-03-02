@@ -37,7 +37,7 @@ static bool handlekeys;
 
 
 #ifdef SYNTH
-static void audio_callback(void *unused, short *byte_stream, int byte_stream_length);
+static void audio_callback(void *unused, void *byte_stream, int byte_stream_length);
 static float getFrq(int note);
 #endif
 #ifdef SCORE

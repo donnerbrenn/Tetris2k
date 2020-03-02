@@ -64,6 +64,7 @@
 	.section	.text.audio_callback,"ax",@progbits
 	.type	audio_callback, @function
 audio_callback:
+	pushq	%r14	#
 	pushq	%r13	#
 	pushq	%r12	#
 	pushq	%rbp	#
@@ -71,106 +72,101 @@ audio_callback:
 # src/t2k.c:65:     for (int i = 0; i < byte_stream_length>>1; ++i)
 	movl	%edx, %edi	# byte_stream_length, byte_stream_length
 	sarl	%edi	# byte_stream_length
-	movl	song_clock.36300(%rip), %ebx	# song_clock, song_clock_lsm.57
+	movl	song_clock.36299(%rip), %r11d	# song_clock, song_clock_lsm.57
 # src/t2k.c:65:     for (int i = 0; i < byte_stream_length>>1; ++i)
 	xorl	%r8d, %r8d	# ivtmp.83
 	xorl	%eax, %eax	# song_clock_lsm.58
 # src/t2k.c:67:         pos=song_clock/(SAMPLERATE/SPEED);
-	movl	$4900, %ebp	#, tmp193
+	movl	$4900, %ebx	#, tmp206
 # src/t2k.c:46:         freq*=1.05946f;
-	movss	.LC1(%rip), %xmm1	#, tmp194
+	movss	.LC1(%rip), %xmm1	#, tmp207
 # src/t2k.c:86:                 freq=SAMPLERATE/hertz[j];
-	movss	.LC2(%rip), %xmm2	#, tmp196
+	movl	$44100, %ebp	#, tmp209
+# src/t2k.c:89:                 stream[i]+=(counter[j]<=freq)*vol[j];
+	xorl	%r12d, %r12d	# tmp210
 .L2:
-	leal	(%rbx,%r8), %r11d	#, _47
+	leal	(%r11,%r8), %r9d	#, _85
 # src/t2k.c:65:     for (int i = 0; i < byte_stream_length>>1; ++i)
-	cmpl	%r8d, %edi	# ivtmp.83, _33
+	cmpl	%r8d, %edi	# ivtmp.83, _32
 	jle	.L25	#,
 # src/t2k.c:67:         pos=song_clock/(SAMPLERATE/SPEED);
-	movl	%r11d, %eax	# _47, tmp137
+	movl	%r9d, %eax	# _85, tmp137
 	cltd
-	idivl	%ebp	# tmp193
-# src/t2k.c:70:         byte_stream[i]=0;
-	movw	$0, (%rsi,%r8,2)	#, MEM[base: byte_stream_48(D), index: ivtmp.83_55, step: 2, offset: 0B]
+	idivl	%ebx	# tmp206
+	movl	%eax, %r10d	# tmp137, tmp137
+# src/t2k.c:70:         stream[i]=0;
+	movw	$0, (%rsi,%r8,2)	#, MEM[base: byte_stream_42(D), index: ivtmp.83_54, step: 2, offset: 0B]
 # src/t2k.c:68:         current_pattern=(pos>>6)&7;
-	movl	%eax, %edx	# tmp137, tmp141
-	sarl	$6, %edx	#, tmp141
+	sarl	$6, %eax	#, tmp141
 # src/t2k.c:73:             note=cpatterns[j][order[current_pattern]][current_note];
-	andl	$7, %edx	#, tmp143
-	movsbq	order(%rdx), %rdx	# order, tmp144
-	salq	$6, %rdx	#, tmp145
-	movl	%eax, %ecx	# tmp137, tmp147
-	andl	$63, %ecx	#, tmp147
-	leaq	cpatterns(%rdx,%rcx), %r12	#, _45
+	andl	$7, %eax	#, tmp143
+	movsbq	order(%rax), %rax	# order, tmp144
+	salq	$6, %rax	#, tmp145
+	movl	%r10d, %edx	# tmp137, tmp147
+	andl	$63, %edx	#, tmp147
+	leaq	cpatterns(%rax,%rdx), %r13	#, _45
 	xorl	%ecx, %ecx	# ivtmp.71
 # src/t2k.c:80:             if((song_clock&6)==0)
-	andl	$6, %r11d	#, tmp159
+	andl	$6, %r9d	#, tmp160
 .L11:
 # src/t2k.c:73:             note=cpatterns[j][order[current_pattern]][current_note];
-	movq	%rcx, %rdx	# ivtmp.71, tmp149
-	salq	$8, %rdx	#, tmp149
-	movsbl	(%r12,%rdx), %edx	# MEM[base: _45, index: _50, offset: 0B], note
+	movq	%rcx, %rax	# ivtmp.71, tmp149
+	salq	$8, %rax	#, tmp149
+	movsbl	0(%r13,%rax), %eax	# MEM[base: _45, index: _49, offset: 0B], note
 # src/t2k.c:74:             if((previous[j]!=pos)&&(note))
-	cmpl	%eax, previous.36302(,%rcx,4)	# tmp137, MEM[symbol: previous, index: ivtmp.71_79, step: 4, offset: 0B]
+	cmpl	%r10d, previous.36301(,%rcx,4)	# tmp137, MEM[symbol: previous, index: ivtmp.71_77, step: 4, offset: 0B]
 	je	.L5	#,
-	testl	%edx, %edx	# note
+	testl	%eax, %eax	# note
 	je	.L5	#,
 # src/t2k.c:43:     float freq=61.7337f;
 	movss	.LC0(%rip), %xmm0	#, freq
 .L3:
 # src/t2k.c:44:     while(--note)
-	decl	%edx	# note
+	decl	%eax	# note
 	je	.L26	#,
 # src/t2k.c:46:         freq*=1.05946f;
-	mulss	%xmm1, %xmm0	# tmp194, freq
+	mulss	%xmm1, %xmm0	# tmp207, freq
 	jmp	.L3	#
 .L26:
 # src/t2k.c:76:                 hertz[j]=getFrq(note);
-	movss	%xmm0, hertz.36298(,%rcx,4)	# freq, MEM[symbol: hertz, index: ivtmp.71_79, step: 4, offset: 0B]
+	cvttss2si	%xmm0, %eax	# freq, tmp157
+	movl	%eax, hertz.36307(,%rcx,4)	# tmp157, MEM[symbol: hertz, index: ivtmp.71_77, step: 4, offset: 0B]
 # src/t2k.c:77:                 previous[j]=pos;
-	movl	%eax, previous.36302(,%rcx,4)	# tmp137, MEM[symbol: previous, index: ivtmp.71_79, step: 4, offset: 0B]
+	movl	%r10d, previous.36301(,%rcx,4)	# tmp137, MEM[symbol: previous, index: ivtmp.71_77, step: 4, offset: 0B]
 # src/t2k.c:78:                 vol[j]=8192;
-	movw	$8192, vol.36299(%rcx,%rcx)	#, MEM[symbol: vol, index: ivtmp.71_79, step: 2, offset: 0B]
+	movw	$8192, vol.36298(%rcx,%rcx)	#, MEM[symbol: vol, index: ivtmp.71_77, step: 2, offset: 0B]
 .L5:
 # src/t2k.c:80:             if((song_clock&6)==0)
-	testl	%r11d, %r11d	# tmp159
+	testl	%r9d, %r9d	# tmp160
 	jne	.L7	#,
 # src/t2k.c:82:                 vol[j]--;
-	decw	vol.36299(%rcx,%rcx)	# MEM[symbol: vol, index: ivtmp.71_79, step: 2, offset: 0B]
+	decw	vol.36298(%rcx,%rcx)	# MEM[symbol: vol, index: ivtmp.71_77, step: 2, offset: 0B]
 .L7:
 # src/t2k.c:84:             if(vol[j]>0)
-	movw	vol.36299(%rcx,%rcx), %r9w	# MEM[symbol: vol, index: ivtmp.71_79, step: 2, offset: 0B], _20
+	movw	vol.36298(%rcx,%rcx), %r14w	# MEM[symbol: vol, index: ivtmp.71_77, step: 2, offset: 0B], _21
 # src/t2k.c:84:             if(vol[j]>0)
-	testw	%r9w, %r9w	# _20
+	testw	%r14w, %r14w	# _21
 	jle	.L8	#,
 # src/t2k.c:86:                 freq=SAMPLERATE/hertz[j];
-	movaps	%xmm2, %xmm0	# tmp196, tmp168
-	divss	hertz.36298(,%rcx,4), %xmm0	# MEM[symbol: hertz, index: ivtmp.71_79, step: 4, offset: 0B], tmp168
-# src/t2k.c:86:                 freq=SAMPLERATE/hertz[j];
-	cvttss2si	%xmm0, %r10d	# tmp168, _23
+	movl	%ebp, %eax	# tmp209, tmp169
+	cltd
+	idivl	hertz.36307(,%rcx,4)	# MEM[symbol: hertz, index: ivtmp.71_77, step: 4, offset: 0B]
 # src/t2k.c:87:                 counter[j]=(counter[j]>=freq)?0:counter[j];
-	movl	counter.36301(,%rcx,4), %edx	# MEM[symbol: counter, index: ivtmp.71_79, step: 4, offset: 0B], _24
+	movl	counter.36300(,%rcx,4), %edx	# MEM[symbol: counter, index: ivtmp.71_77, step: 4, offset: 0B], _24
 # src/t2k.c:87:                 counter[j]=(counter[j]>=freq)?0:counter[j];
-	cmpl	%edx, %r10d	# _24, _23
+	cmpl	%edx, %eax	# _24, tmp169
 	jg	.L9	#,
 	xorl	%edx, %edx	# _24
 .L9:
-# src/t2k.c:89:                 byte_stream[i]+=(counter[j]<=freq)?vol[j]:-vol[j];
-	movw	(%rsi,%r8,2), %r13w	# MEM[base: byte_stream_48(D), index: ivtmp.83_55, step: 2, offset: 0B], _27
 # src/t2k.c:88:                 freq>>=2;
-	sarl	$2, %r10d	#, tmp171
-# src/t2k.c:89:                 byte_stream[i]+=(counter[j]<=freq)?vol[j]:-vol[j];
-	cmpl	%edx, %r10d	# _24, tmp171
-	jge	.L10	#,
-# src/t2k.c:89:                 byte_stream[i]+=(counter[j]<=freq)?vol[j]:-vol[j];
-	negl	%r9d	# iftmp.21_37
-.L10:
-# src/t2k.c:89:                 byte_stream[i]+=(counter[j]<=freq)?vol[j]:-vol[j];
-	addl	%r13d, %r9d	# _27, tmp172
-	movw	%r9w, (%rsi,%r8,2)	# tmp172, MEM[base: byte_stream_48(D), index: ivtmp.83_55, step: 2, offset: 0B]
+	sarl	$2, %eax	#, tmp173
+# src/t2k.c:89:                 stream[i]+=(counter[j]<=freq)*vol[j];
+	cmpl	%edx, %eax	# _24, tmp173
+	cmovl	%r12d, %r14d	# _21,, tmp210, _21
+	addw	%r14w, (%rsi,%r8,2)	# _21, MEM[base: byte_stream_42(D), index: ivtmp.83_54, step: 2, offset: 0B]
 # src/t2k.c:90:                 counter[j]++;
-	incl	%edx	# tmp174
-	movl	%edx, counter.36301(,%rcx,4)	# tmp174, MEM[symbol: counter, index: ivtmp.71_79, step: 4, offset: 0B]
+	incl	%edx	# tmp176
+	movl	%edx, counter.36300(,%rcx,4)	# tmp176, MEM[symbol: counter, index: ivtmp.71_77, step: 4, offset: 0B]
 .L8:
 	incq	%rcx	# ivtmp.71
 # src/t2k.c:71:         for(int j=0;j<VOICES;j++)
@@ -180,19 +176,20 @@ audio_callback:
 	movb	$1, %al	#, song_clock_lsm.58
 	jmp	.L2	#
 .L25:
-	testl	%edi, %edi	# _33
-	movl	$0, %edx	#, tmp176
-	cmovs	%edx, %edi	# _33,, tmp176, tmp175
-	addl	%ebx, %edi	# song_clock_lsm.57, song_clock_lsm.57
+	testl	%edi, %edi	# _32
+	movl	$0, %edx	#, tmp178
+	cmovs	%edx, %edi	# _32,, tmp178, tmp177
+	addl	%r11d, %edi	# song_clock_lsm.57, song_clock_lsm.57
 	testb	%al, %al	# song_clock_lsm.58
 	je	.L1	#,
-	movl	%edi, song_clock.36300(%rip)	# song_clock_lsm.57, song_clock
+	movl	%edi, song_clock.36299(%rip)	# song_clock_lsm.57, song_clock
 .L1:
 # src/t2k.c:95: }
 	popq	%rbx	#
 	popq	%rbp	#
 	popq	%r12	#
 	popq	%r13	#
+	popq	%r14	#
 	ret	
 	.size	audio_callback, .-audio_callback
 	.section	.text.initStone,"ax",@progbits
@@ -713,35 +710,35 @@ _start:
 	.size	buffer.36320, 15
 buffer.36320:
 	.zero	15
-	.section	.bss.counter.36301,"aw",@nobits
+	.section	.bss.counter.36300,"aw",@nobits
 	.align 4
-	.type	counter.36301, @object
-	.size	counter.36301, 12
-counter.36301:
+	.type	counter.36300, @object
+	.size	counter.36300, 12
+counter.36300:
 	.zero	12
-	.section	.bss.vol.36299,"aw",@nobits
+	.section	.bss.vol.36298,"aw",@nobits
 	.align 2
-	.type	vol.36299, @object
-	.size	vol.36299, 6
-vol.36299:
+	.type	vol.36298, @object
+	.size	vol.36298, 6
+vol.36298:
 	.zero	6
-	.section	.bss.hertz.36298,"aw",@nobits
+	.section	.bss.hertz.36307,"aw",@nobits
 	.align 4
-	.type	hertz.36298, @object
-	.size	hertz.36298, 12
-hertz.36298:
+	.type	hertz.36307, @object
+	.size	hertz.36307, 12
+hertz.36307:
 	.zero	12
-	.section	.bss.previous.36302,"aw",@nobits
+	.section	.bss.previous.36301,"aw",@nobits
 	.align 4
-	.type	previous.36302, @object
-	.size	previous.36302, 12
-previous.36302:
+	.type	previous.36301, @object
+	.size	previous.36301, 12
+previous.36301:
 	.zero	12
-	.section	.bss.song_clock.36300,"aw",@nobits
+	.section	.bss.song_clock.36299,"aw",@nobits
 	.align 4
-	.type	song_clock.36300, @object
-	.size	song_clock.36300, 4
-song_clock.36300:
+	.type	song_clock.36299, @object
+	.size	song_clock.36299, 4
+song_clock.36299:
 	.zero	4
 	.section	.bss.handlekeys,"aw",@nobits
 	.type	handlekeys, @object
@@ -1650,6 +1647,3 @@ colors:
 	.align 4
 .LC1:
 	.long	1065852003
-	.align 4
-.LC2:
-	.long	1194083328

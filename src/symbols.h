@@ -3,7 +3,7 @@
 
 //define colors as 32 integers / hex for easy reading
 
-typedef enum color
+enum color
 {
     black= 0x00000000, //    black= 0xF000,
     white= 0x00FFFFFF, //    white= 0x0FFF,
@@ -17,7 +17,7 @@ typedef enum color
     orange=0x00FF8000  //    orange=0x0F80
 };
 
-typedef enum tetronimos
+enum tetronimos
 {
     O=0x0660,
     L=0x0622,
@@ -33,8 +33,7 @@ typedef enum tetronimos
 
 //3x4
 
-
-typedef enum chars
+enum chars
 {
     C0=0x7B6F,     //0
     C1=0x2C97,     //1
