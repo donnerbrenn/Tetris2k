@@ -61,7 +61,7 @@ void audio_callback(void *unused, void *byte_stream, int byte_stream_length)
     static int pos;
     static int current_pattern;
     static int current_note;
-    static int hertz[VOICES];
+    static float hertz[VOICES];
     for (int i = 0; i < byte_stream_length>>1; ++i)
     {
         pos=song_clock/(SAMPLERATE/SPEED);
