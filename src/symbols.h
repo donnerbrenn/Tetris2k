@@ -3,7 +3,7 @@
 
 //define colors as 32 integers / hex for easy reading
 
-enum color
+typedef enum color
 {
     black= 0x00000000, //    black= 0xF000,
     white= 0x00FFFFFF, //    white= 0x0FFF,
@@ -17,7 +17,7 @@ enum color
     orange=0x00FF8000  //    orange=0x0F80
 };
 
-enum tetronimos
+typedef enum tetronimos
 {
     O=0x0660,
     L=0x0622,
@@ -34,7 +34,7 @@ enum tetronimos
 //3x4
 
 
-enum chars
+typedef enum chars
 {
     C0=0x7B6F,     //0
     C1=0x2C97,     //1
@@ -74,7 +74,7 @@ enum chars
     CZ=0x72A7      //Z
 };
 
-//create the "color palette"
+//create the color palette
 const int32_t colors[10]={black,red,green,blue,cyan,yellow,purple,orange,white,grey};
 
 //letters c64 style - just numbers for our score
