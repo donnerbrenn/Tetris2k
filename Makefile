@@ -1,6 +1,6 @@
 CC = cc-8
 
-CFLAGS = -Os -s -march=nocona  -fverbose-asm
+CFLAGS = -Os -s -march=nocona  -fverbose-asm 
 CFLAGS+= -fno-plt
 CFLAGS+= -fno-stack-protector -fno-stack-check
 CFLAGS+= -fno-unwind-tables -fno-asynchronous-unwind-tables -fno-exceptions

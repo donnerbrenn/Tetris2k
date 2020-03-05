@@ -18,27 +18,27 @@ LOAD src/t2k.o
                 0x0000000000010120                . = (SEGMENT_START ("text-segment", 0x10000) + SIZEOF_HEADERS)
                 0x000000000001018c                . = (ALIGN (0x64) + (. & 0x63))
 
-.text           0x000000000001018c      0x653
+.text           0x000000000001018c      0x64d
  *(.text*)
  .text.audio_callback
-                0x000000000001018c      0x13d src/t2k.o
+                0x000000000001018c      0x13b src/t2k.o
  .text.initStone
-                0x00000000000102c9       0x57 src/t2k.o
+                0x00000000000102c7       0x57 src/t2k.o
  .text.initGame
-                0x0000000000010320       0x49 src/t2k.o
- .text.Rotate   0x0000000000010369       0x21 src/t2k.o
-                0x0000000000010369                Rotate
+                0x000000000001031e       0x49 src/t2k.o
+ .text.Rotate   0x0000000000010367       0x1d src/t2k.o
+                0x0000000000010367                Rotate
  .text.DoesPieceFit
-                0x000000000001038a       0x5a src/t2k.o
-                0x000000000001038a                DoesPieceFit
- .text._start   0x00000000000103e4      0x3fb src/t2k.o
-                0x00000000000103e4                _start
+                0x0000000000010384       0x5a src/t2k.o
+                0x0000000000010384                DoesPieceFit
+ .text._start   0x00000000000103de      0x3fb src/t2k.o
+                0x00000000000103de                _start
 
 .plt            0x00000000000107e0        0x0
  .plt           0x00000000000107e0        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
 
-.iplt           0x00000000000107df        0x0
- .iplt          0x00000000000107df        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+.iplt           0x00000000000107d9        0x0
+ .iplt          0x00000000000107d9        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
 
 .plt.got        0x00000000000107e0        0x0
  .plt.got       0x00000000000107e0        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
@@ -124,19 +124,19 @@ LOAD src/t2k.o
 
 .bss            0x0000000000011100      0x258
  *(.bss*)
- .bss.buffer.36320
+ .bss.buffer.36318
                 0x0000000000011100        0xf src/t2k.o
  *fill*         0x000000000001110f        0x1 
- .bss.counter.36300
+ .bss.counter.36298
                 0x0000000000011110        0xc src/t2k.o
- .bss.vol.36298
+ .bss.vol.36296
                 0x000000000001111c        0x6 src/t2k.o
  *fill*         0x0000000000011122        0x2 
- .bss.hertz.36307
+ .bss.hertz.36305
                 0x0000000000011124        0xc src/t2k.o
- .bss.previous.36301
+ .bss.previous.36299
                 0x0000000000011130        0xc src/t2k.o
- .bss.song_clock.36299
+ .bss.song_clock.36297
                 0x000000000001113c        0x4 src/t2k.o
  .bss.handlekeys
                 0x0000000000011140        0x1 src/t2k.o

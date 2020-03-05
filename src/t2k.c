@@ -25,10 +25,11 @@ void drawRect(int x, int y, int w, int col)
 void shuffle()
 {
     int result=7;
-    while(result==7||result==nCurrentPiece)
+    
+    do
     {
         result=SDL_GetTicks()&7;
-    }
+    } while(result==7||result==nCurrentPiece);
     nCurrentPiece=result;
 }
 
@@ -41,10 +42,10 @@ void updateBuffer()
 float getFrq(int note)
 {
     float freq=61.7337f;
-    while(--note)
+    do
     {
         freq*=1.05946f;
-    }
+    } while(--note);
     return freq;
 }
 
@@ -126,13 +127,14 @@ char Rotate(char px, char py, char r)
 {  
     // r&=3;
     char x;
-    while(r)
+    // while(r)
+    do
     {
         x=12+py-(px<<2);
         px=x&3;
         py=x>>2;
-        --r;
-    }
+
+    } while(--r);
     return (py<<2)+px;
 }
 
@@ -342,7 +344,8 @@ void _start()
     asm volatile("sub $8, %rsp");
     initGame();
     initSDL();
-    while(true)
+    
+    do
     {
         updateGame(); 
         updateDisplay();     
@@ -356,6 +359,6 @@ void _start()
         }
         runtime++;
         ProcessEventsSDL();
-    }
+    } while(true);
      __builtin_unreachable();
 }
