@@ -15,7 +15,7 @@
 #define SCREEN_WIDTH 620
 #define SCREEN_HEIGHT 960
 #define SAMPLERATE 44100
-#define BUFFERSIZE 512
+#define BUFFERSIZE 8192
 #define FONTSIZE 8
 
 //tetris variables

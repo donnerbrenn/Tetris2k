@@ -53,14 +53,14 @@ void audio_callback(void *unused, void *byte_stream, int byte_stream_length)
 {
     short *stream=(short*)byte_stream;
     static short vol[VOICES];
-    static int song_clock;
-    static int counter[VOICES];
-    static int previous[VOICES];
-    static int note;
-    static int freq;
-    static int pos;
-    static int current_pattern;
-    static int current_note;
+    static uint song_clock;
+    static uint counter[VOICES];
+    static uint previous[VOICES];
+    static uint note;
+    static uint freq;
+    static uint pos;
+    static uint current_pattern;
+    static uint current_note;
     static float hertz[VOICES];
     for (int i = 0; i < byte_stream_length>>1; ++i)
     {
