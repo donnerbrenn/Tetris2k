@@ -104,8 +104,8 @@ audio_callback:
 	andl	$63, %ecx	#, tmp148
 	leaq	cpatterns(%rdx,%rcx), %rbx	#, _49
 	xorl	%ecx, %ecx	# ivtmp.65
-# src/t2k.c:81:             if((song_clock&12)==0)
-	andl	$12, %ebp	#, tmp160
+# src/t2k.c:81:             if((song_clock&7)==0)
+	andl	$7, %ebp	#, tmp160
 .L15:
 # src/t2k.c:74:             note=cpatterns[j][order[current_pattern]][current_note];
 	movq	%rcx, %rdx	# ivtmp.65, tmp150
@@ -131,7 +131,7 @@ audio_callback:
 # src/t2k.c:79:                 vol[j]=8192;
 	movw	$8192, vol.36296(%rcx,%rcx)	#, MEM[symbol: vol, index: ivtmp.65_80, step: 2, offset: 0B]
 .L3:
-# src/t2k.c:81:             if((song_clock&12)==0)
+# src/t2k.c:81:             if((song_clock&7)==0)
 	testl	%ebp, %ebp	# tmp160
 	jne	.L5	#,
 # src/t2k.c:83:                 vol[j]--;

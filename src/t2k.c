@@ -78,7 +78,7 @@ void audio_callback(void *unused, void *byte_stream, int byte_stream_length)
                 previous[j]=pos;
                 vol[j]=8192;
             }
-            if((song_clock&12)==0)
+            if((song_clock&7)==0)
             {
                 vol[j]--;
             }

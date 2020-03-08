@@ -89,36 +89,36 @@ LOAD src/t2k.o
                 0x0000000000010cc0                colors
  .rodata.cst4   0x0000000000010ce8       0x14 src/t2k.o
 
-.got            0x0000000000010d00       0x50
- .got           0x0000000000010d00       0x50 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
-
-.got.plt        0x0000000000010d50       0x18
- .got.plt       0x0000000000010d50       0x18 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
-                0x0000000000010d50                _GLOBAL_OFFSET_TABLE_
-
-.data.rel.ro    0x0000000000010d68        0x0
- .data.rel.ro   0x0000000000010d68        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
-
-.igot.plt       0x0000000000010d68        0x0
- .igot.plt      0x0000000000010d68        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
-
-.gnu.version_d  0x0000000000010d68        0x0
+.gnu.version_d  0x0000000000010d00        0x0
  .gnu.version_d
-                0x0000000000010d68        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+                0x0000000000010d00        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
 
-.gnu.version    0x0000000000010d68        0x0
- .gnu.version   0x0000000000010d68        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+.gnu.version    0x0000000000010cfc        0x0
+ .gnu.version   0x0000000000010cfc        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
 
-.gnu.version_r  0x0000000000010d68        0x0
+.gnu.version_r  0x0000000000010d00        0x0
  .gnu.version_r
-                0x0000000000010d68        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+                0x0000000000010d00        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
 
-.hash           0x0000000000010d68       0x40
- .hash          0x0000000000010d68       0x40 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
-
-.dynsym         0x0000000000010da8      0x108
+.dynsym         0x0000000000010d00      0x108
  *(.dynsym*)
- .dynsym        0x0000000000010da8      0x108 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+ .dynsym        0x0000000000010d00      0x108 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+
+.hash           0x0000000000010e08       0x40
+ *(.hash*)
+ .hash          0x0000000000010e08       0x40 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+
+.got            0x0000000000010e48       0x68
+ *(.got*)
+ .got           0x0000000000010e48       0x50 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+ .got.plt       0x0000000000010e98       0x18 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+                0x0000000000010e98                _GLOBAL_OFFSET_TABLE_
+
+.data.rel.ro    0x0000000000010eb0        0x0
+ .data.rel.ro   0x0000000000010eb0        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+
+.igot.plt       0x0000000000010eb0        0x0
+ .igot.plt      0x0000000000010eb0        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
                 0x0000000000011000                . = DATA_SEGMENT_ALIGN (CONSTANT (MAXPAGESIZE), CONSTANT (COMMONPAGESIZE))
 
 .dynamic        0x0000000000011000       0xd0

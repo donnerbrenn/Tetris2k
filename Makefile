@@ -59,7 +59,7 @@ t2k.elf: src/t2k.o
 
 %.stripped: %.elf
 	./noelfver $< > $@
-	objcopy $(STRIP) $@
+	strip --strip-all $(STRIP) $@
 	readelf -a  $@
 	sstrip -z $@
 	wc -c $@
@@ -87,6 +87,10 @@ t2k.cmix: t2k.stripped
 	rm $@.cm
 	chmod +x $@
 	wc -c $@
+
+heatmap: t2k.lzma
+	../LZMA-Vizualizer/LzmaSpec $<
+	rm $<
 
 clean:
 	-rm -f t2k* src/t2k.o*
