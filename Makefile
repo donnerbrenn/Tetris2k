@@ -1,6 +1,6 @@
 CC = cc-8
 
-CFLAGS = -Os -s -march=nocona  -fverbose-asm 
+CFLAGS = -Os -s -march=nocona  -fverbose-asm
 CFLAGS+= -fno-plt
 CFLAGS+= -fno-stack-protector -fno-stack-check
 CFLAGS+= -fno-unwind-tables -fno-asynchronous-unwind-tables -fno-exceptions
@@ -11,11 +11,11 @@ CFLAGS+= -fmerge-all-constants
 CFLAGS+= -fno-PIC -fno-PIE
 CFLAGS+= -std=gnu11
 CFLAGS+= -malign-data=cacheline
-CFLAGS+= -mno-fancy-math-387 -mno-ieee-fp
+CFLAGS+= -mno-fancy-math-387 -mno-ieee-fp 
 
 # CFLAGS+=-flto
 
-LIBS=-lSDL2
+LIBS=-lSDL2 #-lc
 LDFLAGS=$(LIBS)
 LDFLAGS+=-nostartfiles -nostdlib -nodefaultlibs
 LDFLAGS+=-Wl,--build-id=none 
@@ -34,11 +34,11 @@ LDFLAGS+=-Wl,--print-gc-sections
 LDFLAGS+=-Wl,--spare-dynamic-tags=2
 LDFLAGS+=-Wl,-flto -T linker.ld
 
+
 STRIP+=-R .got
 STRIP+=-R .got.plt
 STRIP+=-R .bss
-STRIP+=-R .hash
-
+STRIP+=-R .hash 
 all: t2k
 
 vondehi.elf: vondehi/vondehi.asm

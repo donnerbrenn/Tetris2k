@@ -180,7 +180,7 @@ void ProcessEventsSDL()
         if (e.type==SDL_QUIT)
         {
             // SDL_DestroyWindow(window);
-            asm volatile("push $231;pop %rax;xorl %edi,%edi;syscall");
+            asm volatile("push $231;pop %rax;syscall");
             //   asm ( \
             // "movl $1,%eax\n" \
             // "xor %ebx,%ebx\n" \

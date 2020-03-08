@@ -636,10 +636,10 @@ _start:
 # src/t2k.c:180:         if (e.type==SDL_QUIT)
 	cmpl	$256, %eax	#, _146
 	jne	.L82	#,
-# src/t2k.c:183:             asm volatile("push $231;pop %rax;xorl %edi,%edi;syscall");
+# src/t2k.c:183:             asm volatile("push $231;pop %rax;syscall");
 #APP
 # 183 "src/t2k.c" 1
-	push $231;pop %rax;xorl %edi,%edi;syscall
+	push $231;pop %rax;syscall
 # 0 "" 2
 #NO_APP
 .L82:

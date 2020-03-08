@@ -18,7 +18,7 @@ LOAD src/t2k.o
                 0x0000000000010120                . = (SEGMENT_START ("text-segment", 0x10000) + SIZEOF_HEADERS)
                 0x000000000001018c                . = (ALIGN (0x64) + (. & 0x63))
 
-.text           0x000000000001018c      0x64d
+.text           0x000000000001018c      0x64b
  *(.text*)
  .text.audio_callback
                 0x000000000001018c      0x13b src/t2k.o
@@ -31,17 +31,17 @@ LOAD src/t2k.o
  .text.DoesPieceFit
                 0x0000000000010384       0x5a src/t2k.o
                 0x0000000000010384                DoesPieceFit
- .text._start   0x00000000000103de      0x3fb src/t2k.o
+ .text._start   0x00000000000103de      0x3f9 src/t2k.o
                 0x00000000000103de                _start
 
 .plt            0x00000000000107e0        0x0
  .plt           0x00000000000107e0        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
 
-.iplt           0x00000000000107d9        0x0
- .iplt          0x00000000000107d9        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+.iplt           0x00000000000107d7        0x0
+ .iplt          0x00000000000107d7        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
 
-.plt.got        0x00000000000107e0        0x0
- .plt.got       0x00000000000107e0        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+.plt.got        0x00000000000107d8        0x0
+ .plt.got       0x00000000000107d8        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
 
 .rodata         0x0000000000010800      0x374
  *(.rodata*)
