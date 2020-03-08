@@ -1,15 +1,12 @@
 #define SYNTH
 #define SCORE
 
-
 #include <SDL2/SDL.h>
 #include "symbols.h"
 #ifdef SYNTH
 #include "tetris_sng.h"
 #endif
 #include <stdbool.h>
-
-
 
 #define FIELDWIDTH 12
 #define FIELDHEIGHT 18
@@ -34,8 +31,6 @@ static SDL_Surface *screenSurface;
 static SDL_Rect rect;
 static unsigned int runtime=0;
 static bool handlekeys;
-
-
 
 #ifdef SYNTH
 static void audio_callback(void *unused, void *byte_stream, int byte_stream_length);

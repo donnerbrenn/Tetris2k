@@ -33,6 +33,8 @@ LDFLAGS+=-Wl,--whole-archive
 LDFLAGS+=-Wl,--print-gc-sections
 LDFLAGS+=-Wl,--spare-dynamic-tags=2
 LDFLAGS+=-Wl,-flto -T linker.ld
+LDFLAGS+=-Wl,-z,max-page-size=4096
+# LDFLAGS+=-Wl,-z,max-page-size=8
 
 
 STRIP+=-R .got

@@ -78,16 +78,16 @@ void audio_callback(void *unused, void *byte_stream, int byte_stream_length)
                 previous[j]=pos;
                 vol[j]=8192;
             }
-            if((song_clock&6)==0)
+            if((song_clock&12)==0)
             {
                 vol[j]--;
             }
             if(vol[j]>0)
             {
-                freq=SAMPLERATE/hertz[j];
+                float freq=SAMPLERATE/hertz[j];
                 counter[j]=(counter[j]>=freq)?0:counter[j];
-                freq>>=2;
-                stream[i]+=(counter[j]<=freq)*vol[j];
+                freq*=j==1?.5f:.7f;
+                stream[i]+=(counter[j]<=freq)?vol[j]:-vol[j];
                 counter[j]++;
             }
         }
