@@ -16,6 +16,5 @@ SECTIONS
   . = DATA_SEGMENT_ALIGN (CONSTANT (MAXPAGESIZE), CONSTANT (COMMONPAGESIZE));
   .dynamic : { *(.dynamic*) }
   .bss : { *(.bss*)}
-
   . = DATA_SEGMENT_END (.);
 }

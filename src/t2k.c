@@ -125,9 +125,7 @@ void drawcharacter(int num, int posX,int posY)
 
 char Rotate(char px, char py, char r)
 {  
-    // r&=3;
     char x;
-    // while(r)
     do
     {
         x=12+py-(px<<2);
@@ -219,6 +217,7 @@ void updateDisplay()
     // drawRect(0,0,SCREEN_HEIGHT,0x12121212);
     #ifdef SCORE
      drawScore(score,10);
+     drawScore(lines,200);
     //  drawScore(pos, 200);
     //  drawScore(order[current_pattern], 400);
     //  drawScore(current_note, 450);
@@ -231,8 +230,11 @@ void updateDisplay()
             int i=FIELDWIDTH*y+x;
             drawRect(x*50+10,y*50+10,48,(int)(colors[(int)(pBackBuffer[i])]));
 
-            // if(pBackBuffer[i]!=9)
-            //     drawRect(x*50+15,y*50+15,38,(int)(0));
+            if(pBackBuffer[i]!=9)
+            {
+                drawRect(x*50+12,y*50+12,44,(int)(0));
+                drawRect(x*50+18,y*50+18,32,(int)(colors[(int)(pBackBuffer[i])]));
+            }
         }
     }
     SDL_UpdateWindowSurface(window);
@@ -277,6 +279,7 @@ void initGame()
 {
     #ifdef SCORE
     score=0;
+    lines=0;
     #endif
     _memset(pBackBuffer,9,FIELDWIDTH*FIELDHEIGHT);
     for(int y=0;y<FIELDHEIGHT-1;y++)
@@ -310,6 +313,7 @@ void updateGame()
         if(isLineComplete(py))
         {
             #ifdef SCORE
+            lines++;
             multi+=25;
             score+=multi;
             #endif
@@ -344,7 +348,6 @@ void _start()
     asm volatile("sub $8, %rsp");
     initGame();
     initSDL();
-    
     do
     {
         updateGame(); 

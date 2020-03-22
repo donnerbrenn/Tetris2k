@@ -24,6 +24,7 @@ static char nCurrentX;
 static char nCurrentY;
 #ifdef SCORE
 static unsigned int score;
+static unsigned int lines;
 #endif
 static int nCurrentPiece;
 static SDL_Window *window;
