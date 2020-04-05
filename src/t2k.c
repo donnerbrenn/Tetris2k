@@ -177,13 +177,7 @@ void ProcessEventsSDL()
     {
         if (e.type==SDL_QUIT)
         {
-            // SDL_DestroyWindow(window);
             asm volatile("push $231;pop %rax;syscall");
-            //   asm ( \
-            // "movl $1,%eax\n" \
-            // "xor %ebx,%ebx\n" \
-            // "int $128\n" \
-            // );
             __builtin_unreachable();
         }
         if(e.type==SDL_KEYDOWN&&handlekeys)
@@ -218,9 +212,6 @@ void updateDisplay()
     #ifdef SCORE
      drawScore(score,10);
      drawScore(lines,200);
-    //  drawScore(pos, 200);
-    //  drawScore(order[current_pattern], 400);
-    //  drawScore(current_note, 450);
      #endif
 
     for(int y=0;y<FIELDHEIGHT;++y)

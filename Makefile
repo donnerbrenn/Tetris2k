@@ -31,16 +31,11 @@ LDFLAGS+=-Wl,--hash-style=sysv
 LDFLAGS+=-no-pie -fno-pic
 LDFLAGS+=-Wl,--whole-archive
 LDFLAGS+=-Wl,--print-gc-sections
-LDFLAGS+=-Wl,--spare-dynamic-tags=2
+LDFLAGS+=-Wl,--spare-dynamic-tags=3
 LDFLAGS+=-Wl,-flto -T linker.ld
-LDFLAGS+=-Wl,-z,max-page-size=4096
-# LDFLAGS+=-Wl,-z,max-page-size=8
+# LDFLAGS+=-Wl,-z,max-page-size=8192
 
 
-STRIP+=-R .got
-STRIP+=-R .got.plt
-STRIP+=-R .bss
-STRIP+=-R .hash 
 all: t2k
 
 vondehi.elf: vondehi/vondehi.asm
@@ -55,17 +50,20 @@ vondehi.elf: vondehi/vondehi.asm
 
 t2k.elf: src/t2k.o
 	$(CC) -Wl,-Map=src/t2k.map $(CFLAGS) $(LDFLAGS) $< -o $@
+	wc -c $@
 
 
 %.stripped: %.elf
 	./noelfver $< > $@
-	strip --strip-all $(STRIP) $@
+	strip --strip-all -R .crap $@
 	readelf -a  $@
-	sstrip -z $@
+	./Section-Header-Stripper/section-stripper.py $@
 	wc -c $@
 
 %.lzma: %.stripped
-	python3 opt_lzma.py $< -o $@
+	./nicer.py $< -o $@
+	# ./megalania $< > $@
+	# ./LZMA-Vizualizer/LzmaSpec $@
 
 t2k.smol: src/t2k.o #not working - hopefully i can find a solution for the crashing smol-binary
 	python3 smol/src/smol.py  -lSDL2 "src/t2k.o" "t2k.smol.syms.asm"
@@ -90,6 +88,7 @@ t2k.cmix: t2k.stripped
 
 heatmap: t2k.lzma
 	../LZMA-Vizualizer/LzmaSpec $<
+	wc -c $<
 	rm $<
 
 clean:

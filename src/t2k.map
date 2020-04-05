@@ -12,166 +12,158 @@ Name             Origin             Length             Attributes
 
 Linker script and memory map
 
-LOAD /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+LOAD /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
 LOAD src/t2k.o
                 [!provide]                        PROVIDE (__executable_start = SEGMENT_START ("text-segment", 0x10000))
                 0x0000000000010120                . = (SEGMENT_START ("text-segment", 0x10000) + SIZEOF_HEADERS)
                 0x0000000000010120                . = (ALIGN (0x1) + (. & 0x0))
 
-.interp         0x0000000000010120       0x1c
- *(.interp*)
- .interp        0x0000000000010120       0x1c /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+.dynamic        0x0000000000010120       0xe0
+ *(.dynamic*)
+ .dynamic       0x0000000000010120       0xe0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
+                0x0000000000010120                _DYNAMIC
 
-.dynstr         0x000000000001013c       0xa8
- *(.dynstr*)
- .dynstr        0x000000000001013c       0xa8 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
-
-.text           0x00000000000101e4      0x6c1
+.text           0x0000000000010200      0x6c1
  *(.text*)
  .text.audio_callback
-                0x00000000000101e4      0x163 src/t2k.o
+                0x0000000000010200      0x163 src/t2k.o
  .text.drawRect
-                0x0000000000010347       0x2e src/t2k.o
+                0x0000000000010363       0x2e src/t2k.o
  .text.drawScore
-                0x0000000000010375       0x97 src/t2k.o
+                0x0000000000010391       0x97 src/t2k.o
  .text.initStone
-                0x000000000001040c       0x57 src/t2k.o
+                0x0000000000010428       0x57 src/t2k.o
  .text.initGame
-                0x0000000000010463       0x53 src/t2k.o
- .text.Rotate   0x00000000000104b6       0x1d src/t2k.o
-                0x00000000000104b6                Rotate
+                0x000000000001047f       0x53 src/t2k.o
+ .text.Rotate   0x00000000000104d2       0x1d src/t2k.o
+                0x00000000000104d2                Rotate
  .text.DoesPieceFit
-                0x00000000000104d3       0x5a src/t2k.o
-                0x00000000000104d3                DoesPieceFit
- .text._start   0x000000000001052d      0x378 src/t2k.o
-                0x000000000001052d                _start
+                0x00000000000104ef       0x5a src/t2k.o
+                0x00000000000104ef                DoesPieceFit
+ .text._start   0x0000000000010549      0x378 src/t2k.o
+                0x0000000000010549                _start
 
-.plt            0x00000000000108b0        0x0
- .plt           0x00000000000108b0        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+.iplt           0x00000000000108c1        0x0
+ .iplt          0x00000000000108c1        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
 
-.iplt           0x00000000000108a5        0x0
- .iplt          0x00000000000108a5        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+.igot.plt       0x00000000000108c8        0x0
+ .igot.plt      0x00000000000108c8        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
 
-.plt.got        0x00000000000108a8        0x0
- .plt.got       0x00000000000108a8        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+.dynsym         0x00000000000108c8      0x108
+ *(.dynsym*)
+ .dynsym        0x00000000000108c8      0x108 /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
 
-.rela.got       0x00000000000108a8       0xf0
+.rela.got       0x00000000000109d0       0xf0
  *(.rela.got*)
- .rela.got      0x00000000000108a8       0xf0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+ .rela.got      0x00000000000109d0       0xf0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
 
-.rela.plt       0x0000000000010998        0x0
- .rela.plt      0x0000000000010998        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+.rela.plt       0x0000000000010ac0        0x0
+ .rela.plt      0x0000000000010ac0        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
 
-.rela.bss       0x0000000000010998        0x0
- .rela.bss      0x0000000000010998        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+.rela.bss       0x0000000000010ac0        0x0
+ .rela.bss      0x0000000000010ac0        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
 
 .rela.data.rel.ro
-                0x0000000000010998        0x0
+                0x0000000000010ac0        0x0
  .rela.data.rel.ro
-                0x0000000000010998        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+                0x0000000000010ac0        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
 
-.rela.iplt      0x0000000000010998        0x0
- .rela.iplt     0x0000000000010998        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+.rela.iplt      0x0000000000010ac0        0x0
+ .rela.iplt     0x0000000000010ac0        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
 
-.rodata         0x00000000000109c0      0x37c
+.rodata         0x0000000000010ac0      0x37c
  *(.rodata*)
  .rodata.cpatterns
-                0x00000000000109c0      0x300 src/t2k.o
-                0x00000000000109c0                cpatterns
- .rodata.order  0x0000000000010cc0        0x8 src/t2k.o
-                0x0000000000010cc0                order
- *fill*         0x0000000000010cc8        0x8 
+                0x0000000000010ac0      0x300 src/t2k.o
+                0x0000000000010ac0                cpatterns
+ .rodata.order  0x0000000000010dc0        0x8 src/t2k.o
+                0x0000000000010dc0                order
+ *fill*         0x0000000000010dc8        0x8 
  .rodata.characters2
-                0x0000000000010cd0       0x14 src/t2k.o
-                0x0000000000010cd0                characters2
+                0x0000000000010dd0       0x14 src/t2k.o
+                0x0000000000010dd0                characters2
  .rodata.characters
-                0x0000000000010ce4        0xe src/t2k.o
-                0x0000000000010ce4                characters
- *fill*         0x0000000000010cf2        0xe 
+                0x0000000000010de4        0xe src/t2k.o
+                0x0000000000010de4                characters
+ *fill*         0x0000000000010df2        0xe 
  .rodata.colors
-                0x0000000000010d00       0x28 src/t2k.o
-                0x0000000000010d00                colors
- .rodata.cst4   0x0000000000010d28       0x14 src/t2k.o
+                0x0000000000010e00       0x28 src/t2k.o
+                0x0000000000010e00                colors
+ .rodata.cst4   0x0000000000010e28       0x14 src/t2k.o
 
-.gnu.version_d  0x0000000000010d40        0x0
- .gnu.version_d
-                0x0000000000010d40        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+.interp         0x0000000000010e3c       0x1c
+ *(.interp*)
+ .interp        0x0000000000010e3c       0x1c /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
 
-.gnu.version    0x0000000000010d3c        0x0
- .gnu.version   0x0000000000010d3c        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+.dynstr         0x0000000000010e58       0xa8
+ *(.dynstr*)
+ .dynstr        0x0000000000010e58       0xa8 /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
 
-.gnu.version_r  0x0000000000010d40        0x0
- .gnu.version_r
-                0x0000000000010d40        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
-
-.dynsym         0x0000000000010d40      0x108
- *(.dynsym*)
- .dynsym        0x0000000000010d40      0x108 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
-
-.hash           0x0000000000010e48       0x40
- *(.hash*)
- .hash          0x0000000000010e48       0x40 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
-
-.got            0x0000000000010e88       0x68
- *(.got*)
- .got           0x0000000000010e88       0x50 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
- .got.plt       0x0000000000010ed8       0x18 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
-                0x0000000000010ed8                _GLOBAL_OFFSET_TABLE_
-
-.data.rel.ro    0x0000000000010ef0        0x0
- .data.rel.ro   0x0000000000010ef0        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
-
-.igot.plt       0x0000000000010ef0        0x0
- .igot.plt      0x0000000000010ef0        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
-                0x0000000000011000                . = DATA_SEGMENT_ALIGN (CONSTANT (MAXPAGESIZE), CONSTANT (COMMONPAGESIZE))
-
-.dynamic        0x0000000000011000       0xd0
- *(.dynamic*)
- .dynamic       0x0000000000011000       0xd0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
-                0x0000000000011000                _DYNAMIC
-
-.bss            0x0000000000011100      0x258
+.bss            0x0000000000010f00      0x258
  *(.bss*)
- .bss.buffer.36320
-                0x0000000000011100        0xf src/t2k.o
- *fill*         0x000000000001110f        0x1 
- .bss.counter.36299
-                0x0000000000011110        0xc src/t2k.o
- .bss.vol.36297
-                0x000000000001111c        0x6 src/t2k.o
- *fill*         0x0000000000011122        0x2 
- .bss.hertz.36306
-                0x0000000000011124        0xc src/t2k.o
- .bss.previous.36300
-                0x0000000000011130        0xc src/t2k.o
- .bss.song_clock.36298
-                0x000000000001113c        0x4 src/t2k.o
+ .bss.buffer.36404
+                0x0000000000010f00        0xf src/t2k.o
+ *fill*         0x0000000000010f0f        0x1 
+ .bss.counter.36383
+                0x0000000000010f10        0xc src/t2k.o
+ .bss.vol.36381
+                0x0000000000010f1c        0x6 src/t2k.o
+ *fill*         0x0000000000010f22        0x2 
+ .bss.hertz.36390
+                0x0000000000010f24        0xc src/t2k.o
+ .bss.previous.36384
+                0x0000000000010f30        0xc src/t2k.o
+ .bss.song_clock.36382
+                0x0000000000010f3c        0x4 src/t2k.o
  .bss.handlekeys
-                0x0000000000011140        0x1 src/t2k.o
- *fill*         0x0000000000011141        0x3 
- .bss.runtime   0x0000000000011144        0x4 src/t2k.o
- *fill*         0x0000000000011148        0x8 
- .bss.rect      0x0000000000011150       0x10 src/t2k.o
+                0x0000000000010f40        0x1 src/t2k.o
+ *fill*         0x0000000000010f41        0x3 
+ .bss.runtime   0x0000000000010f44        0x4 src/t2k.o
+ *fill*         0x0000000000010f48        0x8 
+ .bss.rect      0x0000000000010f50       0x10 src/t2k.o
  .bss.screenSurface
-                0x0000000000011160        0x8 src/t2k.o
- .bss.window    0x0000000000011168        0x8 src/t2k.o
+                0x0000000000010f60        0x8 src/t2k.o
+ .bss.window    0x0000000000010f68        0x8 src/t2k.o
  .bss.nCurrentPiece
-                0x0000000000011170        0x4 src/t2k.o
- .bss.lines     0x0000000000011174        0x4 src/t2k.o
- .bss.score     0x0000000000011178        0x4 src/t2k.o
+                0x0000000000010f70        0x4 src/t2k.o
+ .bss.lines     0x0000000000010f74        0x4 src/t2k.o
+ .bss.score     0x0000000000010f78        0x4 src/t2k.o
  .bss.nCurrentY
-                0x000000000001117c        0x1 src/t2k.o
+                0x0000000000010f7c        0x1 src/t2k.o
  .bss.nCurrentX
-                0x000000000001117d        0x1 src/t2k.o
+                0x0000000000010f7d        0x1 src/t2k.o
  .bss.nCurrentRotation
-                0x000000000001117e        0x1 src/t2k.o
- *fill*         0x000000000001117f        0x1 
+                0x0000000000010f7e        0x1 src/t2k.o
+ *fill*         0x0000000000010f7f        0x1 
  .bss.pBackBuffer
-                0x0000000000011180       0xd8 src/t2k.o
- *fill*         0x0000000000011258       0x28 
- .bss.pBuffer   0x0000000000011280       0xd8 src/t2k.o
-                0x0000000000011358                . = DATA_SEGMENT_END (.)
-OUTPUT(t2k.elf elf64-x86-64)
+                0x0000000000010f80       0xd8 src/t2k.o
+ *fill*         0x0000000000011058       0x28 
+ .bss.pBuffer   0x0000000000011080       0xd8 src/t2k.o
 
-.dynbss         0x0000000000011358        0x0
- .dynbss        0x0000000000011358        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/../../../../lib/libSDL2.so
+.dynbss         0x0000000000011158        0x0
+ .dynbss        0x0000000000011158        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
+
+.crap           0x0000000000011160       0xa8
+ *(.gnu.version_r*)
+ .gnu.version_r
+                0x0000000000011160        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
+ *(.shstrtab*)
+ *(.data*)
+ .data.rel.ro   0x0000000000011160        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
+ *(.gnu.version*)
+ .gnu.version_d
+                0x0000000000011160        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
+ .gnu.version   0x0000000000011160        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
+ *(.got*)
+ .got           0x0000000000011160       0x50 /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
+ .got.plt       0x00000000000111b0       0x18 /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
+                0x00000000000111b0                _GLOBAL_OFFSET_TABLE_
+ *(.hash*)
+ .hash          0x00000000000111c8       0x40 /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
+ *(.plt*)
+ .plt           0x0000000000011208        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
+ .plt.got       0x0000000000011208        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
+ *(.eh_frame*)
+ *(.comment*)
+ *(.note*)
+OUTPUT(t2k.elf elf64-x86-64)

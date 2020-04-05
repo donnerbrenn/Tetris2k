@@ -1,10 +1,9 @@
-#!/usr/bin/python3.7
+#!/usr/bin/python3
 import os
 import sys
 import subprocess
 
 results=[]
-
 
 input=""
 output=""
@@ -28,7 +27,25 @@ for arg in args:
     else:
         input=arg
 
+def sizeof(filename):
+    return os.stat(filename).st_size
 
+def rewriteHeader(input,output):
+    full_size=sizeof(input)
+    newdata=full_size.to_bytes(8,'little')
+
+    lzma_size=sizeof(output)
+
+    outputfile=open(output,"r+b")
+
+    outputfile.seek(5)
+    outputfile.write(newdata)
+    outputfile.seek(lzma_size-5)
+    # outputfile.write(int(0).to_bytes(1,"little"))
+    outputfile.truncate()
+    # outputfile.seek(lzma_size-6)
+    # outputfile.write(int(0).to_bytes(1,"little"))
+    outputfile.close
 
 def main():
 
@@ -40,7 +57,7 @@ def main():
         return
 
 
-    command = "lzma --format=lzma -9 --extreme  --keep --stdout "+input+" > /tmp/out.lzma --lzma1=preset=9,lc=0,lp=0,pb=0,nice="
+    command = "lzma -T 0 --format=lzma -9 --extreme  --keep --stdout "+input+" > /tmp/out.lzma --lzma1=preset=9,lc=0,lp=0,pb=0,nice="
     progress=0.0
     tick=100.0/(273.0-4.0)
 
@@ -60,11 +77,13 @@ def main():
     if(v==True):
         for row in results:
             print(row)
-    print("Best choice:")
-    print("nice="+str(results[0][1]), "Uses "+str(results[0][0]) + " bytes")
-    exe="lzma --format=lzma -9 --extreme --lzma1=preset=9,lc=0,lp=0,pb=0,nice=" +str(results[0][1]) +" --keep --stdout " +input +" > " +output
+    print("Best choice:","nice="+str(results[0][1]), "uses "+str(results[0][0]) + " bytes")
+    exe="lzma -T 0  --format=lzma -9 --extreme --lzma1=preset=9,lc=0,lp=0,pb=0,nice=" +str(results[0][1]) +" --keep --stdout " +input +" > " +output
+    if(v==True):
+        exe=exe+" -vv"
     print(exe)
     print(os.popen(exe).read())
+    # rewriteHeader(input,output)
 
 main()
 
