@@ -61,9 +61,10 @@ t2k.elf: src/t2k.o
 	wc -c $@
 
 %.lzma: %.stripped
-	./nicer.py $< -o $@
+	./nicer.py $< -o $@ -v
 	# ./megalania $< > $@
 	# ./LZMA-Vizualizer/LzmaSpec $@
+	./LZMA-Vizualizer/contrib/parsemap.py --lzmaspec ./LZMA-Vizualizer/LzmaSpec $@ src/t2k.map
 
 t2k.smol: src/t2k.o #not working - hopefully i can find a solution for the crashing smol-binary
 	python3 smol/src/smol.py  -lSDL2 "src/t2k.o" "t2k.smol.syms.asm"

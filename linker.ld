@@ -3,7 +3,7 @@ ENTRY(_start)
 SEARCH_DIR("/lib"); 
 SECTIONS
 {
-  PROVIDE (__executable_start = SEGMENT_START("text-segment", 0x10000)); . = SEGMENT_START("text-segment", 0x10000) + SIZEOF_HEADERS; . = ALIGN(1) + (. & (1-1));
+  PROVIDE (__executable_start = SEGMENT_START("text-segment", 0x10000)); . = SEGMENT_START("text-segment", 0x10000) + SIZEOF_HEADERS; . = ALIGN(0) + (. & (1));
   .dynamic          : {*(.dynamic*)}
   .text             : {*(.text*)}
   .dynsym           : {*(.dynsym*)}
@@ -12,5 +12,6 @@ SECTIONS
   .interp           : {*(.interp*)}
   .dynstr           : {*(.dynstr*)}
   .bss              : {*(.bss*)}
-  .crap             : {*(.gnu.version_r*) *(.shstrtab*) *(.data*) *(.gnu.version*) *(.got*) *(.hash*) *(.plt*) *(.eh_frame*) *(.comment*) *(.note*) } 
+  .crap             : { *(.got*) *(.hash*) *(.plt*)} 
+  /DISCARD/         : {*(.gnu.version_r*) *(.shstrtab*) *(.data*) *(.gnu.version*)  *(.eh_frame*) *(.comment*) *(.note*)}
 }

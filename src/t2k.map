@@ -16,7 +16,7 @@ LOAD /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
 LOAD src/t2k.o
                 [!provide]                        PROVIDE (__executable_start = SEGMENT_START ("text-segment", 0x10000))
                 0x0000000000010120                . = (SEGMENT_START ("text-segment", 0x10000) + SIZEOF_HEADERS)
-                0x0000000000010120                . = (ALIGN (0x1) + (. & 0x0))
+                0x0000000000010120                . = (ALIGN (0x0) + (. & 0x1))
 
 .dynamic        0x0000000000010120       0xe0
  *(.dynamic*)
@@ -144,16 +144,6 @@ LOAD src/t2k.o
  .dynbss        0x0000000000011158        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
 
 .crap           0x0000000000011160       0xa8
- *(.gnu.version_r*)
- .gnu.version_r
-                0x0000000000011160        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
- *(.shstrtab*)
- *(.data*)
- .data.rel.ro   0x0000000000011160        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
- *(.gnu.version*)
- .gnu.version_d
-                0x0000000000011160        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
- .gnu.version   0x0000000000011160        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
  *(.got*)
  .got           0x0000000000011160       0x50 /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
  .got.plt       0x00000000000111b0       0x18 /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
@@ -163,6 +153,12 @@ LOAD src/t2k.o
  *(.plt*)
  .plt           0x0000000000011208        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
  .plt.got       0x0000000000011208        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
+
+/DISCARD/
+ *(.gnu.version_r*)
+ *(.shstrtab*)
+ *(.data*)
+ *(.gnu.version*)
  *(.eh_frame*)
  *(.comment*)
  *(.note*)
