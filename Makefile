@@ -63,7 +63,7 @@ t2k.elf: src/t2k.o
 %.lzma: %.stripped
 	./nicer.py $< -o $@ -v
 	# ./megalania $< > $@
-	# ./LZMA-Vizualizer/LzmaSpec $@
+	./LZMA-Vizualizer/LzmaSpec $@
 	./LZMA-Vizualizer/contrib/parsemap.py --lzmaspec ./LZMA-Vizualizer/LzmaSpec $@ src/t2k.map
 
 t2k.smol: src/t2k.o #not working - hopefully i can find a solution for the crashing smol-binary
@@ -72,13 +72,13 @@ t2k.smol: src/t2k.o #not working - hopefully i can find a solution for the crash
 	cc -Wl,-Map=t2k.map -m64 -T smol/ld/link.ld -Wl,--oformat=binary -m64 -nostartfiles -nostdlib src/t2k.o stub.t2k.start.o -o $@
 	wc -c $@
 
-t2k: vondehi.elf t2k.lzma
-	cat $^ > $@
-	chmod +x $@
-	# rm t2k.*
-	rm src/t2k.o
-	rm $^
-	wc -c $@ 
+# t2k: vondehi.elf t2k.lzma
+# 	cat $^ > $@
+# 	chmod +x $@
+# 	# rm t2k.*
+# 	rm src/t2k.o
+# 	rm $^
+# 	wc -c $@ 
 
 t2k.cmix: t2k.stripped
 	cmix -c $< $@.cm
@@ -95,3 +95,9 @@ heatmap: t2k.lzma
 clean:
 	-rm -f t2k* src/t2k.o*
 	-rm vondehi/vondehi.elf
+
+
+VNDH_FLAGS :=-l -v --vndh vondehi --vndh_unibin
+t2k: t2k.stripped
+	./autovndh.py $(VNDH_FLAGS) "$<" > "$@"
+	chmod +x $@

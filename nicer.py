@@ -42,10 +42,7 @@ def rewriteHeader(input,output):
     outputfile.seek(5)
     outputfile.write(newdata)
     outputfile.seek(lzma_size-5)
-    # outputfile.write(int(0).to_bytes(1,"little"))
     outputfile.truncate()
-    # outputfile.seek(lzma_size-6)
-    # outputfile.write(int(0).to_bytes(1,"little"))
     outputfile.close
 
 def main(opts):
@@ -66,28 +63,22 @@ def main(opts):
 
     results.sort(key=lambda x: x[0])
 
-    # if(v==True):
-    #     for row in results:
-    #         print(row)
     print("Best choice:","nice="+str(results[0][1]), "uses "+str(results[0][0]) + " bytes")
     exe="lzma -T 0  --format=lzma -9 --extreme --lzma1=preset=9,lc=0,lp=0,pb=0,nice=" +str(results[0][1]) +" --keep --stdout " +opts.infile +" > " +opts.outfile
-    if(opts.verbose==True):
+    if(opts.verbose==True or opts.veryverbose==True):
         exe=exe+" -vv"
-    print(exe)
-    print(os.popen(exe).read())
-    # rewriteHeader(input,output)
+        if(opts.veryverbose==True):
+            for row in results:
+                print(row)
+        print(os.popen(exe).read())
+    else:
+        os.popen(exe).read()
 
-# main()
+    # rewriteHeader(opts.infile,opts.outfile)
 
-
-def test(opts):
-    print(opts)
-
-
-p = argparse.ArgumentParser()
-p.add_argument("infile", type=str,help="The ELF file that will be compressed")
-p.add_argument("-o","--outfile", type=str,default="nicer.lzma", help="The LZMA-compressed ELF file")
-p.add_argument("-v","--verbose" ,help="Be verbose",action="store_true")
-args=p.parse_args()
-# print(args)
-main(args)
+p = argparse.ArgumentParser(description="""\Compresses a given inputfile to LZMA using the optimal nice value for a minimum filesize.""")
+p.add_argument("infile", type=str,help="The ELF file that will be compressed.")
+p.add_argument("-o","--outfile", type=str,default="nicer.lzma", help="The LZMA-compressed ELF file. If not specified, the deafault ist nicer.lzma")
+p.add_argument("-v","--verbose" ,help="Be verbose.",action="store_true")
+p.add_argument("-vv","--veryverbose" ,help="Be even more verbose. Also print out all results.",action="store_true")
+main(p.parse_args())

@@ -3,7 +3,7 @@ ENTRY(_start)
 SEARCH_DIR("/lib"); 
 SECTIONS
 {
-  PROVIDE (__executable_start = SEGMENT_START("text-segment", 0x10000)); . = SEGMENT_START("text-segment", 0x10000) + SIZEOF_HEADERS; . = ALIGN(0) + (. & (1));
+  PROVIDE (__executable_start = SEGMENT_START("text-segment", 0x10000)); . = SEGMENT_START("text-segment", 0x10000) + SIZEOF_HEADERS; . = ALIGN(1) + (. & (1-1));
   .dynamic          : {*(.dynamic*)}
   .text             : {*(.text*)}
   .dynsym           : {*(.dynsym*)}

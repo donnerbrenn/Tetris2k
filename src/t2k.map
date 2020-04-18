@@ -16,7 +16,7 @@ LOAD /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
 LOAD src/t2k.o
                 [!provide]                        PROVIDE (__executable_start = SEGMENT_START ("text-segment", 0x10000))
                 0x0000000000010120                . = (SEGMENT_START ("text-segment", 0x10000) + SIZEOF_HEADERS)
-                0x0000000000010120                . = (ALIGN (0x0) + (. & 0x1))
+                0x0000000000010120                . = (ALIGN (0x1) + (. & 0x0))
 
 .dynamic        0x0000000000010120       0xe0
  *(.dynamic*)
