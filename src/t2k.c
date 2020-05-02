@@ -15,13 +15,6 @@ void _memcpy(void* dest, void* src, int numbytes)
     }
 }
 
-void drawRect(int x, int y, int w, int col)
-{
-    rect=(SDL_Rect){x,y,w,w};
-    SDL_FillRect(screenSurface,&rect,col);
-}
-
-
 void shuffle()
 {
     int result=7;
@@ -49,8 +42,7 @@ float getFrq(int note)
     return freq;
 }
 
-
-void audio_callback(void *unused, void *byte_stream, int byte_stream_length)
+void audio_callback(void *unused, unsigned char *byte_stream, int byte_stream_length)
 {
     short *stream=(short*)byte_stream;
     static short vol[VOICES];
@@ -93,33 +85,6 @@ void audio_callback(void *unused, void *byte_stream, int byte_stream_length)
         }
         song_clock++;
     }
-}
-#endif
-
-#ifdef SCORE
-
-void drawScore(int value, int x)
-{
-    static char buffer[15];
-    SDL_itoa(value,buffer,10);
-    for(int i=0;buffer[i];i++)
-    {
-        drawcharacter((buffer[i]-48),((FONTSIZE<<2)*i)+x,SCREEN_HEIGHT-45);
-    }
-}
-
-
-void drawcharacter(int num, int posX,int posY)
-{
-    for(int y=0;y<5;++y)
-        for(int x=0;x<3;++x)
-        {
-            int i=y*3+x;
-            if(16384 >> (i) & characters2[num])
-            {
-                drawRect(x*FONTSIZE+posX,y*FONTSIZE+posY,FONTSIZE,white);
-            }
-        }
 }
 #endif
 
@@ -175,6 +140,7 @@ void ProcessEventsSDL()
     handlekeys=true;
     while(SDL_PollEvent(&e))
     {
+       
         if (e.type==SDL_QUIT)
         {
             asm volatile("push $231;pop %rax;syscall");
@@ -203,32 +169,6 @@ void ProcessEventsSDL()
         }
 
     }
-}
-
-void updateDisplay()
-{
-    SDL_FillRect(screenSurface,NULL,0x12121212);
-    // drawRect(0,0,SCREEN_HEIGHT,0x12121212);
-    #ifdef SCORE
-     drawScore(score,10);
-     drawScore(lines,200);
-     #endif
-
-    for(int y=0;y<FIELDHEIGHT;++y)
-    {
-        for(int x=0;x<FIELDWIDTH;++x)
-        {
-            int i=FIELDWIDTH*y+x;
-            drawRect(x*50+10,y*50+10,48,(int)(colors[(int)(pBackBuffer[i])]));
-
-            if(pBackBuffer[i]!=9)
-            {
-                drawRect(x*50+12,y*50+12,44,(int)(0));
-                drawRect(x*50+18,y*50+18,32,(int)(colors[(int)(pBackBuffer[i])]));
-            }
-        }
-    }
-    SDL_UpdateWindowSurface(window);
 }
 
 void placeTetromino(int piece,int x, int y, int rotation)
@@ -315,9 +255,10 @@ void updateGame()
     SDL_Delay(15);
 }
 
-void initSDL()
+
+static void initGL()
 {
-    #ifdef SYNTH
+    // SDL_Init(SDL_INIT_EVERYTHING);  
     SDL_AudioSpec want; 
     want.freq = SAMPLERATE;
     want.format = AUDIO_S16SYS;
@@ -326,25 +267,90 @@ void initSDL()
     want.callback = audio_callback;    
     SDL_OpenAudio((&want), NULL);
     SDL_PauseAudio(0);             
-    #else
-    SDL_Init(SDL_INIT_EVERYTHING);  
-    #endif
+    GLWindow=SDL_CreateWindow(NULL,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,SDL_WINDOW_OPENGL);
+    SDL_GL_CreateContext(GLWindow);
+    f = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(f, 1, &shader_glsl, NULL);
+	glCompileShader(f);
 
-    window=SDL_CreateWindow(NULL,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,0);
-    screenSurface = SDL_GetWindowSurface(window);
+        #ifdef DEBUG
+		GLint isCompiled = 0;
+		glGetShaderiv(f, GL_COMPILE_STATUS, &isCompiled);
+		if(isCompiled == GL_FALSE) {
+			GLint maxLength = 0;
+			glGetShaderiv(f, GL_INFO_LOG_LENGTH, &maxLength);
+
+			char* error = malloc(maxLength);
+			glGetShaderInfoLog(f, maxLength, &maxLength, error);
+			printf("%s\n", error);
+
+			exit(-10);
+		}
+        else
+        {
+            printf("Shader compilation was succesfull\n");
+        }
+        #endif
+        
+
+
+    p=glCreateProgram();
+	glAttachShader(p,f);
+	glLinkProgram(p);
+
+        #ifdef DEBUG
+    	GLint isLinked = 0;
+		glGetProgramiv(p, GL_LINK_STATUS, (int *)&isLinked);
+		if (isLinked == GL_FALSE) {
+			GLint maxLength = 0;
+			glGetProgramiv(p, GL_INFO_LOG_LENGTH, &maxLength);
+
+			char* error = malloc(maxLength);
+			glGetProgramInfoLog(p, maxLength, &maxLength,error);
+			printf("%s\n", error);
+
+			exit(-10);
+		}
+        else
+        {
+            printf("Shader linking was succesfull\n");
+        }
+        #endif
+        
+
+    glUseProgram(p);
+    GLPlayfieldPos = glGetUniformLocation( p, VAR_PLAYFIELD ); 
+    GLSizePos = glGetUniformLocation( p, VAR_SIZE ); 
+    GLint size[2]={SCREEN_WIDTH,SCREEN_HEIGHT};
+    glUniform1iv(GLSizePos,2,&size[0]);
+    glUniform2f(GLSizePos,size[0],size[1]);
+    SDL_GL_SetSwapInterval(1);
+}
+
+void updateGL()
+{
+    for(int i=0;i<FIELDHEIGHT*FIELDWIDTH;i++)
+    {
+        glbuffer[i]=pBackBuffer[i];
+    }
+    glUniform1iv(GLPlayfieldPos,FIELDHEIGHT*FIELDWIDTH,&glbuffer[0]);
+    
+    glRecti(-1,-1,1,1);
+	SDL_GL_SwapWindow(GLWindow);
 }
 
 void _start()
 {
     asm volatile("sub $8, %rsp");
     initGame();
-    initSDL();
-    do
+    initGL();
+    while(true)
     {
         updateGame(); 
-        updateDisplay();     
+        
+        
         if((runtime&15)==0)
-        {
+        {       
             if(FallDown())
             {
                 initGame();
@@ -352,7 +358,8 @@ void _start()
             }
         }
         runtime++;
-        ProcessEventsSDL();
-    } while(true);
+       ProcessEventsSDL();
+       updateGL();
+    }
      __builtin_unreachable();
 }

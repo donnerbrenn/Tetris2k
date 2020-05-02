@@ -13,9 +13,7 @@ CFLAGS+= -std=gnu11
 CFLAGS+= -malign-data=cacheline
 CFLAGS+= -mno-fancy-math-387 -mno-ieee-fp 
 
-# CFLAGS+=-flto
-
-LIBS=-lSDL2 #-lc
+LIBS=-lSDL2 -lGL# -lc
 LDFLAGS=$(LIBS)
 LDFLAGS+=-nostartfiles -nostdlib -nodefaultlibs
 LDFLAGS+=-Wl,--build-id=none 
@@ -31,19 +29,21 @@ LDFLAGS+=-Wl,--hash-style=sysv
 LDFLAGS+=-no-pie -fno-pic
 LDFLAGS+=-Wl,--whole-archive
 LDFLAGS+=-Wl,--print-gc-sections
-LDFLAGS+=-Wl,--spare-dynamic-tags=3
-LDFLAGS+=-Wl,-flto -T linker.ld
-# LDFLAGS+=-Wl,-z,max-page-size=8192
+LDFLAGS+=-Wl,--spare-dynamic-tags=2
+LDFLAGS+=-T linker.ld
 
 
 all: t2k
+
+src/shader.h: src/shader.glsl
+	mono ./shader_minifier.exe $< -o $@ 
 
 vondehi.elf: vondehi/vondehi.asm
 	nasm -fbin  -DNO_CHEATING -DNO_UBUNTU_COMPAT -o"$@" "$<"
 	wc -c $@
 
-%.o: %.c
-	$(CC) $(CFLAGS) -S $< -o $@.S
+%.o: %.c src/shader.h
+	$(CC) $(CFLAGS) -S $< -o $@.S #-DDEBUG
 	grep -v 'GCC:\|note.GNU-stack' $@.S > $@.S.S
 	mv $@.S.S $@.S
 	$(CC) $(CFLAGS) -c $@.S -o $@
@@ -62,7 +62,6 @@ t2k.elf: src/t2k.o
 
 %.lzma: %.stripped
 	./nicer.py $< -o $@ -v
-	# ./megalania $< > $@
 	./LZMA-Vizualizer/LzmaSpec $@
 	./LZMA-Vizualizer/contrib/parsemap.py --lzmaspec ./LZMA-Vizualizer/LzmaSpec $@ src/t2k.map
 
@@ -71,14 +70,6 @@ t2k.smol: src/t2k.o #not working - hopefully i can find a solution for the crash
 	nasm -I smol/rt/ -f elf64 -DALIGN_STACK -DUSE_INTERP  t2k.smol.syms.asm -o stub.t2k.start.o
 	cc -Wl,-Map=t2k.map -m64 -T smol/ld/link.ld -Wl,--oformat=binary -m64 -nostartfiles -nostdlib src/t2k.o stub.t2k.start.o -o $@
 	wc -c $@
-
-# t2k: vondehi.elf t2k.lzma
-# 	cat $^ > $@
-# 	chmod +x $@
-# 	# rm t2k.*
-# 	rm src/t2k.o
-# 	rm $^
-# 	wc -c $@ 
 
 t2k.cmix: t2k.stripped
 	cmix -c $< $@.cm
@@ -95,6 +86,7 @@ heatmap: t2k.lzma
 clean:
 	-rm -f t2k* src/t2k.o*
 	-rm vondehi/vondehi.elf
+	-rm src/shader.h
 
 
 VNDH_FLAGS :=-l -v --vndh vondehi --vndh_unibin
