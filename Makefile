@@ -7,8 +7,7 @@ CFLAGS += -fno-PIC -fno-PIE
 CFLAGS += -Wall
 CFLAGS += -no-pie
 
-
-LIBS=-lSDL2 #-lc
+LIBS=-lSDL2
 
 all: t2k
 
@@ -20,7 +19,7 @@ all: t2k
 
 SMOLARGS= -fuse-interp -falign-stack -fuse-dnload-loader -funsafe-dynamic -fuse-dt-debug -fno-start-arg --det
 t2k.smol: src/t2k.o
-	python3 ./smol/smold.py --smolrt "$(PWD)/smol/rt" --smolld "$(PWD)/smol/ld" $(SMOLARGS)  -lSDL2 -lc $< $@
+	python3 ./smol/smold.py --smolrt "$(PWD)/smol/rt" --smolld "$(PWD)/smol/ld" $(SMOLARGS)  $(LIBS) $< $@
 	wc -c $@
 
 t2k.cmix: t2k.smol
