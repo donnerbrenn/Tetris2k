@@ -9,8 +9,8 @@ CFLAGS += -no-pie
 
 LIBS=-lSDL2
 
-
 VNDH_FLAGS :=-l -v --vndh vondehi --vndh_unibin
+SMOLARGS= -fuse-interp -falign-stack -fuse-dnload-loader -funsafe-dynamic -fuse-dt-debug -fno-start-arg --det
 
 
 all: t2k
@@ -23,7 +23,7 @@ all: t2k
 	./autovndh.py $(VNDH_FLAGS) --nostub  "$<" > "$@"
 	rm $<
 
-SMOLARGS= -fuse-interp -falign-stack -fuse-dnload-loader -funsafe-dynamic -fuse-dt-debug -fno-start-arg --det
+
 t2k.smol: src/t2k.o
 	python3 ./smol/smold.py --smolrt "$(PWD)/smol/rt" --smolld "$(PWD)/smol/ld" $(SMOLARGS)  $(LIBS) $< $@
 	wc -c $@
