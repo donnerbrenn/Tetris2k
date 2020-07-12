@@ -9,13 +9,19 @@ CFLAGS += -no-pie
 
 LIBS=-lSDL2
 
+
+VNDH_FLAGS :=-l -v --vndh vondehi --vndh_unibin
+
+
 all: t2k
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
+
 %.lzma: %.smol
-	./nicer.py $< -o $@ -v
+	./autovndh.py $(VNDH_FLAGS) --nostub  "$<" > "$@"
+	rm $<
 
 SMOLARGS= -fuse-interp -falign-stack -fuse-dnload-loader -funsafe-dynamic -fuse-dt-debug -fno-start-arg --det
 t2k.smol: src/t2k.o
@@ -36,9 +42,9 @@ heatmap: t2k.lzma
 
 clean:
 	-rm -f t2k* src/t2k.o*
-	-rm vondehi/vondehi.elf
 
-VNDH_FLAGS :=-l -v --vndh vondehi --vndh_unibin
+
 t2k: t2k.smol
 	./autovndh.py $(VNDH_FLAGS) "$<" > "$@"
+	rm $<
 	chmod +x $@
