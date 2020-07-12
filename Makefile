@@ -1,86 +1,29 @@
 CC = cc-8
 
-CFLAGS = -Os -s -march=nocona  -fverbose-asm
-CFLAGS+= -fno-plt
-CFLAGS+= -fno-stack-protector -fno-stack-check
-CFLAGS+= -fno-unwind-tables -fno-asynchronous-unwind-tables -fno-exceptions
-CFLAGS+= -funsafe-math-optimizations -ffast-math
-CFLAGS+= -fomit-frame-pointer
-CFLAGS+= -ffunction-sections -fdata-sections 
-CFLAGS+= -fmerge-all-constants 
-CFLAGS+= -fno-PIC -fno-PIE
-CFLAGS+= -std=gnu11
-CFLAGS+= -malign-data=cacheline
-CFLAGS+= -mno-fancy-math-387 -mno-ieee-fp 
+CFLAGS = -Os -s -march=nocona 
+CFLAGS += -fno-plt
+CFLAGS += -fno-stack-protector -fno-stack-check
+CFLAGS += -fno-PIC -fno-PIE
+CFLAGS += -Wall
+CFLAGS += -no-pie
 
-# CFLAGS+=-flto
 
 LIBS=-lSDL2 #-lc
-LDFLAGS=$(LIBS)
-LDFLAGS+=-nostartfiles -nostdlib -nodefaultlibs
-LDFLAGS+=-Wl,--build-id=none 
-LDFLAGS+=-Wl,-z,norelro
-LDFLAGS+=-Wl,-z,nocombreloc
-LDFLAGS+=-Wl,--gc-sections 
-LDFLAGS+=-Wl,--hash-style=sysv
-LDFLAGS+=-Wl,-z,nodynamic-undefined-weak
-LDFLAGS+=-Wl,--no-ld-generated-unwind-info
-LDFLAGS+=-Wl,--no-eh-frame-hdr
-LDFLAGS+=-Wl,-z,noseparate-code 
-LDFLAGS+=-Wl,--hash-style=sysv
-LDFLAGS+=-no-pie -fno-pic
-LDFLAGS+=-Wl,--whole-archive
-LDFLAGS+=-Wl,--print-gc-sections
-LDFLAGS+=-Wl,--spare-dynamic-tags=3
-LDFLAGS+=-Wl,-flto -T linker.ld
-# LDFLAGS+=-Wl,-z,max-page-size=8192
-
 
 all: t2k
 
-vondehi.elf: vondehi/vondehi.asm
-	nasm -fbin  -DNO_CHEATING -DNO_UBUNTU_COMPAT -o"$@" "$<"
-	wc -c $@
-
 %.o: %.c
-	$(CC) $(CFLAGS) -S $< -o $@.S
-	grep -v 'GCC:\|note.GNU-stack' $@.S > $@.S.S
-	mv $@.S.S $@.S
-	$(CC) $(CFLAGS) -c $@.S -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
-t2k.elf: src/t2k.o
-	$(CC) -Wl,-Map=src/t2k.map $(CFLAGS) $(LDFLAGS) $< -o $@
-	wc -c $@
-
-
-%.stripped: %.elf
-	./noelfver $< > $@
-	strip --strip-all -R .crap $@
-	readelf -a  $@
-	./Section-Header-Stripper/section-stripper.py $@
-	wc -c $@
-
-%.lzma: %.stripped
+%.lzma: %.smol
 	./nicer.py $< -o $@ -v
-	# ./megalania $< > $@
-	./LZMA-Vizualizer/LzmaSpec $@
-	./LZMA-Vizualizer/contrib/parsemap.py --lzmaspec ./LZMA-Vizualizer/LzmaSpec $@ src/t2k.map
 
-t2k.smol: src/t2k.o #not working - hopefully i can find a solution for the crashing smol-binary
-	python3 smol/src/smol.py  -lSDL2 "src/t2k.o" "t2k.smol.syms.asm"
-	nasm -I smol/rt/ -f elf64 -DALIGN_STACK -DUSE_INTERP  t2k.smol.syms.asm -o stub.t2k.start.o
-	cc -Wl,-Map=t2k.map -m64 -T smol/ld/link.ld -Wl,--oformat=binary -m64 -nostartfiles -nostdlib src/t2k.o stub.t2k.start.o -o $@
+SMOLARGS= -fuse-interp -falign-stack -fuse-dnload-loader -funsafe-dynamic -fuse-dt-debug -fno-start-arg --det
+t2k.smol: src/t2k.o
+	python3 ./smol/smold.py --smolrt "$(PWD)/smol/rt" --smolld "$(PWD)/smol/ld" $(SMOLARGS)  -lSDL2 -lc $< $@
 	wc -c $@
 
-# t2k: vondehi.elf t2k.lzma
-# 	cat $^ > $@
-# 	chmod +x $@
-# 	# rm t2k.*
-# 	rm src/t2k.o
-# 	rm $^
-# 	wc -c $@ 
-
-t2k.cmix: t2k.stripped
+t2k.cmix: t2k.smol
 	cmix -c $< $@.cm
 	cat cmix/cmixdropper.sh $@.cm > $@
 	rm $@.cm
@@ -96,8 +39,7 @@ clean:
 	-rm -f t2k* src/t2k.o*
 	-rm vondehi/vondehi.elf
 
-
 VNDH_FLAGS :=-l -v --vndh vondehi --vndh_unibin
-t2k: t2k.stripped
+t2k: t2k.smol
 	./autovndh.py $(VNDH_FLAGS) "$<" > "$@"
 	chmod +x $@

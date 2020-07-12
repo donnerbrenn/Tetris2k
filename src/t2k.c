@@ -58,7 +58,7 @@ void audio_callback(void *unused, void *byte_stream, int byte_stream_length)
     static uint counter[VOICES];
     static uint previous[VOICES];
     static uint note;
-    static uint freq;
+
     static uint pos;
     static uint current_pattern;
     static uint current_note;
@@ -71,7 +71,7 @@ void audio_callback(void *unused, void *byte_stream, int byte_stream_length)
         stream[i]=0;
         for(int j=0;j<VOICES;j++)
         {
-            note=cpatterns[j][order[current_pattern]][current_note];
+            note=cpatterns[j][(int)order[current_pattern]][current_note];
             if((previous[j]!=pos)&&(note))
             {
                 hertz[j]=getFrq(note);
@@ -334,9 +334,9 @@ void initSDL()
     screenSurface = SDL_GetWindowSurface(window);
 }
 
-void _start()
+__attribute__((__externally_visible__, __section__(".text.startup._start"), __noreturn__))
+extern void _start()
 {
-    asm volatile("sub $8, %rsp");
     initGame();
     initSDL();
     do

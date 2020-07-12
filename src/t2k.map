@@ -23,7 +23,7 @@ LOAD src/t2k.o
  .dynamic       0x0000000000010120       0xe0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
                 0x0000000000010120                _DYNAMIC
 
-.text           0x0000000000010200      0x6c1
+.text           0x0000000000010200      0x6bd
  *(.text*)
  .text.audio_callback
                 0x0000000000010200      0x163 src/t2k.o
@@ -40,36 +40,37 @@ LOAD src/t2k.o
  .text.DoesPieceFit
                 0x00000000000104ef       0x5a src/t2k.o
                 0x00000000000104ef                DoesPieceFit
- .text._start   0x0000000000010549      0x378 src/t2k.o
+ .text.startup._start
+                0x0000000000010549      0x374 src/t2k.o
                 0x0000000000010549                _start
 
-.iplt           0x00000000000108c1        0x0
- .iplt          0x00000000000108c1        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
+.iplt           0x00000000000108bd        0x0
+ .iplt          0x00000000000108bd        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
 
-.igot.plt       0x00000000000108c8        0x0
- .igot.plt      0x00000000000108c8        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
+.igot.plt       0x00000000000108c0        0x0
+ .igot.plt      0x00000000000108c0        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
 
-.dynsym         0x00000000000108c8      0x108
+.dynsym         0x00000000000108c0      0x108
  *(.dynsym*)
- .dynsym        0x00000000000108c8      0x108 /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
+ .dynsym        0x00000000000108c0      0x108 /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
 
-.rela.got       0x00000000000109d0       0xf0
+.rela.got       0x00000000000109c8       0xf0
  *(.rela.got*)
- .rela.got      0x00000000000109d0       0xf0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
+ .rela.got      0x00000000000109c8       0xf0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
 
-.rela.plt       0x0000000000010ac0        0x0
- .rela.plt      0x0000000000010ac0        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
+.rela.plt       0x0000000000010ab8        0x0
+ .rela.plt      0x0000000000010ab8        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
 
-.rela.bss       0x0000000000010ac0        0x0
- .rela.bss      0x0000000000010ac0        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
+.rela.bss       0x0000000000010ab8        0x0
+ .rela.bss      0x0000000000010ab8        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
 
 .rela.data.rel.ro
-                0x0000000000010ac0        0x0
+                0x0000000000010ab8        0x0
  .rela.data.rel.ro
-                0x0000000000010ac0        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
+                0x0000000000010ab8        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
 
-.rela.iplt      0x0000000000010ac0        0x0
- .rela.iplt     0x0000000000010ac0        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
+.rela.iplt      0x0000000000010ab8        0x0
+ .rela.iplt     0x0000000000010ab8        0x0 /usr/lib/gcc/x86_64-pc-linux-gnu/8.4.0/../../../../lib/libSDL2.so
 
 .rodata         0x0000000000010ac0      0x37c
  *(.rodata*)
