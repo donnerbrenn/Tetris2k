@@ -1,5 +1,6 @@
 #define SYNTH
 #define SCORE
+#define DECO
 
 #include <SDL2/SDL.h>
 #include "symbols.h"

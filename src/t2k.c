@@ -220,12 +220,13 @@ void updateDisplay()
         {
             int i=FIELDWIDTH*y+x;
             drawRect(x*50+10,y*50+10,48,(int)(colors[(int)(pBackBuffer[i])]));
-
+            #ifdef DECO
             if(pBackBuffer[i]!=9)
             {
                 drawRect(x*50+12,y*50+12,44,(int)(0));
                 drawRect(x*50+18,y*50+18,32,(int)(colors[(int)(pBackBuffer[i])]));
             }
+            #endif
         }
     }
     SDL_UpdateWindowSurface(window);
