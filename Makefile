@@ -6,8 +6,9 @@ CFLAGS += -fno-stack-protector -fno-stack-check
 CFLAGS += -fno-PIC -fno-PIE
 CFLAGS += -Wall
 CFLAGS += -no-pie
+CFLAGS += -nostartfiles -nostdlib 
 
-LIBS=-lSDL2
+LIBS=-lSDL2 -lc
 
 VNDH_FLAGS :=-l -v --vndh vondehi --vndh_unibin
 SMOLARGS= -fuse-interp -falign-stack -fuse-dnload-loader -funsafe-dynamic -fuse-dt-debug -fno-start-arg --det
@@ -25,7 +26,7 @@ all: t2k
 
 
 t2k.smol: src/t2k.o
-	python3 ./smol/smold.py --smolrt "$(PWD)/smol/rt" --smolld "$(PWD)/smol/ld" $(SMOLARGS)  $(LIBS) $< $@
+	python3 ./smol/smold.py --smolrt "smol/rt" --smolld "smol/ld" $(SMOLARGS)  $(LIBS) $< $@
 	wc -c $@
 
 t2k.cmix: t2k.smol

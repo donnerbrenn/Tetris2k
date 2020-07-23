@@ -1,15 +1,2 @@
 .vscode/
-bin/
-crt1.o
-main.elf
-main.o
-main.needssmol.o
-main.smolstub.o
-main.symbols.asm
-smol.map
-main.elf.xz
-main.elf.lzma
-shelldropper.sh
-assembler
-assembler.S
-vondehi.elf
+t2k
