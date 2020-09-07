@@ -1,6 +1,6 @@
 #define SYNTH
 #define SCORE
-#define DECO
+// #define DECO
 
 #include <SDL2/SDL.h>
 #include "symbols.h"
@@ -13,7 +13,7 @@
 #define FIELDHEIGHT 18
 #define SCREEN_WIDTH 620
 #define SCREEN_HEIGHT 960
-#define SAMPLERATE 44100
+#define SAMPLERATE 96000
 #define BUFFERSIZE 8192
 #define FONTSIZE 8
 
@@ -35,7 +35,7 @@ static unsigned int runtime=0;
 static bool handlekeys;
 
 #ifdef SYNTH
-static void audio_callback(void *unused, void *byte_stream, int byte_stream_length);
+static void audio_callback(void *unused, unsigned char *byte_stream, int byte_stream_length);
 static float getFrq(int note);
 #endif
 #ifdef SCORE

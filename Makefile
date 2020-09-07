@@ -11,8 +11,7 @@ CFLAGS += -nostartfiles -nostdlib
 LIBS=-lSDL2 -lc
 
 VNDH_FLAGS :=-l -v --vndh vondehi --vndh_unibin
-SMOLARGS= -fuse-interp -falign-stack -fuse-dnload-loader -funsafe-dynamic -fuse-dt-debug -fno-start-arg --det
-
+SMOLARGS= -c -fuse-interp -falign-stack -fuse-dnload-loader -funsafe-dynamic -fuse-dt-debug -fno-start-arg --det
 
 all: t2k
 

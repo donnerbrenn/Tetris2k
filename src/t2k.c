@@ -50,18 +50,18 @@ float getFrq(int note)
 }
 
 
-void audio_callback(void *unused, void *byte_stream, int byte_stream_length)
+void audio_callback(void *unused, unsigned char *byte_stream, int byte_stream_length)
 {
     short *stream=(short*)byte_stream;
     static short vol[VOICES];
-    static uint song_clock;
-    static uint counter[VOICES];
-    static uint previous[VOICES];
-    static uint note;
+    static unsigned int song_clock;
+    static unsigned int counter[VOICES];
+    static unsigned int previous[VOICES];
+    static unsigned int note;
 
-    static uint pos;
-    static uint current_pattern;
-    static uint current_note;
+    static unsigned int pos;
+    static unsigned int current_pattern;
+    static unsigned int current_note;
     static float hertz[VOICES];
     for (int i = 0; i < byte_stream_length>>1; ++i)
     {
@@ -249,7 +249,7 @@ void placeTetromino(int piece,int x, int y, int rotation)
 
 void DropLine(int line)
 {
-    for(line=(++line)*FIELDWIDTH;line>12;--line)
+    for(line=(line+1)*FIELDWIDTH;line>12;--line)
     {
         pBackBuffer[line]=pBackBuffer[line-FIELDWIDTH];
     }
