@@ -21,4 +21,4 @@ Nasm
 Clone with 
 git clone --recursive https://github.com/donnerbrenn/Tetris2k.git
 
-Just run make on your Linux-System, the binary (t2k) can be found in the main folder after compilation. A precompiled binary is provided though.
+Just run make on your Linux-System, the binary (t2k) can be found in the main folder after compilation.
