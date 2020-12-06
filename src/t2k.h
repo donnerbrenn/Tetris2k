@@ -23,16 +23,17 @@ static char pBackBuffer[FIELDWIDTH*FIELDHEIGHT];
 static char nCurrentRotation;
 static char nCurrentX;
 static char nCurrentY;
+static bool handlekeys;
 #ifdef SCORE
 static unsigned int score;
 static unsigned int lines;
 #endif
+static unsigned int runtime=0;
 static int nCurrentPiece;
 static SDL_Window *window;
 static SDL_Surface *screenSurface;
 static SDL_Rect rect;
-static unsigned int runtime=0;
-static bool handlekeys;
+
 
 #ifdef SYNTH
 static void audio_callback(void *unused, unsigned char *byte_stream, int byte_stream_length);
@@ -43,6 +44,8 @@ static void drawcharacter(int num, int posX,int posY);
 static void drawScore(int value, int x);
 #endif
 
+static void _memcpy(void* dest, void* src, size_t numbytes);
+static void _memset(void* dest, char val, size_t numbytes);
 static void ProcessEventsSDL();
 static void updateDisplay();
 static void placeTetromino(int piece,int x, int y, int rotation);
@@ -55,10 +58,7 @@ static void initSDL();
 static bool FallDown();
 static bool isLineComplete(int line);
 static void drawRect(int x, int y, int w, int col);
-static void _memcpy(void* dest, void* src, int numbytes);
-static void _memset(void* dest, char val, int numbytes);
 static void initStone();
-
 inline char Rotate(char px, char py, char r);
 inline bool DoesPieceFit(int nTetromino, int nRotation, int nPosX, int nPosY);
 

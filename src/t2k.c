@@ -1,17 +1,21 @@
 #include "t2k.h"
-void _memset(void* dest,char val,int numbytes)
+
+
+void _memset(void* dest,char val,size_t numbytes)
 {
-    for(int i=0;i<numbytes;i++)
+    while(numbytes)
     {
-        ((char*)dest)[i]=val;
+        --numbytes;
+        ((char*)dest)[numbytes]=val;
     }
 }
 
-void _memcpy(void* dest, void* src, int numbytes) 
+void _memcpy(void* dest, void* src, size_t numbytes) 
 {
-	for(int i=0;i<numbytes;i++)
+    while(numbytes)
     {
-        ((char*)dest)[i]=((char*)src)[i];
+        --numbytes;
+        ((char*)dest)[numbytes]=((char*)src)[numbytes];
     }
 }
 
@@ -21,15 +25,13 @@ void drawRect(int x, int y, int w, int col)
     SDL_FillRect(screenSurface,&rect,col);
 }
 
-
 void shuffle()
 {
     int result=7;
-    
-    do
+    while(result==7||result==nCurrentPiece)
     {
         result=SDL_GetTicks()&7;
-    } while(result==7||result==nCurrentPiece);
+    } 
     nCurrentPiece=result;
 }
 
@@ -178,7 +180,6 @@ void ProcessEventsSDL()
         if (e.type==SDL_QUIT)
         {
             asm volatile("push $231;pop %rax;syscall");
-            __builtin_unreachable();
         }
         if(e.type==SDL_KEYDOWN&&handlekeys)
         {
@@ -261,8 +262,8 @@ void initStone()
 {
         shuffle();
         nCurrentRotation=0;
-        nCurrentY= 0;
-        nCurrentX = (FIELDWIDTH>>2)+1;
+        nCurrentY=0;
+        nCurrentX=(FIELDWIDTH>>2)+1;
         runtime=0;
         updateBuffer();
 }
@@ -290,7 +291,6 @@ bool isLineComplete(int line)
             return false;
         }
     }
-
     return true;
 }
 
@@ -319,7 +319,8 @@ void updateGame()
 void initSDL()
 {
     #ifdef SYNTH
-    SDL_AudioSpec want; 
+
+    SDL_AudioSpec want;
     want.freq = SAMPLERATE;
     want.format = AUDIO_S16SYS;
     want.channels=1;
@@ -340,7 +341,7 @@ extern void _start()
 {
     initGame();
     initSDL();
-    do
+    for(;;)
     {
         updateGame(); 
         updateDisplay();     
@@ -354,6 +355,5 @@ extern void _start()
         }
         runtime++;
         ProcessEventsSDL();
-    } while(true);
-     __builtin_unreachable();
+    }
 }
