@@ -13,7 +13,8 @@ CFLAGS+= -fmerge-all-constants
 CFLAGS+= -mno-fancy-math-387 -mno-ieee-fp 
 CFLAGS+= -fomit-frame-pointer
 CFLAGS+= -funsafe-math-optimizations -ffast-math 
-CFLAGS+= -fmerge-all-constants
+CFLAGS+= -fmerge-all-constants 
+CFLAGS+= -fsingle-precision-constant 
 
 LIBS=-lSDL2
 
@@ -24,6 +25,10 @@ all: t2k
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
+	
+	objcopy $@ --set-section-alignment *=1 -g -x -X -S --strip-unneeded -R .comment -R .data
+	size $@
+	# readelf -S $@
 
 %.lzma: %.smol
 	./autovndh.py $(VNDH_FLAGS) --nostub  "$<" > "$@"
