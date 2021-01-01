@@ -1,0 +1,183 @@
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+LOAD src/t2k.o
+LOAD /tmp/smolouttoaligue.o
+                0x0000000000010000                . = 0x10000
+                0x0000000000010000                _smol_origin = .
+
+.header         0x0000000000010000       0xe0
+ *(.header)
+ .header        0x0000000000010000       0xe0 /tmp/smolouttoaligue.o
+                0x0000000000010000                _EHDR
+                0x0000000000010038                _PHDR
+
+.dynamic        0x00000000000100e0       0x40
+ *(.dynamic .rodata.dynamic)
+ .rodata.dynamic
+                0x00000000000100e0       0x40 /tmp/smolouttoaligue.o
+                0x00000000000100e0                _DYNAMIC
+
+.interp         0x0000000000010120       0x1c
+ *(.interp .rodata.interp)
+ .rodata.interp
+                0x0000000000010120       0x1c /tmp/smolouttoaligue.o
+                0x0000000000010120                _INTERP
+                0x000000000001013c                _smol_text_start = .
+                0x000000000000013c                _smol_text_off = (_smol_text_start - _smol_origin)
+
+.text           0x000000000001013c      0xab9
+ *(.rodata.dynamic)
+ *(.rodata.interp .rodata.neededlibs)
+ .rodata.neededlibs
+                0x000000000001013c        0xb /tmp/smolouttoaligue.o
+                0x000000000001013c                _strtab
+ *(.rdata .rdata.* .rodata .rodata.*)
+ .rodata        0x0000000000010147      0x368 src/t2k.o
+                0x0000000000010147                cpatterns
+                0x0000000000010447                order
+                0x0000000000010457                characters2
+                0x000000000001046b                characters
+                0x0000000000010487                colors
+ .rodata.cst4   0x00000000000104af       0x14 src/t2k.o
+ *(.text.startup.smol)
+ .text.startup.smol
+                0x00000000000104c3       0x97 /tmp/smolouttoaligue.o
+                0x00000000000104c3                _smol_start
+                0x000000000001055a                _smol_rt_end
+ *(.text.startup._start)
+ .text.startup._start
+                0x000000000001055a      0x35c src/t2k.o
+                0x000000000001055a                _start
+ *(.text .text.*)
+ .text          0x00000000000108b6      0x33f src/t2k.o
+                0x0000000000010b7e                Rotate
+                0x0000000000010b9b                DoesPieceFit
+                0x0000000000010bf5                _smol_text_end = .
+                0x0000000000000ab9                _smol_text_size = (_smol_text_end - _smol_text_start)
+                0x0000000000000bf5                _smol_textandheader_size = (_smol_text_end - _smol_origin)
+                0x0000000000010bf5                _smol_data_start = .
+                0x0000000000000bf5                _smol_data_off = (_smol_data_start - _smol_origin)
+
+.data           0x0000000000010bf5       0x51
+ *(.data.smolgot)
+ .data.smolgot  0x0000000000010bf5       0x51 /tmp/smolouttoaligue.o
+                0x0000000000010bf5                SDL_Delay
+                0x0000000000010bf5                _symbols
+                0x0000000000010bfd                SDL_PollEvent
+                0x0000000000010c05                SDL_OpenAudio
+                0x0000000000010c0d                SDL_UpdateWindowSurface
+                0x0000000000010c15                SDL_GetWindowSurface
+                0x0000000000010c1d                SDL_GetTicks
+                0x0000000000010c25                SDL_CreateWindow
+                0x0000000000010c2d                SDL_PauseAudio
+                0x0000000000010c35                SDL_FillRect
+                0x0000000000010c3d                SDL_itoa
+                0x0000000000010c46                _smolplt
+ *(.data .data.* .tdata .tdata.*)
+
+.dynstuff
+ *(.symtab .strtab .shstrtab .rel.text .got.plt .gnu.linkonce.* .plt .plt.got)
+                0x0000000000010c46                _smol_data_end = .
+                0x0000000000000051                _smol_data_size = (_smol_data_end - _smol_data_start)
+                0x0000000000000c46                _smol_total_filesize = (. - _smol_origin)
+                0x0000000000010c46                _smol_bss_start = .
+                0x0000000000000c46                _smol_bss_off = (_smol_bss_start - _smol_origin)
+
+.bss            0x0000000000010c46      0x258
+ *(.bss .bss.* .tbss .tbss.* .sbss .sbss.*)
+ .bss           0x0000000000010c46      0x258 src/t2k.o
+                0x0000000000010e9e                _smol_bss_end = .
+                0x0000000000000258                _smol_bss_size = (_smol_bss_end - _smol_bss_start)
+                0x00000000000002a9                _smol_dataandbss_size = (_smol_bss_end - _smol_data_start)
+                0x0000000000000e9e                _smol_total_memsize = (. - _smol_origin)
+
+.stab
+ *(.stab)
+
+.stabstr
+ *(.stabstr)
+
+.stab.excl
+ *(.stab.excl)
+
+.stab.exclstr
+ *(.stab.exclstr)
+
+.stab.index
+ *(.stab.index)
+
+.stab.indexstr
+ *(.stab.indexstr)
+
+.debug
+ *(.debug)
+
+.line
+ *(.line)
+
+.debug_srcinfo
+ *(.debug_srcinfo)
+
+.debug_sfnames
+ *(.debug_sfnames)
+
+.debug_aranges
+ *(.debug_aranges)
+
+.debug_pubnames
+ *(.debug_pubnames)
+
+.debug_info
+ *(.debug_info .gnu.linkonce.wi.*)
+
+.debug_abbrev
+ *(.debug_abbrev)
+
+.debug_line
+ *(.debug_line .debug_line.* .debug_line_end)
+
+.debug_frame
+ *(.debug_frame)
+
+.debug_str
+ *(.debug_str)
+
+.debug_loc
+ *(.debug_loc)
+
+.debug_macinfo
+ *(.debug_macinfo)
+
+.debug_weaknames
+ *(.debug_weaknames)
+
+.debug_funcnames
+ *(.debug_funcnames)
+
+.debug_typenames
+ *(.debug_typenames)
+
+.debug_varnames
+ *(.debug_varnames)
+
+.debug_pubtypes
+ *(.debug_pubtypes)
+
+.debug_ranges
+ *(.debug_ranges)
+
+.debug_macro
+ *(.debug_macro)
+
+.debug_addr
+ *(.debug_addr)
+
+/DISCARD/
+ *(.*)
+OUTPUT(t2k.smol binary)

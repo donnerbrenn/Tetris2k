@@ -1,0 +1,7 @@
+t2k.c:55:6:audio_callback	40	static
+t2k.c:103:6:drawScore	80	static
+t2k.c:261:6:initStone	16	static
+t2k.c:271:6:initGame	8	static
+t2k.c:128:6:Rotate	8	static
+t2k.c:141:6:DoesPieceFit	8	static
+t2k.c:340:13:_start	112	static

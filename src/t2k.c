@@ -1,6 +1,8 @@
 #include "t2k.h"
 
 
+
+
 void _memset(void* dest,char val,size_t numbytes)
 {
     while(numbytes)
@@ -21,6 +23,7 @@ void _memcpy(void* dest, void* src, size_t numbytes)
 
 void drawRect(int x, int y, int w, int col)
 {
+    static SDL_Rect rect;
     rect=(SDL_Rect){x,y,w,w};
     SDL_FillRect(screenSurface,&rect,col);
 }
@@ -127,12 +130,26 @@ void drawcharacter(int num, int posX,int posY)
 
 char Rotate(char px, char py, char r)
 {  
-    char x;
     do
     {
-        x=12+py-(px<<2);
+        register char x=12+py-(px<<2);
+
+
+
+        //    asm volatile(
+        //     "movb $4, %%bl\n\t"
+        //     "divb %%bl\n\t"
+        //     "movb %%ah, %[px]\n\t"
+        //     : [px] "=r" (px), [py] "=r" (py)
+        //     : "r" (x)
+        // );
+        // printf("x:%i px:%i py:%i\n",x,px,py);
+        // asm volatile("push $231;pop %rax;syscall");
+
         px=x&3;
         py=x>>2;
+        // printf("x:%i px:%i py:%i\n",x,px,py);
+        // exit(0);
 
     } while(--r);
     return (py<<2)+px;
@@ -173,6 +190,7 @@ bool FallDown()
 
 void ProcessEventsSDL()
 {
+    static bool handlekeys;
     SDL_Event e;
     handlekeys=true;
     while(SDL_PollEvent(&e))
@@ -336,9 +354,10 @@ void initSDL()
     screenSurface = SDL_GetWindowSurface(window);
 }
 
+
 __attribute__((__externally_visible__, __section__(".text.startup._start"), __noreturn__))
 extern void _start()
-{
+{    
     initGame();
     initSDL();
     for(;;)

@@ -1,27 +1,20 @@
 CC = cc-8
 
-CFLAGS = -Os -s -march=nocona 
-CFLAGS += -fno-plt
-CFLAGS += -fno-stack-protector -fno-stack-check
-CFLAGS += -fno-PIC -fno-PIE
-CFLAGS += -Wall
-CFLAGS += -no-pie
-CFLAGS += -nostartfiles -nostdlib 
-CFLAGS += -malign-data=cacheline
-CFLAGS+= -fno-stack-protector -fno-stack-check
-CFLAGS+= -fmerge-all-constants 
-CFLAGS+= -mno-fancy-math-387 -mno-ieee-fp 
-CFLAGS+= -fomit-frame-pointer
-CFLAGS+= -funsafe-math-optimizations -ffast-math 
-CFLAGS+= -fmerge-all-constants 
-CFLAGS+= -fsingle-precision-constant 
+CFLAGS = -s -fno-plt -fno-stack-protector -fno-stack-check -fno-PIC -fno-PIE -march=nocona \
+-no-pie -nostartfiles -malign-data=cacheline -fno-stack-protector -fno-stack-check \
+-fmerge-all-constants -mno-fancy-math-387 -mno-ieee-fp -fomit-frame-pointer \
+-funsafe-math-optimizations -ffast-math -fmerge-all-constants -fsingle-precision-constant 
+CFLAGS += -Os 
 
-LIBS=-lSDL2
+LIBS=-lSDL2 -lc
 
 VNDH_FLAGS :=-l -v --vndh vondehi --vndh_unibin
 SMOLARGS= -c -fuse-interp -falign-stack -fuse-dnload-loader -funsafe-dynamic -fuse-dt-debug -fno-start-arg --det
 
 all: t2k
+
+src/t2k.S: src/t2k.c
+	gcc -S  $< -o $@
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -50,8 +43,11 @@ heatmap: t2k.lzma
 	@stat --printf="$@: %s bytes\n" $<
 	rm $<
 
+xlink: t2k.smol
+	cat t2k.smol | ~/coding/xlink/bin/xlink
+
 clean:
-	-rm -f t2k* src/t2k.o*
+	-rm -f t2k* src/t2k.o* src/t2k.S
 
 t2k: t2k.smol
 	./autovndh.py $(VNDH_FLAGS) "$<" > "$@"

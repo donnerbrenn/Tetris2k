@@ -9,6 +9,11 @@
 #endif
 #include <stdbool.h>
 
+struct state
+{
+}state;
+
+
 #define FIELDWIDTH 12
 #define FIELDHEIGHT 18
 #define SCREEN_WIDTH 620
@@ -23,16 +28,16 @@ static char pBackBuffer[FIELDWIDTH*FIELDHEIGHT];
 static char nCurrentRotation;
 static char nCurrentX;
 static char nCurrentY;
-static bool handlekeys;
 #ifdef SCORE
 static unsigned int score;
 static unsigned int lines;
 #endif
 static unsigned int runtime=0;
 static int nCurrentPiece;
-static SDL_Window *window;
 static SDL_Surface *screenSurface;
-static SDL_Rect rect;
+static SDL_Window *window;
+
+
 
 
 #ifdef SYNTH
