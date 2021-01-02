@@ -51,20 +51,19 @@ static void drawScore(int value, int x);
 
 static void _memcpy(void* dest, void* src, size_t numbytes);
 static void _memset(void* dest, char val, size_t numbytes);
-static void ProcessEventsSDL();
+static void processEventsSDL();
 static void updateDisplay();
 static void placeTetromino(int piece,int x, int y, int rotation);
-static void DropLine(int line);
+static void dropLine(int line);
 static void initGame();
 static void updateGame();
-static void updateBuffer();
 static void shuffle();
 static void initSDL();
-static bool FallDown();
+static bool fallDown();
 static bool isLineComplete(int line);
 static void drawRect(int x, int y, int w, int col);
 static void initStone();
-inline char Rotate(char px, char py, char r);
-inline bool DoesPieceFit(int nTetromino, int nRotation, int nPosX, int nPosY);
+inline char getRotatedIndex(char px, char py, char r);
+inline bool doesPieceFit(int nTetromino, int nRotation, int nPosX, int nPosY);
 
 void _start();

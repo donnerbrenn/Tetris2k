@@ -4,7 +4,7 @@ CFLAGS = -s -fno-plt -fno-stack-protector -fno-stack-check -fno-PIC -fno-PIE -ma
 -no-pie -nostartfiles -malign-data=cacheline -fno-stack-protector -fno-stack-check \
 -fmerge-all-constants -mno-fancy-math-387 -mno-ieee-fp -fomit-frame-pointer \
 -funsafe-math-optimizations -ffast-math -fmerge-all-constants -fsingle-precision-constant 
-CFLAGS += -Os 
+CFLAGS += -Os
 
 LIBS=-lSDL2 -lc
 
@@ -18,7 +18,6 @@ src/t2k.S: src/t2k.c
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
-	
 	objcopy $@ --set-section-alignment *=1 -g -x -X -S --strip-unneeded -R .comment -R .data
 	size $@
 	# readelf -S $@

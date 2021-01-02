@@ -38,11 +38,6 @@ void shuffle()
     nCurrentPiece=result;
 }
 
-void updateBuffer()
-{
-    _memcpy(pBuffer,pBackBuffer,FIELDHEIGHT*FIELDWIDTH); 
-}
-
 #ifdef SYNTH
 float getFrq(int note)
 {
@@ -67,7 +62,9 @@ void audio_callback(void *unused, unsigned char *byte_stream, int byte_stream_le
     static unsigned int pos;
     static unsigned int current_pattern;
     static unsigned int current_note;
+    static float freq;
     static float hertz[VOICES];
+
     for (int i = 0; i < byte_stream_length>>1; ++i)
     {
         pos=song_clock/(SAMPLERATE/SPEED);
@@ -89,7 +86,7 @@ void audio_callback(void *unused, unsigned char *byte_stream, int byte_stream_le
             }
             if(vol[j]>0)
             {
-                float freq=SAMPLERATE/hertz[j];
+                freq=SAMPLERATE/hertz[j];
                 counter[j]=(counter[j]>=freq)?0:counter[j];
                 freq*=j==1?.5f:.7f;
                 stream[i]+=(counter[j]<=freq)?vol[j]:-vol[j];
@@ -128,15 +125,18 @@ void drawcharacter(int num, int posX,int posY)
 }
 #endif
 
-char Rotate(char px, char py, char r)
+char getRotatedIndex(char px, char py, char r)
 {  
     do
     {
-        register char x=12+py-(px<<2);
+        char x=12+py-(px<<2);
+        px=x&3;
+        py=x>>2;
 
 
 
         //    asm volatile(
+        //     // "addb %[py],%1;\n\t"
         //     "movb $4, %%bl\n\t"
         //     "divb %%bl\n\t"
         //     "movb %%ah, %[px]\n\t"
@@ -145,9 +145,6 @@ char Rotate(char px, char py, char r)
         // );
         // printf("x:%i px:%i py:%i\n",x,px,py);
         // asm volatile("push $231;pop %rax;syscall");
-
-        px=x&3;
-        py=x>>2;
         // printf("x:%i px:%i py:%i\n",x,px,py);
         // exit(0);
 
@@ -155,14 +152,14 @@ char Rotate(char px, char py, char r)
     return (py<<2)+px;
 }
 
-bool DoesPieceFit(int nTetromino, int nRotation, int nPosX, int nPosY)
+bool doesPieceFit(int nTetromino, int nRotation, int nPosX, int nPosY)
 {
     for(int px=0;px<4;++px)
     {
         for(int py=0;py<4;++py)
         {
             //Get index into piece
-            int pi = (Rotate((px),(py),(nRotation)));
+            int pi = (getRotatedIndex((px),(py),(nRotation)));
             //Get index into field
             int fi = (nPosY+py)*FIELDWIDTH+(nPosX+px);
             if(characters[nTetromino]&(1 << pi) && pBuffer[fi])
@@ -174,9 +171,9 @@ bool DoesPieceFit(int nTetromino, int nRotation, int nPosX, int nPosY)
     return true;
 }
 
-bool FallDown()
+bool fallDown()
 {
-    if(DoesPieceFit(nCurrentPiece,nCurrentRotation,nCurrentX,nCurrentY+1))
+    if(doesPieceFit(nCurrentPiece,nCurrentRotation,nCurrentX,nCurrentY+1))
     {
         ++nCurrentY;
         return(false);
@@ -184,14 +181,18 @@ bool FallDown()
     else
     {
         initStone();
-        return (!DoesPieceFit(nCurrentPiece,nCurrentRotation,nCurrentX,nCurrentY));
+        return (!doesPieceFit(nCurrentPiece,nCurrentRotation,nCurrentX,nCurrentY));
     }
 }
 
-void ProcessEventsSDL()
+void processEventsSDL()
 {
-    static bool handlekeys;
     SDL_Event e;
+    static bool handlekeys;
+    static char key;
+    static char newRot;
+    static char newX;
+    static char newY;
     handlekeys=true;
     while(SDL_PollEvent(&e))
     {
@@ -202,12 +203,12 @@ void ProcessEventsSDL()
         if(e.type==SDL_KEYDOWN&&handlekeys)
         {
             handlekeys=false;
-            char key=(e.key.keysym.sym);
-            char newRot=nCurrentRotation+(key=='w');
-            char newX=(nCurrentX)+(key=='d')-(key=='a');
-            char newY=(nCurrentY)+(key=='s');
+            key=(e.key.keysym.sym);
+            newRot=nCurrentRotation+(key=='w');
+            newX=(nCurrentX)+(key=='d')-(key=='a');
+            newY=(nCurrentY)+(key=='s');
             
-            if(DoesPieceFit(nCurrentPiece,newRot,newX,newY))
+            if(doesPieceFit(nCurrentPiece,newRot,newX,newY))
             {
                 #ifdef SCORE
                 if(newY!=nCurrentY)
@@ -232,12 +233,12 @@ void updateDisplay()
      drawScore(score,10);
      drawScore(lines,200);
      #endif
-
+     static int i;
     for(int y=0;y<FIELDHEIGHT;++y)
     {
         for(int x=0;x<FIELDWIDTH;++x)
         {
-            int i=FIELDWIDTH*y+x;
+            i=FIELDWIDTH*y+x;
             drawRect(x*50+10,y*50+10,48,(int)(colors[(int)(pBackBuffer[i])]));
             #ifdef DECO
             if(pBackBuffer[i]!=9)
@@ -253,20 +254,21 @@ void updateDisplay()
 
 void placeTetromino(int piece,int x, int y, int rotation)
 {
+    static int i;
     for(int py=0;py<4;++py)
     {
         for(int px=0;px<4;++px)
         {
-            if((1 << (Rotate((px),(py),(rotation)))) & characters[piece])
+            if(1 << getRotatedIndex(px,py,rotation) & characters[piece])
             {
-                int i=(y+py)*FIELDWIDTH+(x+px);
+                i=(y+py)*FIELDWIDTH+(x+px);
                 pBackBuffer[i]=(piece+1);
             }
         }
     }
 }
 
-void DropLine(int line)
+void dropLine(int line)
 {
     for(line=(line+1)*FIELDWIDTH;line>12;--line)
     {
@@ -283,7 +285,7 @@ void initStone()
         nCurrentY=0;
         nCurrentX=(FIELDWIDTH>>2)+1;
         runtime=0;
-        updateBuffer();
+        _memcpy(pBuffer,pBackBuffer,FIELDHEIGHT*FIELDWIDTH); 
 }
 
 void initGame()
@@ -315,7 +317,7 @@ bool isLineComplete(int line)
 void updateGame()
 {
     #ifdef SCORE
-    int multi=0;
+    static int multi=0;
     #endif
     _memcpy(pBackBuffer,pBuffer,FIELDHEIGHT*FIELDWIDTH);
     for(int py=0;py<FIELDHEIGHT-1;++py)
@@ -327,7 +329,7 @@ void updateGame()
             multi+=25;
             score+=multi;
             #endif
-            DropLine(py);
+            dropLine(py);
         }
     }
     placeTetromino(nCurrentPiece,nCurrentX,nCurrentY,nCurrentRotation);
@@ -366,13 +368,13 @@ extern void _start()
         updateDisplay();     
         if((runtime&15)==0)
         {
-            if(FallDown())
+            if(fallDown())
             {
                 initGame();
                 SDL_Delay(2000);
             }
         }
         runtime++;
-        ProcessEventsSDL();
+        processEventsSDL();
     }
 }
