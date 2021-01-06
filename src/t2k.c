@@ -1,8 +1,5 @@
 #include "t2k.h"
 
-
-
-
 void _memset(void* dest,char val,size_t numbytes)
 {
     while(numbytes)
@@ -54,16 +51,16 @@ void audio_callback(void *unused, unsigned char *byte_stream, int byte_stream_le
 {
     short *stream=(short*)byte_stream;
     static short vol[VOICES];
-    static unsigned int song_clock;
-    static unsigned int counter[VOICES];
-    static unsigned int previous[VOICES];
     static unsigned int note;
-
+    static unsigned int song_clock;
     static unsigned int pos;
     static unsigned int current_pattern;
     static unsigned int current_note;
-    static float freq;
+    static unsigned int counter[VOICES];
+    static unsigned int previous[VOICES];
     static float hertz[VOICES];
+    static float freq;
+    
 
     for (int i = 0; i < byte_stream_length>>1; ++i)
     {
@@ -74,17 +71,17 @@ void audio_callback(void *unused, unsigned char *byte_stream, int byte_stream_le
         for(int j=0;j<VOICES;j++)
         {
             note=cpatterns[j][(int)order[current_pattern]][current_note];
-            if((previous[j]!=pos)&&(note))
+            if((previous[j]!=pos)&&note)
             {
                 hertz[j]=getFrq(note);
                 previous[j]=pos;
                 vol[j]=8192;
             }
-            if((song_clock&7)==0)
+            if(!(song_clock&7))
             {
                 vol[j]--;
             }
-            if(vol[j]>0)
+            if(vol[j]>=0)
             {
                 freq=SAMPLERATE/hertz[j];
                 counter[j]=(counter[j]>=freq)?0:counter[j];
@@ -132,9 +129,6 @@ char getRotatedIndex(char px, char py, char r)
         char x=12+py-(px<<2);
         px=x&3;
         py=x>>2;
-
-
-
         //    asm volatile(
         //     // "addb %[py],%1;\n\t"
         //     "movb $4, %%bl\n\t"
@@ -228,7 +222,6 @@ void processEventsSDL()
 void updateDisplay()
 {
     SDL_FillRect(screenSurface,NULL,0x12121212);
-    // drawRect(0,0,SCREEN_HEIGHT,0x12121212);
     #ifdef SCORE
      drawScore(score,10);
      drawScore(lines,200);

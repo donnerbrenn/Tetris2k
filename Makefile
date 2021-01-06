@@ -1,12 +1,13 @@
-CC = cc-8
+CC = gcc-8
 
 CFLAGS = -s -fno-plt -fno-stack-protector -fno-stack-check -fno-PIC -fno-PIE -march=nocona \
--no-pie -nostartfiles -malign-data=cacheline -fno-stack-protector -fno-stack-check \
--fmerge-all-constants -mno-fancy-math-387 -mno-ieee-fp -fomit-frame-pointer \
+-no-pie -nostartfiles -fno-stack-protector -fno-stack-check \
+-fmerge-all-constants -fomit-frame-pointer \
 -funsafe-math-optimizations -ffast-math -fmerge-all-constants -fsingle-precision-constant 
+CFLAGS += -malign-data=cacheline -mno-fancy-math-387 -mno-ieee-fp
 CFLAGS += -Os
 
-LIBS=-lSDL2 -lc
+LIBS=-lSDL2
 
 VNDH_FLAGS :=-l -v --vndh vondehi --vndh_unibin
 SMOLARGS= -c -fuse-interp -falign-stack -fuse-dnload-loader -funsafe-dynamic -fuse-dt-debug -fno-start-arg --det
@@ -42,8 +43,8 @@ heatmap: t2k.lzma
 	@stat --printf="$@: %s bytes\n" $<
 	rm $<
 
-xlink: t2k.smol
-	cat t2k.smol | ~/coding/xlink/bin/xlink
+# xlink: t2k.smol
+# 	cat t2k.smol | ~/coding/xlink/bin/xlink
 
 clean:
 	-rm -f t2k* src/t2k.o* src/t2k.S

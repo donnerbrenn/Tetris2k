@@ -9,9 +9,6 @@
 #endif
 #include <stdbool.h>
 
-struct state
-{
-}state;
 
 
 #define FIELDWIDTH 12
@@ -36,9 +33,6 @@ static unsigned int runtime=0;
 static int nCurrentPiece;
 static SDL_Surface *screenSurface;
 static SDL_Window *window;
-
-
-
 
 #ifdef SYNTH
 static void audio_callback(void *unused, unsigned char *byte_stream, int byte_stream_length);
