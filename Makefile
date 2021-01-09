@@ -27,6 +27,12 @@ src/t2k.S: src/t2k.c
 	./autovndh.py $(VNDH_FLAGS) --nostub  "$<" > "$@"
 	rm $<
 
+t2k.sh: shelldropper.sh t2k.lzma
+	cat $^ > $@
+	chmod +x $@
+	wc -c $@
+
+
 t2k.smol: src/t2k.o
 	python3 ./smol/smold.py --smolrt "smol/rt" --smolld "smol/ld" $(SMOLARGS)  $(LIBS) $< $@
 	@stat --printf="$@: %s bytes\n" $@

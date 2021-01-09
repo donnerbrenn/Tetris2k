@@ -43,6 +43,7 @@ static void drawcharacter(int num, int posX,int posY);
 static void drawScore(int value, int x);
 #endif
 
+
 static void _memcpy(void* dest, void* src, size_t numbytes);
 static void _memset(void* dest, char val, size_t numbytes);
 static void processEventsSDL();
@@ -60,4 +61,11 @@ static void initStone();
 inline char getRotatedIndex(char px, char py, char r);
 inline bool doesPieceFit(int nTetromino, int nRotation, int nPosX, int nPosY);
 
+__attribute__((__externally_visible__, __section__(".text.startup._start"), __noreturn__))
 void _start();
+
+__attribute__(( __noreturn__))
+static void quit();
+
+static void keys();
+
