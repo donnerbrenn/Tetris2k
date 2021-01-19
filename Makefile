@@ -4,10 +4,10 @@ CFLAGS = -s -fno-plt -fno-stack-protector -fno-stack-check -fno-PIC -fno-PIE -ma
 -no-pie -nostartfiles -fno-stack-protector -fno-stack-check \
 -fmerge-all-constants -fomit-frame-pointer \
 -funsafe-math-optimizations -ffast-math -fmerge-all-constants -fsingle-precision-constant 
-CFLAGS += -malign-data=cacheline -mno-fancy-math-387 -mno-ieee-fp
+CFLAGS += -malign-data=cacheline -mno-fancy-math-387 -mno-ieee-fp# -fno-builtin -flto
 CFLAGS += -Os
 
-LIBS=-lSDL2
+LIBS=-lSDL2 
 
 VNDH_FLAGS :=-l -v --vndh vondehi --vndh_unibin
 SMOLARGS= -c -fuse-interp -falign-stack -fuse-dnload-loader -funsafe-dynamic -fuse-dt-debug -fno-start-arg --det
@@ -31,7 +31,6 @@ t2k.sh: shelldropper.sh t2k.lzma
 	cat $^ > $@
 	chmod +x $@
 	wc -c $@
-
 
 t2k.smol: src/t2k.o
 	python3 ./smol/smold.py --smolrt "smol/rt" --smolld "smol/ld" $(SMOLARGS)  $(LIBS) $< $@

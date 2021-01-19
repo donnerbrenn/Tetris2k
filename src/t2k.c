@@ -46,27 +46,23 @@ float getFrq(int note)
     return freq;
 }
 
-
 void audio_callback(void *unused, unsigned char *byte_stream, int byte_stream_length)
 {
     short *stream=(short*)byte_stream;
     static short vol[VOICES];
     static unsigned int note;
     static unsigned int song_clock;
-    static unsigned int pos;
-    static unsigned int current_pattern;
-    static unsigned int current_note;
     static unsigned int counter[VOICES];
     static unsigned int previous[VOICES];
     static float hertz[VOICES];
     static float freq;
-    
 
     for (int i = 0; i < byte_stream_length>>1; ++i)
     {
-        pos=song_clock/(SAMPLERATE/SPEED);
-        current_pattern=(pos>>6)&7;
-        current_note=pos&63;
+        unsigned int pos=song_clock/(SAMPLERATE/SPEED);
+        unsigned int current_pattern=(pos>>6)&7;
+        unsigned int current_note=pos&63;
+
         stream[i]=0;
         for(int j=0;j<VOICES;j++)
         {

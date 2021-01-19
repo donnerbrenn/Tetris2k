@@ -58,6 +58,8 @@ static bool fallDown();
 static bool isLineComplete(int line);
 static void drawRect(int x, int y, int w, int col);
 static void initStone();
+static void keys();
+
 inline char getRotatedIndex(char px, char py, char r);
 inline bool doesPieceFit(int nTetromino, int nRotation, int nPosX, int nPosY);
 
@@ -66,6 +68,4 @@ void _start();
 
 __attribute__(( __noreturn__))
 static void quit();
-
-static void keys();
 
