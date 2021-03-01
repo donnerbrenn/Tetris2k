@@ -1,4 +1,5 @@
 #include "t2k.h"
+#include "sys.h"
 
 void _memset(void* dest,char val,size_t numbytes)
 {
@@ -27,10 +28,10 @@ void drawRect(int x, int y, int w, int col)
 
 void shuffle()
 {
-    int result=7;
-    while(result==7||result==nCurrentPiece)
+    unsigned char result=-1;
+    while(result>6||result==nCurrentPiece)
     {
-        result=SDL_GetTicks()&7;
+        SYS_getrandom(&result,1,1);
     } 
     nCurrentPiece=result;
 }
@@ -188,6 +189,7 @@ void processEventsSDL()
     {
         if (e.type==SDL_QUIT)
         {
+            // SYS_exit_group(0);
             asm volatile("push $231;pop %rax;syscall");
         }
         if(e.type==SDL_KEYDOWN&&handlekeys)
@@ -263,7 +265,8 @@ void dropLine(int line)
     {
         pBackBuffer[line]=pBackBuffer[line-FIELDWIDTH];
     }
-    _memset(pBackBuffer+1,0,9);
+    // _memcpy(pBackBuffer+FIELDWIDTH,pBackBuffer,line*FIELDWIDTH);
+    _memset(pBackBuffer+1,0,10);
     initStone();
 }
 

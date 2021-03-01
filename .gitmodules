@@ -3,4 +3,4 @@
 	url = https://gitlab.com/PoroCYon/vondehi.git
 [submodule "smol"]
 	path = smol
-	url = https://github.com/Shizmob/smol.git
+	url = https://github.com/PoroCYon/smol.git
