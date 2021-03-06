@@ -1,12 +1,11 @@
 
 Discarded input sections
 
- .note.gnu.property
-                0x0000000000000000       0x30 /tmp/smolin8149nlu0.o
- .eh_frame      0x0000000000000000      0x128 /tmp/smolin8149nlu0.o
- .comment       0x0000000000000000       0x26 /tmp/smolin8149nlu0.o
+ .comment       0x0000000000000000       0x12 obj/t2k.o
  .note.GNU-stack
-                0x0000000000000000        0x0 /tmp/smolin8149nlu0.o
+                0x0000000000000000        0x0 obj/t2k.o
+ .note.gnu.property
+                0x0000000000000000       0x30 obj/t2k.o
 
 Memory Configuration
 
@@ -15,97 +14,137 @@ Name             Origin             Length             Attributes
 
 Linker script and memory map
 
-LOAD /tmp/smolin8149nlu0.o
-LOAD /tmp/smoloutqx7ev91u.o
+LOAD obj/t2k.o
+LOAD /tmp/smoloutq76_nnl8.o
                 0x0000000000010000                . = 0x10000
                 0x0000000000010000                _smol_origin = .
 
 .header         0x0000000000010000       0xe0
  *(.header)
- .header        0x0000000000010000       0xe0 /tmp/smoloutqx7ev91u.o
+ .header        0x0000000000010000       0xe0 /tmp/smoloutq76_nnl8.o
                 0x0000000000010000                _EHDR
                 0x0000000000010038                _PHDR
                 0x0000000000010088                _INTERP
 
-.dynamic        0x00000000000100e0      0x124
+.dynamic        0x00000000000100e0       0x30
  *(.dynamic .rodata.dynamic .interp)
- .dynamic       0x00000000000100e0       0x60 /tmp/smoloutqx7ev91u.o
+ .rodata.dynamic
+                0x00000000000100e0       0x30 /tmp/smoloutq76_nnl8.o
                 0x00000000000100e0                _DYNAMIC
  *(.dynsym .dynstr)
- .dynsym        0x0000000000010140        0x5 /tmp/smoloutqx7ev91u.o
-                0x0000000000010140                _dynsym
- .dynstr        0x0000000000010145       0xaf /tmp/smoloutqx7ev91u.o
-                0x0000000000010145                _dynstr
  *(.rela.plt)
- .rela.plt      0x00000000000101f4       0x10 /tmp/smoloutqx7ev91u.o
-                0x00000000000101f4                _rela_plt
-                0x0000000000010204                _smol_data_start = .
-                0x0000000000000204                _smol_data_off = (_smol_data_start - _smol_origin)
+                0x0000000000010110                _smol_data_start = .
+                0x0000000000000110                _smol_data_off = (_smol_data_start - _smol_origin)
 
-.data           0x0000000000010204        0x0
+.data           0x0000000000010110       0x49
  *(.data.smolgot .data.got.plt)
+ .data.smolgot  0x0000000000010110       0x49 /tmp/smoloutq76_nnl8.o
+                0x0000000000010110                SDL_itoa
+                0x0000000000010110                _symbols
+                0x0000000000010118                SDL_FillRect
+                0x0000000000010120                SDL_OpenAudio
+                0x0000000000010128                SDL_PauseAudio
+                0x0000000000010130                SDL_CreateWindow
+                0x0000000000010138                SDL_GetWindowSurface
+                0x0000000000010140                SDL_Delay
+                0x0000000000010148                SDL_UpdateWindowSurface
+                0x0000000000010150                SDL_PollEvent
+                0x0000000000010159                _smolplt
  *(.data.got.plt.start)
  *(.data.got.plt)
  *(.data .data.* .tdata .tdata.*)
- .data          0x0000000000010204        0x0 /tmp/smolin8149nlu0.o
-                0x0000000000010204                _smol_data_end = .
-                0x0000000000000000                _smol_data_size = (_smol_data_end - _smol_data_start)
-                0x0000000000000204                _smol_dataandheader_size = (_smol_data_end - _smol_origin)
-                0x00000000000004ec                _smol_dataandheaderandbss_size = (_smol_dataandheader_size + _smol_bss_size)
-                0x0000000000010204                _smol_text_start = .
-                0x0000000000000204                _smol_text_off = (_smol_text_start - _smol_origin)
+ .data          0x0000000000010159        0x0 obj/t2k.o
+                0x0000000000010159                _smol_data_end = .
+                0x0000000000000049                _smol_data_size = (_smol_data_end - _smol_data_start)
+                0x0000000000000159                _smol_dataandheader_size = (_smol_data_end - _smol_origin)
+                0x000000000000037e                _smol_dataandheaderandbss_size = (_smol_dataandheader_size + _smol_bss_size)
+                0x0000000000010159                _smol_text_start = .
+                0x0000000000000159                _smol_text_off = (_smol_text_start - _smol_origin)
 
-.text           0x0000000000010220      0xa88
+.text           0x0000000000010159      0xab5
  *(.rdata .rdata.* .rodata .rodata.*)
- .rodata        0x0000000000010220      0x368 /tmp/smolin8149nlu0.o
-                0x0000000000010220                characters2
-                0x0000000000010240                cpatterns
-                0x0000000000010540                order
-                0x0000000000010548                characters
-                0x0000000000010560                colors
- .rodata.cst4   0x0000000000010588       0x14 /tmp/smolin8149nlu0.o
+ .rodata.cpatterns
+                0x0000000000010159      0x300 obj/t2k.o
+ .rodata.order  0x0000000000010459        0x8 obj/t2k.o
+ .rodata.characters2
+                0x0000000000010461       0x14 obj/t2k.o
+ .rodata.characters
+                0x0000000000010475        0xe obj/t2k.o
+ .rodata.colors
+                0x0000000000010483       0x28 obj/t2k.o
+ .rodata.cst4   0x00000000000104ab       0x14 obj/t2k.o
+ .rodata.neededlibs
+                0x00000000000104bf        0xb /tmp/smoloutq76_nnl8.o
+                0x00000000000104bf                _strtab
  *(.text.startup.smol)
  .text.startup.smol
-                0x000000000001059c       0x4f /tmp/smoloutqx7ev91u.o
-                0x00000000000105a1                _smol_start
-                0x00000000000105eb                _smol_rt_end
+                0x00000000000104ca       0x87 /tmp/smoloutq76_nnl8.o
+                0x00000000000104ca                _smol_start
+                0x0000000000010551                _smol_rt_end
  *(.text.startup._start)
  .text.startup._start
-                0x00000000000105eb      0x362 /tmp/smolin8149nlu0.o
-                0x00000000000105eb                _start
+                0x0000000000010551      0x37a obj/t2k.o
+                0x0000000000010551                _start
  *(.text .text.*)
- .text          0x000000000001094d      0x35b /tmp/smolin8149nlu0.o
-                0x0000000000010c23                getRotatedIndex
-                0x0000000000010c42                doesPieceFit
-                0x0000000000010ca8                _smol_text_end = .
-                0x0000000000000aa4                _smol_text_size = (_smol_text_end - _smol_text_start)
-                0x0000000000000ca8                _smol_total_filesize = (. - _smol_origin)
-                0x0000000000010ca8                _smol_bss_start = .
-                0x0000000000000ca8                _smol_bss_off = (_smol_bss_start - _smol_origin)
+ .text          0x00000000000108cb        0x0 obj/t2k.o
+ .text.audio_callback
+                0x00000000000108cb      0x163 obj/t2k.o
+ .text.doesPieceFit
+                0x0000000000010a2e       0x67 obj/t2k.o
+ .text.drawScore
+                0x0000000000010a95       0xc7 obj/t2k.o
+ .text.initStone
+                0x0000000000010b5c       0x68 obj/t2k.o
+ .text.initGame
+                0x0000000000010bc4       0x4a obj/t2k.o
+                0x0000000000010c0e                _smol_text_end = .
+                0x0000000000000ab5                _smol_text_size = (_smol_text_end - _smol_text_start)
+                0x0000000000000c0e                _smol_total_filesize = (. - _smol_origin)
+                0x0000000000010c0e                _smol_bss_start = .
+                0x0000000000000c0e                _smol_bss_off = (_smol_bss_start - _smol_origin)
 
-.bss            0x0000000000010cc0      0x2d0
+.bss            0x0000000000010c0e      0x225
  *(.bss.got.plt)
- .bss.got.plt   0x0000000000010cc0       0x50 /tmp/smoloutqx7ev91u.o
-                0x0000000000010cc0                memmove
-                0x0000000000010cc8                SDL_Delay
-                0x0000000000010cd0                SDL_PauseAudio
-                0x0000000000010cd8                SDL_itoa
-                0x0000000000010ce0                SDL_GetWindowSurface
-                0x0000000000010ce8                SDL_UpdateWindowSurface
-                0x0000000000010cf0                SDL_OpenAudio
-                0x0000000000010cf8                SDL_CreateWindow
-                0x0000000000010d00                SDL_FillRect
-                0x0000000000010d08                SDL_PollEvent
-                0x0000000000010d10                _smolplt
  *(.bss .bss.* .tbss .tbss.* .sbss .sbss.*)
- *fill*         0x0000000000010d10       0x10 
- .bss           0x0000000000010d20      0x258 /tmp/smolin8149nlu0.o
- .bss.got.plt.start
-                0x0000000000010f78       0x18 /tmp/smoloutqx7ev91u.o
-                0x0000000000010f78                _GLOBAL_OFFSET_TABLE_
-                0x0000000000010f90                _smol_bss_end = .
-                0x00000000000002e8                _smol_bss_size = (_smol_bss_end - _smol_bss_start)
-                0x0000000000000f90                _smol_total_memsize = (. - _smol_origin)
+ .bss           0x0000000000010c0e        0x0 obj/t2k.o
+ .bss.handlekeys.38036
+                0x0000000000010c0e        0x1 obj/t2k.o
+ .bss.rect.37946
+                0x0000000000010c0f       0x10 obj/t2k.o
+ .bss.buffer.37988
+                0x0000000000010c1f        0xf obj/t2k.o
+ .bss.multi.38093
+                0x0000000000010c2e        0x4 obj/t2k.o
+ .bss.counter.37969
+                0x0000000000010c32        0xc obj/t2k.o
+ .bss.vol.37966
+                0x0000000000010c3e        0x6 obj/t2k.o
+ .bss.hertz.37971
+                0x0000000000010c44        0xc obj/t2k.o
+ .bss.previous.37970
+                0x0000000000010c50        0xc obj/t2k.o
+ .bss.song_clock.37968
+                0x0000000000010c5c        0x4 obj/t2k.o
+ .bss.window    0x0000000000010c60        0x8 obj/t2k.o
+ .bss.screenSurface
+                0x0000000000010c68        0x8 obj/t2k.o
+ .bss.nCurrentPiece
+                0x0000000000010c70        0x4 obj/t2k.o
+ .bss.runtime   0x0000000000010c74        0x4 obj/t2k.o
+ .bss.lines     0x0000000000010c78        0x4 obj/t2k.o
+ .bss.score     0x0000000000010c7c        0x4 obj/t2k.o
+ .bss.nCurrentY
+                0x0000000000010c80        0x1 obj/t2k.o
+ .bss.nCurrentX
+                0x0000000000010c81        0x1 obj/t2k.o
+ .bss.nCurrentRotation
+                0x0000000000010c82        0x1 obj/t2k.o
+ .bss.pBackBuffer
+                0x0000000000010c83       0xd8 obj/t2k.o
+ .bss.pBuffer   0x0000000000010d5b       0xd8 obj/t2k.o
+                0x0000000000010e33                _smol_bss_end = .
+                0x0000000000000225                _smol_bss_size = (_smol_bss_end - _smol_bss_start)
+                0x0000000000000e33                _smol_total_memsize = (. - _smol_origin)
 
 .stab
  *(.stab)
@@ -137,47 +176,29 @@ LOAD /tmp/smoloutqx7ev91u.o
 .debug_sfnames
  *(.debug_sfnames)
 
-.debug_aranges  0x0000000000000000       0x40
+.debug_aranges
  *(.debug_aranges)
- .debug_aranges
-                0x0000000000000000       0x40 /tmp/smolin8149nlu0.o
- .debug_aranges
-                0x0000000000000040        0x0 /tmp/smoloutqx7ev91u.o
 
 .debug_pubnames
-                0x0000000000000000        0x0
  *(.debug_pubnames)
- .debug_pubnames
-                0x0000000000000000        0x0 /tmp/smoloutqx7ev91u.o
 
-.debug_info     0x0000000000000000     0x31d5
+.debug_info
  *(.debug_info .gnu.linkonce.wi.*)
- .debug_info    0x0000000000000000     0x31d5 /tmp/smolin8149nlu0.o
-                0x0000000000000c40                t2k.c.adb467e3
- .debug_info    0x00000000000031d5        0x0 /tmp/smoloutqx7ev91u.o
 
-.debug_abbrev   0x0000000000000000      0x42d
+.debug_abbrev
  *(.debug_abbrev)
- .debug_abbrev  0x0000000000000000      0x42d /tmp/smolin8149nlu0.o
- .debug_abbrev  0x000000000000042d        0x0 /tmp/smoloutqx7ev91u.o
 
-.debug_line     0x0000000000000000      0x98f
+.debug_line
  *(.debug_line .debug_line.* .debug_line_end)
- .debug_line    0x0000000000000000      0x98f /tmp/smolin8149nlu0.o
- .debug_line    0x000000000000098f        0x0 /tmp/smoloutqx7ev91u.o
 
-.debug_frame    0x0000000000000000        0x0
+.debug_frame
  *(.debug_frame)
- .debug_frame   0x0000000000000000        0x0 /tmp/smoloutqx7ev91u.o
 
-.debug_str      0x0000000000000000     0x2965
+.debug_str
  *(.debug_str)
- .debug_str     0x0000000000000000     0x2965 /tmp/smolin8149nlu0.o
 
-.debug_loc      0x0000000000000000     0x105f
+.debug_loc
  *(.debug_loc)
- .debug_loc     0x0000000000000000     0x105f /tmp/smolin8149nlu0.o
- .debug_loc     0x000000000000105f        0x0 /tmp/smoloutqx7ev91u.o
 
 .debug_macinfo
  *(.debug_macinfo)
@@ -197,9 +218,8 @@ LOAD /tmp/smoloutqx7ev91u.o
 .debug_pubtypes
  *(.debug_pubtypes)
 
-.debug_ranges   0x0000000000000000      0x780
+.debug_ranges
  *(.debug_ranges)
- .debug_ranges  0x0000000000000000      0x780 /tmp/smolin8149nlu0.o
 
 .debug_macro
  *(.debug_macro)

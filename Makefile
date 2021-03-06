@@ -1,36 +1,40 @@
 OBJDIR := obj
 BINDIR := bin
-SRCDIR := rt
-TESTDIR:= src
+RTDIR := rt
+SRCDIR:= src
 
 NASM ?= nasm
 OBJCOPY ?= objcopy
 
-CC=gcc
+CC=gcc-8
 
 BITS ?= $(shell getconf LONG_BIT)
 
 COPTFLAGS= -Os -march=nocona
 COPTFLAGS+= -fno-plt -fno-stack-protector -fno-stack-check -fno-unwind-tables \
-  -fno-asynchronous-unwind-tables -fomit-frame-pointer -ffast-math -no-pie \
-  -fno-pic -fno-PIE -ffunction-sections -fdata-sections \
-  -fmerge-all-constants -mno-fancy-math-387 -mno-ieee-fp -funsafe-math-optimizations \
-  -fsingle-precision-constant -flto -nostdlib -nostartfiles \
-  -fwhole-program -fno-exceptions -mpreferred-stack-boundary=3 -fvisibility=hidden -flto 
+	-fno-asynchronous-unwind-tables -fomit-frame-pointer -ffast-math -no-pie \
+	-fno-pic -fno-PIE -ffunction-sections -fdata-sections -fmerge-all-constants \
+	-funsafe-math-optimizations -malign-data=cacheline -fsingle-precision-constant \
+	-fwhole-program -fno-exceptions -fvisibility=hidden \
+	-mpreferred-stack-boundary=4 -mno-fancy-math-387 -mno-ieee-fp #-flto 
 
-CFLAGS=-g -Wall -Wextra -Wpedantic -std=gnu11 -nostartfiles -fno-PIC $(COPTFLAGS) #-DUSE_DL_FINI
-CFLAGS   += -m$(BITS) $(shell pkg-config --cflags sdl2)
+CFLAGS = -g -std=gnu11 -nodefaultlibs -fno-PIC $(COPTFLAGS) -m$(BITS)
+CFLAGS += -Wall -Wextra #-Wpedantic
 
-LIBS = -lSDL2 -lc
+LIBS = $(filter-out -pthread,$(shell pkg-config --libs sdl2)) -lc
 
 PWD ?= .
 
 SMOLFLAGS = --smolrt "$(PWD)/smol/rt" --smolld "$(PWD)/smol/ld" \
-  --verbose -g -c -fuse-dlfixup-loader -fno-start-arg -funsafe-dynamic 
+	-c -fuse-dnload-loader -fno-start-arg -fno-ifunc-support -funsafe-dynamic 
+
+# SMOLFLAGS = --smolrt "$(PWD)/smol/rt" --smolld "$(PWD)/smol/ld" \
+# 	-g -c -fuse-dlfixup-loader -fno-start-arg -fno-ifunc-support -funsafe-dynamic
+
 
 PYTHON3 ?= python3
 
-all: vndh #cmix
+all: vndh #heatmap
 
 $(BINDIR)/t2k: $(BINDIR)/t2k.smol
 	./autovndh.py $(VNDH_FLAGS) $< > $@
@@ -44,13 +48,16 @@ clean:
 
 .SECONDARY:
 
-$(OBJDIR)/%.o: $(TESTDIR)/%.c $(OBJDIR)/
+$(OBJDIR)/%.o: $(SRCDIR)/%.c $(OBJDIR)/
 	$(CC) $(CFLAGS) -c "$<" -o "$@"
+	objcopy $@ --set-section-alignment *=1 -g -x -X -S --strip-unneeded
+	size $@
 
 VNDH_FLAGS :=-l -v --vndh vondehi #--vndh_unibin
 $(BINDIR)/%.dbg $(BINDIR)/%.smol: $(OBJDIR)/%.o $(BINDIR)/
 	$(PYTHON3) ./smol/smold.py --debugout "$@.dbg" $(SMOLFLAGS) --ldflags=-Wl,-Map=$(BINDIR)/$*.map $(LIBS) "$<" "$@"
 	$(PYTHON3) ./smol/smoltrunc.py "$@" "$(OBJDIR)/$(notdir $@)" && mv "$(OBJDIR)/$(notdir $@)" "$@" && chmod +x "$@"
+	wc -c $@
 
 $(BINDIR)/%.lzma: $(BINDIR)/t2k.smol
 	./autovndh.py $(VNDH_FLAGS) --nostub  "$<" > "$@"
@@ -69,7 +76,7 @@ $(BINDIR)/t2k.sh: shelldropper.sh $(BINDIR)/t2k.lzma
 
 xlink: $(BINDIR)/t2k.smol
 	cat $< | ~/coding/xlink/bin/xlink
-	chmod +x $@
+	# chmod +x $@
 
 cmix: $(BINDIR)/t2k.cmix
 	wc -c $<
