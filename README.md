@@ -5,7 +5,7 @@ Tetris written in C targetting a filesize of 2048 Bytes - Including 3 channel mu
 
 ## Current size: 
 
-2015 bytes
+1975 bytes
 
 ## Build dependencies:
 
