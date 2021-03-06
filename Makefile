@@ -21,7 +21,7 @@ COPTFLAGS+= -fno-plt -fno-stack-protector -fno-stack-check -fno-unwind-tables \
 CFLAGS = -g -std=gnu11 -nodefaultlibs -fno-PIC $(COPTFLAGS) -m$(BITS)
 CFLAGS += -Wall -Wextra #-Wpedantic
 
-LIBS = $(filter-out -pthread,$(shell pkg-config --libs sdl2)) -lc
+LIBS = -lSDL2 -lc
 
 PWD ?= .
 
@@ -50,7 +50,7 @@ clean:
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c $(OBJDIR)/
 	$(CC) $(CFLAGS) -c "$<" -o "$@"
-	objcopy $@ --set-section-alignment *=1 -g -x -X -S --strip-unneeded
+	$(OBJCOPY) $@ --set-section-alignment *=1 -g -x -X -S --strip-unneeded
 	size $@
 
 VNDH_FLAGS :=-l -v --vndh vondehi #--vndh_unibin
@@ -72,11 +72,8 @@ $(BINDIR)/t2k.sh: shelldropper.sh $(BINDIR)/t2k.lzma
 	cat $^ > $@
 	chmod +x $@
 
-
-
 xlink: $(BINDIR)/t2k.smol
 	cat $< | ~/coding/xlink/bin/xlink
-	# chmod +x $@
 
 cmix: $(BINDIR)/t2k.cmix
 	wc -c $<
@@ -94,7 +91,6 @@ $(BINDIR)/t2k.cmix: $(BINDIR)/t2k.smol
 	rm $@.cm
 	chmod +x $@
 	@stat --printf="$@: %s bytes\n" $@
-
 
 .PHONY: all clean
 

@@ -28,7 +28,7 @@ def run_proc_get_stdout(cmdlin):
         proc.wait()
         if proc.returncode != 0:
             if verbose > 1: eprint("-> " + str(proc.returncode))
-            elif verobse > 0:
+            elif verbose > 0:
                 eprint(str(cmdlin)+" -> " + str(proc.returncode))
         return None if proc.returncode != 0 else output
     except KeyboardInterrupt:
