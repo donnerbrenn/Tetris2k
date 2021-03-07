@@ -351,7 +351,7 @@ void initSDL()
 
 __attribute__((__externally_visible__, __section__(".text.startup._start"), __noreturn__))
 extern void _start()
-{    
+{
     initGame();
     initSDL();
     for(;;)

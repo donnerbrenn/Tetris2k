@@ -1,5 +1,5 @@
-#define SYNTH
-#define SCORE
+// #define SYNTH
+// #define SCORE
 // #define DECO
 
 #include <SDL2/SDL.h>

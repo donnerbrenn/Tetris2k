@@ -6,7 +6,11 @@ SRCDIR:= src
 NASM ?= nasm
 OBJCOPY ?= objcopy
 
+
 CC=gcc-8
+USELTO=false
+SMOLLOADER=dlfixup
+ALIGNSTACK=false
 
 BITS ?= $(shell getconf LONG_BIT)
 
@@ -16,7 +20,12 @@ COPTFLAGS+= -fno-plt -fno-stack-protector -fno-stack-check -fno-unwind-tables \
 	-fno-pic -fno-PIE -ffunction-sections -fdata-sections -fmerge-all-constants \
 	-funsafe-math-optimizations -malign-data=cacheline -fsingle-precision-constant \
 	-fwhole-program -fno-exceptions -fvisibility=hidden \
-	-mpreferred-stack-boundary=4 -mno-fancy-math-387 -mno-ieee-fp #-flto 
+	-mno-fancy-math-387 -mno-ieee-fp 
+COPTFLAGS += -DSYNTH 
+COPTFLAGS += -DSCORE 
+# COPTFLAGS += -DALIGN
+# COPTFLAGS += -DDECO
+
 
 CFLAGS = -g -std=gnu11 -nodefaultlibs -fno-PIC $(COPTFLAGS) -m$(BITS)
 CFLAGS += -Wall -Wextra #-Wpedantic
@@ -26,7 +35,8 @@ LIBS = -lSDL2 -lc
 PWD ?= .
 
 SMOLFLAGS = --smolrt "$(PWD)/smol/rt" --smolld "$(PWD)/smol/ld" \
-	-c -fuse-dnload-loader -fno-start-arg -fno-ifunc-support -funsafe-dynamic 
+	-c  -fuse-$(SMOLLOADER)-loader -fno-start-arg -fno-ifunc-support -funsafe-dynamic \
+	# --hang-on-startup
 
 # SMOLFLAGS = --smolrt "$(PWD)/smol/rt" --smolld "$(PWD)/smol/ld" \
 # 	-g -c -fuse-dlfixup-loader -fno-start-arg -fno-ifunc-support -funsafe-dynamic
@@ -34,7 +44,7 @@ SMOLFLAGS = --smolrt "$(PWD)/smol/rt" --smolld "$(PWD)/smol/ld" \
 
 PYTHON3 ?= python3
 
-all: vndh #heatmap
+all: vndh #sh cmix
 
 $(BINDIR)/t2k: $(BINDIR)/t2k.smol
 	./autovndh.py $(VNDH_FLAGS) $< > $@
@@ -49,13 +59,21 @@ clean:
 .SECONDARY:
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c $(OBJDIR)/
+ifeq ($(USELTO),true)
+	$(CC) $(CFLAGS) -flto -c "$<" -o "$@"
+else
 	$(CC) $(CFLAGS) -c "$<" -o "$@"
+endif
 	$(OBJCOPY) $@ --set-section-alignment *=1 -g -x -X -S --strip-unneeded
 	size $@
 
-VNDH_FLAGS :=-l -v --vndh vondehi #--vndh_unibin
+VNDH_FLAGS :=-l -v --vndh vondehi 
 $(BINDIR)/%.dbg $(BINDIR)/%.smol: $(OBJDIR)/%.o $(BINDIR)/
-	$(PYTHON3) ./smol/smold.py --debugout "$@.dbg" $(SMOLFLAGS) --ldflags=-Wl,-Map=$(BINDIR)/$*.map $(LIBS) "$<" "$@"
+ifeq ($(ALIGNSTACK),true)
+	$(PYTHON3) ./smol/smold.py -falign-stack --debugout "$@.dbg" $(SMOLFLAGS) --ldflags=-Wl,-Map=$(BINDIR)/$*.map $(LIBS) "$<" "$@"
+else
+	$(PYTHON3) ./smol/smold.py -fno-align-stack --debugout "$@.dbg" $(SMOLFLAGS) --ldflags=-Wl,-Map=$(BINDIR)/$*.map $(LIBS) "$<" "$@"
+endif
 	$(PYTHON3) ./smol/smoltrunc.py "$@" "$(OBJDIR)/$(notdir $@)" && mv "$(OBJDIR)/$(notdir $@)" "$@" && chmod +x "$@"
 	wc -c $@
 

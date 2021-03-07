@@ -5,7 +5,7 @@ Tetris written in C targetting a filesize of 2048 Bytes - Including 3 channel mu
 
 ## Current size: 
 
-1975 bytes
+1954 bytes
 
 ## Build dependencies:
 
@@ -21,4 +21,4 @@ Nasm
 Clone with 
 git clone --recursive https://github.com/donnerbrenn/Tetris2k.git
 
-Just run make on your Linux-System, the binary (t2k) can be found in the main folder after compilation.
+Just run make on your Linux-System, the binary (t2k) can be found in the bin folder after compilation.
