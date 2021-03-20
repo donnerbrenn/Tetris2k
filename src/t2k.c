@@ -1,5 +1,5 @@
 #include "t2k.h"
-#include "sys.h"
+
 
 void _memset(void* dest,char val,size_t numbytes)
 {
@@ -47,7 +47,7 @@ float getFrq(int note)
     return freq;
 }
 
-void audio_callback(void *unused, unsigned char *byte_stream, int byte_stream_length)
+void audio_callback(__attribute__((unused)) void *unused, unsigned char *byte_stream, int byte_stream_length)
 {
     short *stream=(short*)byte_stream;
     static short vol[VOICES];
@@ -93,7 +93,6 @@ void audio_callback(void *unused, unsigned char *byte_stream, int byte_stream_le
 #endif
 
 #ifdef SCORE
-
 void drawScore(int value, int x)
 {
     static char buffer[15];
@@ -126,19 +125,6 @@ char getRotatedIndex(char px, char py, char r)
         char x=12+py-(px<<2);
         px=x&3;
         py=x>>2;
-        //    asm volatile(
-        //     // "addb %[py],%1;\n\t"
-        //     "movb $4, %%bl\n\t"
-        //     "divb %%bl\n\t"
-        //     "movb %%ah, %[px]\n\t"
-        //     : [px] "=r" (px), [py] "=r" (py)
-        //     : "r" (x)
-        // );
-        // printf("x:%i px:%i py:%i\n",x,px,py);
-        // asm volatile("push $231;pop %rax;syscall");
-        // printf("x:%i px:%i py:%i\n",x,px,py);
-        // exit(0);
-
     } while(--r);
     return (py<<2)+px;
 }
@@ -189,8 +175,12 @@ void processEventsSDL()
     {
         if (e.type==SDL_QUIT)
         {
-            // SYS_exit_group(0);
+            #ifdef __i386__
+            SYS_exit_group(0);
+            #else
             asm volatile("push $231;pop %rax;syscall");
+            #endif
+            __builtin_unreachable();
         }
         if(e.type==SDL_KEYDOWN&&handlekeys)
         {
@@ -340,8 +330,8 @@ void initSDL()
     want.callback = audio_callback;    
     SDL_OpenAudio((&want), NULL);
     SDL_PauseAudio(0);             
-    #else
-    SDL_Init(SDL_INIT_EVERYTHING);  
+    // #else
+    // SDL_Init(SDL_INIT_EVERYTHING);  
     #endif
 
     window=SDL_CreateWindow(NULL,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,0);
@@ -369,4 +359,5 @@ extern void _start()
         runtime++;
         processEventsSDL();
     }
+    __builtin_unreachable();
 }

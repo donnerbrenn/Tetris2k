@@ -1,18 +1,34 @@
+BITS ?=64#$(shell getconf LONG_BIT)
+
 OBJDIR := obj
 BINDIR := bin
 RTDIR := rt
 SRCDIR:= src
 
+SYNTH=true
+SCORE=true
+DECO=false
+
 NASM ?= nasm
 OBJCOPY ?= objcopy
 
-
 CC=gcc-8
 USELTO=false
-SMOLLOADER=dlfixup
-ALIGNSTACK=false
+ALIGNSTACK=true
 
-BITS ?= $(shell getconf LONG_BIT)
+ifeq ($(BITS),32)
+	SECTIONORDER=dt
+else
+	SECTIONORDER=td
+endif
+
+#dlfixup, dnload or default
+ifeq ($(BITS),64)
+	SMOLLOADER=dlfixup
+else
+	SMOLLOADER=dnload
+endif
+
 
 COPTFLAGS= -Os -march=nocona
 COPTFLAGS+= -fno-plt -fno-stack-protector -fno-stack-check -fno-unwind-tables \
@@ -20,26 +36,47 @@ COPTFLAGS+= -fno-plt -fno-stack-protector -fno-stack-check -fno-unwind-tables \
 	-fno-pic -fno-PIE -ffunction-sections -fdata-sections -fmerge-all-constants \
 	-funsafe-math-optimizations -malign-data=cacheline -fsingle-precision-constant \
 	-fwhole-program -fno-exceptions -fvisibility=hidden \
-	-mno-fancy-math-387 -mno-ieee-fp 
-COPTFLAGS += -DSYNTH 
-COPTFLAGS += -DSCORE 
-# COPTFLAGS += -DALIGN
-# COPTFLAGS += -DDECO
+	-mno-fancy-math-387 -mno-ieee-fp -fno-builtin# -mpreferred-stack-boundary=3
+
+ifeq ($(BITS),32)
+	-mpreferred-stack-boundary=2 -falign-functions=1 -falign-jumps=1 -falign-loops=1 
+endif
+
+ifeq ($(SYNTH),true)
+	COPTFLAGS += -DSYNTH 
+endif
+ifeq ($(SCORE),true)
+	COPTFLAGS += -DSCORE 
+endif
+ifeq ($(DECO),true)
+	COPTFLAGS += -DDECO
+endif
+
+ifeq ($(USELTO),true)
+	COPTFLAGS+=-flto
+endif
 
 
-CFLAGS = -g -std=gnu11 -nodefaultlibs -fno-PIC $(COPTFLAGS) -m$(BITS)
+CFLAGS = -std=gnu11 -nodefaultlibs -fno-PIC $(COPTFLAGS) -m$(BITS)
 CFLAGS += -Wall -Wextra #-Wpedantic
 
-LIBS = -lSDL2 -lc
+LIBS = -lSDL2 
 
 PWD ?= .
 
 SMOLFLAGS = --smolrt "$(PWD)/smol/rt" --smolld "$(PWD)/smol/ld" \
-	-c  -fuse-$(SMOLLOADER)-loader -fno-start-arg -fno-ifunc-support -funsafe-dynamic \
-	# --hang-on-startup
-
-# SMOLFLAGS = --smolrt "$(PWD)/smol/rt" --smolld "$(PWD)/smol/ld" \
-# 	-g -c -fuse-dlfixup-loader -fno-start-arg -fno-ifunc-support -funsafe-dynamic
+	 -g -fno-start-arg -fno-ifunc-support --section-order=$(SECTIONORDER)
+ifeq ($(ALIGNSTACK),true)
+	SMOLFLAGS+=-falign-stack
+else
+	SMOLFLAGS+=-fno-align-stack
+endif
+ifeq ($(SMOLLOADER),dlfixup)
+	SMOLFLAGS+= -fuse-$(SMOLLOADER)-loader
+endif
+ifeq ($(SMOLLOADER),dnload)
+	SMOLFLAGS+= -fuse-$(SMOLLOADER)-loader -c
+endif
 
 
 PYTHON3 ?= python3
@@ -59,26 +96,18 @@ clean:
 .SECONDARY:
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c $(OBJDIR)/
-ifeq ($(USELTO),true)
-	$(CC) $(CFLAGS) -flto -c "$<" -o "$@"
-else
 	$(CC) $(CFLAGS) -c "$<" -o "$@"
-endif
 	$(OBJCOPY) $@ --set-section-alignment *=1 -g -x -X -S --strip-unneeded
 	size $@
 
 VNDH_FLAGS :=-l -v --vndh vondehi 
 $(BINDIR)/%.dbg $(BINDIR)/%.smol: $(OBJDIR)/%.o $(BINDIR)/
-ifeq ($(ALIGNSTACK),true)
-	$(PYTHON3) ./smol/smold.py -falign-stack --debugout "$@.dbg" $(SMOLFLAGS) --ldflags=-Wl,-Map=$(BINDIR)/$*.map $(LIBS) "$<" "$@"
-else
-	$(PYTHON3) ./smol/smold.py -fno-align-stack --debugout "$@.dbg" $(SMOLFLAGS) --ldflags=-Wl,-Map=$(BINDIR)/$*.map $(LIBS) "$<" "$@"
-endif
+	$(PYTHON3) ./smol/smold.py --debugout "$@.dbg" $(SMOLFLAGS) --ldflags=-Wl,-Map=$(BINDIR)/$*.map $(LIBS) "$<" "$@"
 	$(PYTHON3) ./smol/smoltrunc.py "$@" "$(OBJDIR)/$(notdir $@)" && mv "$(OBJDIR)/$(notdir $@)" "$@" && chmod +x "$@"
 	wc -c $@
 
 $(BINDIR)/%.lzma: $(BINDIR)/t2k.smol
-	./autovndh.py $(VNDH_FLAGS) --nostub  "$<" > "$@"
+	./autovndh.py $(VNDH_FLAGS) --nostub  $< > $@
 	rm $<
 
 heatmap: $(BINDIR)/%.lzma
@@ -98,7 +127,6 @@ cmix: $(BINDIR)/t2k.cmix
 
 vndh: $(BINDIR)/t2k
 	wc -c $<
-	
 
 sh: $(BINDIR)/t2k.sh
 	wc -c $<
@@ -111,4 +139,3 @@ $(BINDIR)/t2k.cmix: $(BINDIR)/t2k.smol
 	@stat --printf="$@: %s bytes\n" $@
 
 .PHONY: all clean
-

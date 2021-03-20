@@ -8,6 +8,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
+// #include <sys/signal.h>
 #include <poll.h>
 #include <time.h>
 #include <fcntl.h>
@@ -299,6 +300,7 @@ force_inline static void SYS_break(void) {
 // -- syscall numbers
 
 #ifdef __x86_64__
+#define SYS_NR_nanosleep 35
 #define SYS_NR_exit 60
 #define SYS_NR_exit_group 231
 #define SYS_NR_mmap 9
@@ -342,6 +344,7 @@ force_inline static void SYS_break(void) {
 #define SYS_NR_munmap 91
 #define SYS_NR_clock_gettime 265
 #define SYS_NR_clock_nanosleep 267
+#define SYS_NR_nanosleep 162
 #define SYS_NR_fork 2
 #define SYS_NR_vfork 190
 #define SYS_NR_pipe 42
@@ -356,6 +359,7 @@ force_inline static void SYS_break(void) {
 #define SYS_NR_brk 45
 #define SYS_NR_waitid 284
 #define SYS_NR_waitpid 7
+#define SYS_NR_getrandom 355
 #else /* ARM */
 #define SYS_NR_exit 1
 #define SYS_NR_exit_group 231
@@ -452,6 +456,12 @@ SYSCALL_FUNC ssize_t SYS_pipe2(int fd[2], int flags) {
     MEMORY_BARRIER();
     return r;
 }
+
+
+SYSCALL_FUNC ssize_t SYS_nanosleep(int nano, int second) {
+    return SYS_syscall3(SYS_NR_nanosleep, nano, second,0);
+}
+
 SYSCALL_FUNC ssize_t SYS_dup2(int oldfd, int newfd) {
     return SYS_syscall2(SYS_NR_dup2, oldfd, newfd);
 }
