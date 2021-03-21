@@ -35,8 +35,8 @@ COPTFLAGS+= -fno-plt -fno-stack-protector -fno-stack-check -fno-unwind-tables \
 	-fno-asynchronous-unwind-tables -fomit-frame-pointer -ffast-math -no-pie \
 	-fno-pic -fno-PIE -ffunction-sections -fdata-sections -fmerge-all-constants \
 	-funsafe-math-optimizations -malign-data=cacheline -fsingle-precision-constant \
-	-fwhole-program -fno-exceptions -fvisibility=hidden \
-	-mno-fancy-math-387 -mno-ieee-fp -fno-builtin# -mpreferred-stack-boundary=3
+	 -fno-exceptions \
+	-mno-fancy-math-387 -mno-ieee-fp -fno-builtin
 
 ifeq ($(BITS),32)
 	-mpreferred-stack-boundary=2 -falign-functions=1 -falign-jumps=1 -falign-loops=1 
@@ -78,6 +78,7 @@ ifeq ($(SMOLLOADER),dnload)
 	SMOLFLAGS+= -fuse-$(SMOLLOADER)-loader -c
 endif
 
+# SMOLFLAGS += -I /lib/ld*.so
 
 PYTHON3 ?= python3
 
@@ -126,6 +127,18 @@ cmix: $(BINDIR)/t2k.cmix
 	wc -c $<
 
 vndh: $(BINDIR)/t2k
+	wc -c $<
+
+$(BINDIR)/t2k.okp: $(BINDIR)/t2k.smol
+	cp $< oneKpaq
+	cd oneKpaq
+	pwd
+	./onekpaq.py 1 3 t2k.smol t2k.okp --stub oneKpaq/onekpaq_stub_lnx32.asm
+	mv oneKpaq/t2k.okp $@
+	
+
+
+okp: $(BINDIR)/t2k.okp
 	wc -c $<
 
 sh: $(BINDIR)/t2k.sh
