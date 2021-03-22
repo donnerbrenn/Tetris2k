@@ -301,6 +301,7 @@ void updateGame()
     #ifdef SCORE
     static int multi=0;
     #endif
+    multi=0;
     _memcpy(pBackBuffer,pBuffer,FIELDHEIGHT*FIELDWIDTH);
     for(int py=0;py<FIELDHEIGHT-1;++py)
     {
@@ -330,8 +331,6 @@ void initSDL()
     want.callback = audio_callback;    
     SDL_OpenAudio((&want), NULL);
     SDL_PauseAudio(0);             
-    // #else
-    // SDL_Init(SDL_INIT_EVERYTHING);  
     #endif
 
     window=SDL_CreateWindow(NULL,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,0);
@@ -363,7 +362,6 @@ void run()
 __attribute__((__externally_visible__, __section__(".text.startup._start"), __noreturn__))
 extern void _start()
 {
-    
     initSDL();
     for(;;)
     {
