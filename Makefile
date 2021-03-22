@@ -5,8 +5,8 @@ BINDIR := bin
 RTDIR := rt
 SRCDIR:= src
 
-SYNTH=true
-SCORE=true
+SYNTH=false
+SCORE=false
 DECO=false
 
 NASM ?= nasm
@@ -82,7 +82,7 @@ endif
 
 PYTHON3 ?= python3
 
-all: vndh #sh cmix
+all: bin/t2k.sh #cmix
 
 $(BINDIR)/t2k: $(BINDIR)/t2k.smol
 	./autovndh.py $(VNDH_FLAGS) $< > $@

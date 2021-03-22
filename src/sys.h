@@ -459,8 +459,10 @@ SYSCALL_FUNC ssize_t SYS_pipe2(int fd[2], int flags) {
 
 
 SYSCALL_FUNC void SYS_nanosleep(int second, int nano) {
-    struct t{long nano; long second}t;
-    return SYS_syscall1(SYS_NR_nanosleep, &t);
+    static struct timespec t;
+    t=(struct timespec){nano,second};   
+
+    SYS_syscall1(SYS_NR_nanosleep, &t);
 }
 
 SYSCALL_FUNC ssize_t SYS_dup2(int oldfd, int newfd) {
