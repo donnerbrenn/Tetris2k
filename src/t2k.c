@@ -251,11 +251,11 @@ void placeTetromino(int piece,int x, int y, int rotation)
 
 void dropLine(int line)
 {
-    for(line=(line+1)*FIELDWIDTH;line>12;--line)
-    {
-        pBackBuffer[line]=pBackBuffer[line-FIELDWIDTH];
-    }
-    // _memcpy(pBackBuffer+FIELDWIDTH,pBackBuffer,line*FIELDWIDTH);
+    // for(line=(line+1)*FIELDWIDTH;line>12;--line)
+    // {
+    //     pBackBuffer[line]=pBackBuffer[line-FIELDWIDTH];
+    // }
+    _memcpy(pBackBuffer+FIELDWIDTH,pBackBuffer,line*FIELDWIDTH);
     _memset(pBackBuffer+1,0,10);
     initStone();
 }
@@ -365,7 +365,6 @@ extern void _start()
 {
     
     initSDL();
-    init:
     for(;;)
     {
         run();
