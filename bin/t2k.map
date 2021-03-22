@@ -15,28 +15,28 @@ Name             Origin             Length             Attributes
 Linker script and memory map
 
 LOAD obj/t2k.o
-LOAD /tmp/smoloutoej3_w_z.o
+LOAD /tmp/smoloutb6xc1gm0.o
                 0x0000000000010000                . = 0x10000
                 0x0000000000010000                _smol_origin = .
 
 .header         0x0000000000010000       0xe0
  *(.header)
- .header        0x0000000000010000       0xe0 /tmp/smoloutoej3_w_z.o
+ .header        0x0000000000010000       0xe0 /tmp/smoloutb6xc1gm0.o
                 0x0000000000010000                _EHDR
                 0x0000000000010038                _PHDR
                 0x0000000000010088                _INTERP
 
 .dynamic        0x00000000000100e0      0x10a
  *(.dynamic .rodata.dynamic .interp)
- .dynamic       0x00000000000100e0       0x58 /tmp/smoloutoej3_w_z.o
+ .dynamic       0x00000000000100e0       0x58 /tmp/smoloutb6xc1gm0.o
                 0x00000000000100e0                _DYNAMIC
  *(.dynsym .dynstr)
- .dynsym        0x0000000000010138        0x5 /tmp/smoloutoej3_w_z.o
+ .dynsym        0x0000000000010138        0x5 /tmp/smoloutb6xc1gm0.o
                 0x0000000000010138                _dynsym
- .dynstr        0x000000000001013d       0x9d /tmp/smoloutoej3_w_z.o
+ .dynstr        0x000000000001013d       0x9d /tmp/smoloutb6xc1gm0.o
                 0x000000000001013d                _dynstr
  *(.rela.plt)
- .rela.plt      0x00000000000101da       0x10 /tmp/smoloutoej3_w_z.o
+ .rela.plt      0x00000000000101da       0x10 /tmp/smoloutb6xc1gm0.o
                 0x00000000000101da                _rela_plt
                 0x00000000000101ea                _smol_text_start = .
                 0x0000000000000c4e                _smol_text_off = (_smol_data_end - _smol_origin)
@@ -44,7 +44,7 @@ LOAD /tmp/smoloutoej3_w_z.o
 .text           0x00000000000101ea      0xa64
  *(.text.startup.smol)
  .text.startup.smol
-                0x00000000000101ea       0x4d /tmp/smoloutoej3_w_z.o
+                0x00000000000101ea       0x4d /tmp/smoloutb6xc1gm0.o
                 0x00000000000101ef                _smol_start
                 0x0000000000010237                _smol_rt_end
  *(.text.startup._start)
@@ -101,7 +101,7 @@ LOAD /tmp/smoloutoej3_w_z.o
 
 .bss            0x0000000000010c4e      0x285
  *(.bss.got.plt)
- .bss.got.plt   0x0000000000010c4e       0x48 /tmp/smoloutoej3_w_z.o
+ .bss.got.plt   0x0000000000010c4e       0x48 /tmp/smoloutb6xc1gm0.o
                 0x0000000000010c4e                SDL_itoa
                 0x0000000000010c56                SDL_FillRect
                 0x0000000000010c5e                SDL_OpenAudio
@@ -150,7 +150,7 @@ LOAD /tmp/smoloutoej3_w_z.o
                 0x0000000000010d0b       0xd8 obj/t2k.o
  .bss.pBuffer   0x0000000000010de3       0xd8 obj/t2k.o
  .bss.got.plt.start
-                0x0000000000010ebb       0x18 /tmp/smoloutoej3_w_z.o
+                0x0000000000010ebb       0x18 /tmp/smoloutb6xc1gm0.o
                 0x0000000000010ebb                _GLOBAL_OFFSET_TABLE_
                 0x0000000000010ed3                _smol_bss_end = .
                 0x0000000000000285                _smol_bss_size = (_smol_bss_end - _smol_bss_start)
@@ -190,36 +190,36 @@ LOAD /tmp/smoloutoej3_w_z.o
 .debug_aranges  0x0000000000000000        0x0
  *(.debug_aranges)
  .debug_aranges
-                0x0000000000000000        0x0 /tmp/smoloutoej3_w_z.o
+                0x0000000000000000        0x0 /tmp/smoloutb6xc1gm0.o
 
 .debug_pubnames
                 0x0000000000000000        0x0
  *(.debug_pubnames)
  .debug_pubnames
-                0x0000000000000000        0x0 /tmp/smoloutoej3_w_z.o
+                0x0000000000000000        0x0 /tmp/smoloutb6xc1gm0.o
 
 .debug_info     0x0000000000000000        0x0
  *(.debug_info .gnu.linkonce.wi.*)
- .debug_info    0x0000000000000000        0x0 /tmp/smoloutoej3_w_z.o
+ .debug_info    0x0000000000000000        0x0 /tmp/smoloutb6xc1gm0.o
 
 .debug_abbrev   0x0000000000000000        0x0
  *(.debug_abbrev)
- .debug_abbrev  0x0000000000000000        0x0 /tmp/smoloutoej3_w_z.o
+ .debug_abbrev  0x0000000000000000        0x0 /tmp/smoloutb6xc1gm0.o
 
 .debug_line     0x0000000000000000        0x0
  *(.debug_line .debug_line.* .debug_line_end)
- .debug_line    0x0000000000000000        0x0 /tmp/smoloutoej3_w_z.o
+ .debug_line    0x0000000000000000        0x0 /tmp/smoloutb6xc1gm0.o
 
 .debug_frame    0x0000000000000000        0x0
  *(.debug_frame)
- .debug_frame   0x0000000000000000        0x0 /tmp/smoloutoej3_w_z.o
+ .debug_frame   0x0000000000000000        0x0 /tmp/smoloutb6xc1gm0.o
 
 .debug_str
  *(.debug_str)
 
 .debug_loc      0x0000000000000000        0x0
  *(.debug_loc)
- .debug_loc     0x0000000000000000        0x0 /tmp/smoloutoej3_w_z.o
+ .debug_loc     0x0000000000000000        0x0 /tmp/smoloutb6xc1gm0.o
 
 .debug_macinfo
  *(.debug_macinfo)
