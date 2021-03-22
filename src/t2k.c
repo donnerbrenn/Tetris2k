@@ -338,12 +338,9 @@ void initSDL()
     screenSurface = SDL_GetWindowSurface(window);
 }
 
-
-__attribute__((__externally_visible__, __section__(".text.startup._start"), __noreturn__))
-extern void _start()
+void run()
 {
     initGame();
-    initSDL();
     for(;;)
     {
         updateGame(); 
@@ -352,12 +349,26 @@ extern void _start()
         {
             if(fallDown())
             {
-                initGame();
                 SDL_Delay(2000);
+                return;
+                __builtin_unreachable();
             }
         }
         runtime++;
         processEventsSDL();
+    }
+    __builtin_unreachable();
+}
+
+__attribute__((__externally_visible__, __section__(".text.startup._start"), __noreturn__))
+extern void _start()
+{
+    
+    initSDL();
+    init:
+    for(;;)
+    {
+        run();
     }
     __builtin_unreachable();
 }

@@ -57,6 +57,7 @@ static bool fallDown();
 static bool isLineComplete(int line);
 static void drawRect(int x, int y, int w, int col);
 static void initStone();
+static void run();
 
 inline char getRotatedIndex(char px, char py, char r);
 inline bool doesPieceFit(int nTetromino, int nRotation, int nPosX, int nPosY);
