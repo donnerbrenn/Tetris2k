@@ -1,11 +1,13 @@
-// #define SYNTH
+#define SYNTH
 // #define SCORE
 // #define DECO
 
 #include <SDL2/SDL.h>
 #include "symbols.h"
 #ifdef SYNTH
+// #include "irgendwas.h"
 #include "tetris_sng.h"
+
 #endif
 #include <stdbool.h>
 #include "sys.h"

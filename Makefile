@@ -60,7 +60,7 @@ endif
 CFLAGS = -std=gnu11 -nodefaultlibs -fno-PIC $(COPTFLAGS) -m$(BITS)
 CFLAGS += -Wall -Wextra #-Wpedantic
 
-LIBS = -lSDL2 
+LIBS = -lSDL2 -lc
 
 PWD ?= .
 

@@ -39,7 +39,7 @@ void shuffle()
 #ifdef SYNTH
 float getFrq(int note)
 {
-    float freq=61.7337f;
+    float freq=61.7337f/2;
     do
     {
         freq*=1.05946f;
@@ -61,20 +61,20 @@ void audio_callback(__attribute__((unused)) void *unused, unsigned char *byte_st
     for (int i = 0; i < byte_stream_length>>1; ++i)
     {
         unsigned int pos=song_clock/(SAMPLERATE/SPEED);
-        unsigned int current_pattern=(pos>>6)&7;
-        unsigned int current_note=pos&63;
+        unsigned int current_pattern=(pos/PATTERNLENGTH)%sizeof(order);
+        unsigned int current_note=pos%PATTERNLENGTH;
 
         stream[i]=0;
         for(int j=0;j<VOICES;j++)
         {
-            note=cpatterns[j][(int)order[current_pattern]][current_note];
+            note=cpatterns[(int)order[current_pattern]][j][current_note];
             if((previous[j]!=pos)&&note)
             {
                 hertz[j]=getFrq(note);
                 previous[j]=pos;
                 vol[j]=8192;
             }
-            if(!(song_clock&7))
+            if(!(song_clock&15))
             {
                 vol[j]--;
             }
