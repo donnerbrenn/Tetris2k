@@ -5,8 +5,8 @@
 #include <SDL2/SDL.h>
 #include "symbols.h"
 #ifdef SYNTH
-// #include "irgendwas.h"
-#include "tetris_sng.h"
+#include "irgendwas.h"
+// #include "tetris_sng.h"
 
 #endif
 #include <stdbool.h>
@@ -17,7 +17,7 @@
 #define FIELDHEIGHT 18
 #define SCREEN_WIDTH 620
 #define SCREEN_HEIGHT 960
-#define SAMPLERATE 96000
+#define SAMPLERATE 48000
 #define BUFFERSIZE 8192
 #define FONTSIZE 8
 

@@ -35,8 +35,8 @@ COPTFLAGS+= -fno-plt -fno-stack-protector -fno-stack-check -fno-unwind-tables \
 	-fno-asynchronous-unwind-tables -fomit-frame-pointer -ffast-math -no-pie \
 	-fno-pic -fno-PIE -ffunction-sections -fdata-sections -fmerge-all-constants \
 	-funsafe-math-optimizations -malign-data=cacheline -fsingle-precision-constant \
-	 -fno-exceptions \
-	-mno-fancy-math-387 -mno-ieee-fp -fno-builtin
+	 -fno-exceptions -mno-fancy-math-387 -mno-ieee-fp -fno-builtin -mfpmath=387 
+
 
 ifeq ($(BITS),32)
 	-mpreferred-stack-boundary=2 -falign-functions=1 -falign-jumps=1 -falign-loops=1 
@@ -82,7 +82,7 @@ endif
 
 PYTHON3 ?= python3
 
-all: vndh #sh cmix
+all: okp #sh cmix
 
 $(BINDIR)/t2k: $(BINDIR)/t2k.smol
 	./autovndh.py $(VNDH_FLAGS) $< > $@
@@ -93,6 +93,9 @@ clean:
 
 %/:
 	@mkdir -vp "$@"
+
+bin/t2k.okp: bin/t2k.smol
+	./makeokp.sh
 
 .SECONDARY:
 
@@ -129,17 +132,16 @@ cmix: $(BINDIR)/t2k.cmix
 vndh: $(BINDIR)/t2k
 	wc -c $<
 
-$(BINDIR)/t2k.okp: $(BINDIR)/t2k.smol
-	cp $< oneKpaq
-	cd oneKpaq
-	pwd
-	./onekpaq.py 1 3 t2k.smol t2k.okp --stub oneKpaq/onekpaq_stub_lnx32.asm
-	mv oneKpaq/t2k.okp $@
+# $(BINDIR)/t2k.okp: $(BINDIR)/t2k.smol
+# 	cp $< oneKpaq
+# 	cd oneKpaq
+# 	pwd
+# 	./onekpaq.py 1 3 t2k.smol t2k.okp --stub oneKpaq/onekpaq_stub_lnx32.asm
+# 	mv oneKpaq/t2k.okp $@
 	
 
 
 okp: $(BINDIR)/t2k.okp
-	wc -c $<
 
 sh: $(BINDIR)/t2k.sh
 	wc -c $<

@@ -1,4 +1,5 @@
 #include "t2k.h"
+#include <assert.h>
 
 
 void _memset(void* dest,char val,size_t numbytes)
@@ -52,7 +53,7 @@ void audio_callback(__attribute__((unused)) void *unused, unsigned char *byte_st
     short *stream=(short*)byte_stream;
     static short vol[VOICES];
     static unsigned int note;
-    static unsigned int song_clock;
+    static unsigned int song_clock=0;
     static unsigned int counter[VOICES];
     static unsigned int previous[VOICES];
     static float hertz[VOICES];
@@ -74,16 +75,22 @@ void audio_callback(__attribute__((unused)) void *unused, unsigned char *byte_st
                 previous[j]=pos;
                 vol[j]=8192;
             }
-            if(!(song_clock&15))
+            // if(!(song_clock&15))
+            // {
+            //     vol[j]-=4;
+            // }
+            if(!(song_clock&3))
             {
-                vol[j]--;
+                vol[j]-=1;
             }
+            
+            
             if(vol[j]>=0)
             {
                 freq=SAMPLERATE/hertz[j];
                 counter[j]=(counter[j]>=freq)?0:counter[j];
                 freq*=j==1?.5f:.7f;
-                stream[i]+=(counter[j]<=freq)?vol[j]:-vol[j];
+                stream[i]+=(counter[j]+j<=freq)?vol[j]:-vol[j];
                 counter[j]++;
             }
         }
@@ -175,11 +182,7 @@ void processEventsSDL()
     {
         if (e.type==SDL_QUIT)
         {
-            #ifdef __i386__
             SYS_exit_group(0);
-            #else
-            asm volatile("push $231;pop %rax;syscall");
-            #endif
             __builtin_unreachable();
         }
         if(e.type==SDL_KEYDOWN&&handlekeys)
