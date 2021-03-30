@@ -5,8 +5,7 @@
 #include <SDL2/SDL.h>
 #include "symbols.h"
 #ifdef SYNTH
-#include "irgendwas.h"
-// #include "tetris_sng.h"
+#include "tetris_sng.h"
 
 #endif
 #include <stdbool.h>
