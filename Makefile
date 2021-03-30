@@ -142,6 +142,7 @@ vndh: $(BINDIR)/t2k
 
 
 okp: $(BINDIR)/t2k.okp
+	wc -c $<
 
 sh: $(BINDIR)/t2k.sh
 	wc -c $<
