@@ -82,7 +82,7 @@ endif
 
 PYTHON3 ?= python3
 
-all: okp #sh cmix
+all: vndh #sh cmix
 
 $(BINDIR)/t2k: $(BINDIR)/t2k.smol
 	./autovndh.py $(VNDH_FLAGS) $< > $@
