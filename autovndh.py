@@ -46,7 +46,7 @@ def run_compr(compr, mpool,inp):
     return list(filter(lambda x: x[0] is not None,
                        mpool.map(lambda o: (run_one(binf,o,inp), isgz), opt)))
 
-def do_vndh(bin_nasm,vndh_dir,brute_result,vtag,vfork,vunibin,vcheat):
+def do_vndh(bin_nasm,vndh_dir,brute_result,vtag,vfork,vunibin,vcheat,vnoargv):
     blob, isgz = brute_result
     vndh_src = os.path.join(vndh_dir, "vondehi.asm")
     if not os.path.isfile(vndh_src):
@@ -54,33 +54,32 @@ def do_vndh(bin_nasm,vndh_dir,brute_result,vtag,vfork,vunibin,vcheat):
         return None
 
     cmdlin = [bin_nasm,"-fbin","-o/dev/stdout"]
-    if isgz: cmdlin.append("-DUSE_GZIP")
+    if isgz == 2: cmdlin.append('-DUSE_ZSTD')
+    elif isgz: cmdlin.append("-DUSE_GZIP")
     if vtag is not None: cmdlin.append('-DTAG='+vtag)
     if vfork: cmdlin.append('-DUSE_VFORK')
     if vunibin: cmdlin.append('-DNO_UBUNTU_COMPAT')
     if not vcheat: cmdlin.append('-DNO_CHEATING')
+    if not vnoargv: cmdlin.append('-DWANT_ARGV')
     cmdlin.append(vndh_src)
 
     vbl = run_proc_get_stdout(cmdlin)
     return None if vbl is None else (vbl + blob)
 
 
-opt_nice=list(range(4,274))
-opt_nice = ["nice="+str(i) for i in opt_nice] 
-
-opt_depth=list(range(1,1000))
-opt_depth = ["nice="+str(i) for i in opt_depth] 
-
 opt_xz_lzma = [
-    [ 'dict=16M' ],
-    [ 'lc=0,lp=0' ],
+    [ 'dict=8M' ],
+    [ 'lc=0,lp=0', 'lc=0,lp=1', 'lc=0,lp=2', 'lc=0,lp=3', 'lc=0,lp=4',
+      'lc=1,lp=0', 'lc=1,lp=1', 'lc=1,lp=2', 'lc=1,lp=3',
+      'lc=2,lp=0', 'lc=2,lp=1', 'lc=2,lp=2',
+      'lc=3,lp=0', 'lc=3,lp=1',
+      'lc=4,lp=0' ],
     [ 'pb=0', 'pb=1', 'pb=2', 'pb=3', 'pb=4' ],
-    [ 'mf=bt4' ],
+    [ 'mf=bt4', 'mf=hc4' ],
     [ 'mode=normal' ],
-    opt_nice,
-    [ 'depth=0' ]
+    ['nice='+(str(nice)) for nice in [int for int in list(range(25,30))]],
+    [ 'depth=1000' ]
 ]
-
 
 opt_gzip = [["-cnk9"]]
 opt_xz   = list(map(lambda x: ['--stdout','--keep']+sum(x,[]),itertools.product(\
@@ -90,6 +89,7 @@ opt_xz   = list(map(lambda x: ['--stdout','--keep']+sum(x,[]),itertools.product(
 opt_lzma = list(map(lambda opts: ['--stdout','--keep','--lzma1='+','.join(opts)], \
     itertools.product(*opt_xz_lzma)))
 opt_zopfli = [['--gzip','--i1024','-c']]
+opt_zstd = [['-z','--ultra','-22','--no-check','--no-dictID','-c','-k','--format=zstd']]
 
 def main(opts):
     global verbose
@@ -111,7 +111,8 @@ def main(opts):
         [(opts.gzip  , opt_gzip  , True )] if opts.gzip   is not None else [],
         [(opts.xz    , opt_xz    , False)] if opts.xz     is not None else [],
         [(opts.lzma  , opt_lzma  , False)] if opts.lzma   is not None else [],
-        [(opts.zopfli, opt_zopfli, True )] if opts.zopfli is not None else [] \
+        [(opts.zopfli, opt_zopfli, True )] if opts.zopfli is not None else [],
+        [(opts.zstd  , opt_zstd  , 2    )] if opts.zstd   is not None else [] \
     ], [])
 
     if len(comprs) == 0:
@@ -127,22 +128,31 @@ def main(opts):
         eprint("No useable results available. See error log.")
         return
 
+    eprint(len(allofthem))
     allofthem_s = sorted(allofthem, key=lambda x:len(x[0]))
 
     best = allofthem_s[0]
+    
 
-    if verbose > 0: eprint(len(best[0]), "gzip" if best[1] else "xz")
+    if verbose > 0:
+        lbl = "xz"
+        if best[1] == 2:
+            lbl = "zstd"
+        elif best[1]:
+            lbl = "gzip"
+        eprint(len(best[0]), lbl)
 
-    res = best[0]
+    res, stubbed = best[0], None
     if not opts.nostub:
-        res = do_vndh(opts.nasm, opts.vndh, best,
+        stubbed = do_vndh(opts.nasm, opts.vndh, best,
                       opts.vndh_tag, opts.vndh_vfork, opts.vndh_unibin,
-                      opts.vndh_cheat)
+                      opts.vndh_cheat,opts.vndh_no_argv)
 
-    if res is not None:
-        if verbose > 0: eprint("final: "+str(len(res)))
+    if verbose > 0: eprint("final: "+str(len(res)))
 
-        opts.output_file.write(res)
+    opts.output_file.write(stubbed or res)
+    if stubbed is not None and opts.rawout is not None:
+        opts.rawout.write(res)
 
 if __name__=='__main__':
     p = argparse.ArgumentParser(description="""\
@@ -176,13 +186,22 @@ correct flags.
                    type=str, default=None, help='Enable Zopfli-based gzip '+
                    'compression, and optionally specify which zopfli binary to'+
                    ' use.')
+    p.add_argument('--zstd', '-Z', const=shutil.which('zstd'), nargs='?',
+                   type=str, default=None, help='Enable Zstd-based '+
+                   'compression, and optionally specify which Zstd binary to'+
+                   ' use.')
 
     p.add_argument('--nasm', type=str, default=shutil.which('nasm'),
                    help='nasm binary to use')
     p.add_argument('--vndh', type=str, default='ext/vondehi',
                    help='Directory of the vondehi source code')
 
-    p.add_argument('--jobs', '-j', type=int, default=multiprocessing.cpu_count()+2,
+    p.add_argument('--jobs', '-j', type=int, default=multiprocessing.cpu_count(),
+                   help="Number of jobs that run in parallel for the bruteforcing")
+
+    p.add_argument('--nicestart', '-ns', type=int, default=4,
+                   help="Number of jobs that run in parallel for the bruteforcing")
+    p.add_argument('--niceend', '-ne', type=int, default=274,
                    help="Number of jobs that run in parallel for the bruteforcing")
 
     p.add_argument('--vndh_tag', type=str, help="Vanity tag to pass to vondehi")
@@ -191,9 +210,17 @@ correct flags.
     p.add_argument('--vndh_unibin', action='store_true', help="Disable "+
                    "compatibility with distributions that keep /bin and "+
                    "/usr/bin separate.")
-    p.add_argument('--vndh_cheat', action='store_true', help="Save five bytes"+
-                   " by cheating a bit in the decompression code. Will eat "+
-                   "argv/envp, and won't work on Wayland.")
+    p.add_argument('--vndh_cheat', action='store_true', help="Assume file "+
+                   "descriptor numbers and hope arguments and environment "+
+                   "variables are passed correctly by chance to the payload."+
+                   " You cannot use this if you're running on Wayland.")
+    p.add_argument('--vndh_no_argv', action='store_true', help="Don't properly"+
+                   " keep track of the stack location, makes argv passing bork"+
+                   " but saves a few bytes. Only in effect if --vndh_cheat is "+
+                   "not enabled.")
+
+    p.add_argument('--rawout', type=argparse.FileType('wb'),
+                   help='File to write the raw compressed data to (if --vndh is enabled).')
 
     main(p.parse_args(sys.argv[1:]))
 
