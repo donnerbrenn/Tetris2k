@@ -1,4 +1,4 @@
-#define SYNTH
+// #define SYNTH
 // #define SCORE
 // #define DECO
 
@@ -46,7 +46,7 @@ static void drawScore(int value, int x);
 
 static void _memcpy(void* dest, void* src, size_t numbytes);
 static void _memset(void* dest, char val, size_t numbytes);
-static void processEventsSDL();
+static void processSDLEvents();
 static void updateDisplay();
 static void placeTetromino(int piece,int x, int y, int rotation);
 static void dropLine(int line);
@@ -58,7 +58,7 @@ static bool fallDown();
 static bool isLineComplete(int line);
 static void drawRect(int x, int y, int w, int col);
 static void initStone();
-static void run();
+static void runGame();
 
 inline char getRotatedIndex(char px, char py, char r);
 inline bool doesPieceFit(int nTetromino, int nRotation, int nPosX, int nPosY);

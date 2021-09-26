@@ -1,4 +1,4 @@
-BITS ?=64#$(shell getconf LONG_BIT)
+BITS ?=$(shell getconf LONG_BIT)
 
 OBJDIR := obj
 BINDIR := bin
@@ -58,9 +58,9 @@ endif
 
 
 CFLAGS = -std=gnu11 -nodefaultlibs -fno-PIC $(COPTFLAGS) -m$(BITS)
-CFLAGS += -Wall -Wextra #-Wpedantic
+#CFLAGS += -Wall -Wextra #-Wpedantic
 
-LIBS = -lSDL2 -lc
+LIBS = -lSDL2 #-lc
 
 PWD ?= .
 

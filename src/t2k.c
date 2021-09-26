@@ -29,21 +29,21 @@ void drawRect(int x, int y, int w, int col)
 
 void shuffle()
 {
-    unsigned char result=-1;
-    while(result>6||result==nCurrentPiece)
+    unsigned char result;
+    do
     {
         SYS_getrandom(&result,1,1);
-    } 
+    } while(result>6||result==nCurrentPiece);
     nCurrentPiece=result;
 }
 
 #ifdef SYNTH
 float getFrq(int note)
 {
-    float freq=61.7337f/2;
+    float freq=61.7337/2;
     do
     {
-        freq*=1.05946f;
+        freq*=1.059463094359f;
     } while(--note);
     return freq;
 }
@@ -75,17 +75,12 @@ void audio_callback(__attribute__((unused)) void *unused, unsigned char *byte_st
                 previous[j]=pos;
                 vol[j]=8192;
             }
-            // if(!(song_clock&15))
-            // {
-            //     vol[j]-=4;
-            // }
             if(!(song_clock&3))
             {
-                vol[j]-=1;
+                vol[j]--;
             }
-            
-            
-            if(vol[j]>=0)
+
+            if(vol[j]>0)
             {
                 freq=SAMPLERATE/hertz[j];
                 counter[j]=(counter[j]>=freq)?0:counter[j];
@@ -129,7 +124,7 @@ char getRotatedIndex(char px, char py, char r)
 {  
     do
     {
-        char x=12+py-(px<<2);
+        char x=12+py-(px*4);
         px=x&3;
         py=x>>2;
     } while(--r);
@@ -169,7 +164,7 @@ bool fallDown()
     }
 }
 
-void processEventsSDL()
+void processSDLEvents()
 {
     SDL_Event e;
     static bool handlekeys;
@@ -303,8 +298,9 @@ void updateGame()
 {
     #ifdef SCORE
     static int multi=0;
-    #endif
     multi=0;
+    #endif
+    
     _memcpy(pBackBuffer,pBuffer,FIELDHEIGHT*FIELDWIDTH);
     for(int py=0;py<FIELDHEIGHT-1;++py)
     {
@@ -340,9 +336,8 @@ void initSDL()
     screenSurface = SDL_GetWindowSurface(window);
 }
 
-void run()
+void runGame()
 {
-    initGame();
     for(;;)
     {
         updateGame(); 
@@ -357,7 +352,7 @@ void run()
             }
         }
         runtime++;
-        processEventsSDL();
+        processSDLEvents();
     }
     __builtin_unreachable();
 }
@@ -368,7 +363,8 @@ extern void _start()
     initSDL();
     for(;;)
     {
-        run();
+        initGame();
+        runGame();
     }
     __builtin_unreachable();
 }
